@@ -5,11 +5,9 @@ import "./Shareable.sol";
 
 contract Managed is Configurable, Shareable {
 
-  enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint}
+  enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) txs;
-  event Test(uint test);
   uint numAuthorizedKeys = 1;
-  address[] own;
 
   struct Transaction {
     address to;
@@ -17,20 +15,20 @@ contract Managed is Configurable, Shareable {
     Operations op;
   }
 
-  function Managed() Shareable(own,required) {
-    required = 2;
+  function Managed() Shareable() {
     address owner  = msg.sender;
     owners[numAuthorizedKeys] = uint(owner);
     ownerIndex[uint(owner)] = numAuthorizedKeys;
     numAuthorizedKeys++;
+    required = 1;
   }
 
   function getTxsType(bytes32 _hash) returns (uint) {
     return uint(txs[_hash].op);
   }
 
-  function setRequired(uint _required) onlyAuthorized() {
-    if(_required > 1) {
+  function setRequired(uint _required) execute(Operations.changeReq) {
+    if(_required > 1 && numAuthorizedKeys < _required) {
       required = _required; 
     }
   }
@@ -42,7 +40,7 @@ contract Managed is Configurable, Shareable {
   }
 
   modifier execute(Operations _type) {
-   if(numAuthorizedKeys > 2) {
+   if (required > 1) {
    if (this != msg.sender) {
       bytes32 _r = sha3(msg.data,"signature");
       txs[_r].data = msg.data;
@@ -53,8 +51,9 @@ contract Managed is Configurable, Shareable {
     else {
      _;
     }
-  } else {
-  _;
+  }
+  else {
+     _;
   }
  }
 
@@ -74,12 +73,20 @@ contract Managed is Configurable, Shareable {
       }
       return false;
   } 
+ 
+  function getKeys() onlyAuthorized() returns(uint[256]) {
+      return owners;
+  } 
 
   function addKey(address key) execute(Operations.createLOC) {
     if (ownerIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
       owners[numAuthorizedKeys] = uint(key);        
       ownerIndex[uint(key)] = numAuthorizedKeys;
       numAuthorizedKeys++;
+      if(numAuthorizedKeys > 2)
+       {
+         required++;
+       }
     }
   }
 
@@ -88,6 +95,10 @@ contract Managed is Configurable, Shareable {
       remove(ownerIndex[uint(key)]);
       delete ownerIndex[uint(key)];
       numAuthorizedKeys--;
+      if(numAuthorizedKeys >= 2)
+       {
+         required--;
+       }
     }
   }
 
