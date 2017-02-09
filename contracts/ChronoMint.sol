@@ -4,6 +4,7 @@ import "./Managed.sol";
 import "./LOC.sol";
 import "./ChronoBankPlatformInterface.sol";
 import "./ERC20Interface.sol";
+import "./ExchangeInterface.sol";
 
 contract ChronoMint is Managed {
   address internal platform;
@@ -18,12 +19,24 @@ contract ChronoMint is Managed {
       return false;
   }
   
-  function claimOwnership(address _addr) onlyAuthorized() returns(bool) {
+  function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
      if(Owned(_addr).claimContractOwnership()) {
        platform = _addr;
        return true;
      }
      return false;
+  }
+
+  function claimExchangeOwnership(address _addr) onlyAuthorized() returns(bool) {
+     if(Owned(_addr).claimContractOwnership()) {
+       contracts[uint(Setting.exchangeContract)] = _addr;
+       return true;
+     }
+     return false;
+  }
+
+  function setExchangePrices(uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
+     return ExchangeInterface(contracts[uint(Setting.exchangeContract)]).setPrices(_buyPrice, _sellPrice);    
   }
 
   function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() returns(bool) {
