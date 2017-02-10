@@ -7,6 +7,7 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) txs;
+  string[20] memberNames;
   uint numAuthorizedKeys = 1;
 
   struct Transaction {
@@ -14,6 +15,16 @@ contract Managed is Configurable, Shareable {
     bytes data;
     Operations op;
   }
+
+  function setMemberName(string _name) onlyAuthorized() returns(bool) {
+     memberNames[ownerIndex[uint(msg.sender)]] = _name;
+     return true;
+  }
+
+  function getMemberName() constant returns(string) {
+     return memberNames[ownerIndex[uint(msg.sender)]];
+  }
+
 
   function Managed() Shareable() {
     address owner  = msg.sender;
@@ -74,7 +85,7 @@ contract Managed is Configurable, Shareable {
       return false;
   } 
  
-  function getKeys() onlyAuthorized() returns(uint[256]) {
+  function getKeys() onlyAuthorized() returns(uint[20]) {
       return owners;
   } 
 

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.8;
 
 import "./Managed.sol";
 import "./LOC.sol";
@@ -12,7 +12,7 @@ contract ChronoMint is Managed {
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
 
-  function isCBE(address key) returns(bool) {
+  function isCBE(address key) constant returns(bool) {
       if (isAuthorized(msg.sender)) {
          return true;
       }
