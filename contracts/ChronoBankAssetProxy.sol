@@ -32,10 +32,12 @@ contract ChronoBankAssetProxy is ERC20 {
     ChronoBankPlatform public chronoBankPlatform;
 
     // Assigned symbol, immutable.
-    bytes32 public symbol;
+    bytes32 smbl;
 
     // Assigned name, immutable.
     string public name;
+
+    string public symbol;
 
     /**
      * Sets platform address, assigns symbol and name.
@@ -48,15 +50,22 @@ contract ChronoBankAssetProxy is ERC20 {
      *
      * @return success.
      */
-    function init(ChronoBankPlatform _chronoBankPlatform, bytes32 _symbol, string _name) returns(bool) {
+    function init(ChronoBankPlatform _chronoBankPlatform, string _symbol, string _name) returns(bool) {
         if (address(chronoBankPlatform) != 0x0) {
             return false;
         }
         chronoBankPlatform = _chronoBankPlatform;
         symbol = _symbol;
+        smbl = stringToBytes32(_symbol);
         name = _name;
         return true;
     }
+
+function stringToBytes32(string memory source) returns (bytes32 result) {
+    assembly {
+        result := mload(add(source, 32))
+    }
+}
 
     /**
      * Only platform is allowed to call.
@@ -71,7 +80,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * Only current asset owner is allowed to call.
      */
     modifier onlyAssetOwner() {
-        if (chronoBankPlatform.isOwner(msg.sender, symbol)) {
+        if (chronoBankPlatform.isOwner(msg.sender, smbl)) {
             _;
         }
     }
@@ -91,7 +100,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return asset total supply.
      */
     function totalSupply() constant returns(uint) {
-        return chronoBankPlatform.totalSupply(symbol);
+        return chronoBankPlatform.totalSupply(smbl);
     }
 
     /**
@@ -102,7 +111,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return holder balance.
      */
     function balanceOf(address _owner) constant returns(uint) {
-        return chronoBankPlatform.balanceOf(_owner, symbol);
+        return chronoBankPlatform.balanceOf(_owner, smbl);
     }
 
     /**
@@ -114,7 +123,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return holder to spender allowance.
      */
     function allowance(address _from, address _spender) constant returns(uint) {
-        return chronoBankPlatform.allowance(_from, _spender, symbol);
+        return chronoBankPlatform.allowance(_from, _spender, smbl);
     }
 
     /**
@@ -123,7 +132,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return asset decimals.
      */
     function decimals() constant returns(uint8) {
-        return chronoBankPlatform.baseUnit(symbol);
+        return chronoBankPlatform.baseUnit(smbl);
     }
 
     /**
@@ -174,7 +183,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __transferWithReference(address _to, uint _value, string _reference, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyTransferWithReference(_to, _value, symbol, _reference, _sender);
+        return chronoBankPlatform.proxyTransferWithReference(_to, _value, smbl, _reference, _sender);
     }
 
     /**
@@ -228,7 +237,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __transferFromWithReference(address _from, address _to, uint _value, string _reference, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyTransferFromWithReference(_from, _to, _value, symbol, _reference, _sender);
+        return chronoBankPlatform.proxyTransferFromWithReference(_from, _to, _value, smbl, _reference, _sender);
     }
 
     /**
@@ -265,7 +274,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __approve(address _spender, uint _value, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyApprove(_spender, _value, symbol, _sender);
+        return chronoBankPlatform.proxyApprove(_spender, _value, smbl, _sender);
     }
 
     /**

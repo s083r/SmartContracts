@@ -46,7 +46,7 @@ contract ChronoMint is Managed {
      return false;
   }
  
-  function send(uint _name, address _to, uint _value) onlyAuthorized() returns(bool) {
+  function sendAsset(uint _name, address _to, uint _value) onlyAuthorized() returns(bool) {
      return ERC20Interface(contracts[_name]).transfer(_to,_value);
   }
  
