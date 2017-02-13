@@ -8,7 +8,7 @@ contract Managed is Configurable, Shareable {
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) txs;
   string[20] memberNames;
-  uint numAuthorizedKeys = 1;
+  uint public numAuthorizedKeys = 1;
 
   struct Transaction {
     address to;
@@ -16,17 +16,16 @@ contract Managed is Configurable, Shareable {
     Operations op;
   }
 
-  function setMemberName(string _name) onlyAuthorized() returns(bool) {
-     memberNames[ownerIndex[uint(msg.sender)]] = _name;
+  function setMemberName(address key, string _name) onlyAuthorized() returns(bool) {
+     memberNames[ownerIndex[uint(key)]] = _name;
      return true;
   }
 
-  function getMemberName() constant returns(string) {
-     return memberNames[ownerIndex[uint(msg.sender)]];
+  function getMemberName(address key) constant returns(string) {
+     return memberNames[ownerIndex[uint(key)]];
   }
 
-
-  function Managed() Shareable() {
+  function Managed() {
     address owner  = msg.sender;
     owners[numAuthorizedKeys] = uint(owner);
     ownerIndex[uint(owner)] = numAuthorizedKeys;
@@ -85,10 +84,6 @@ contract Managed is Configurable, Shareable {
       return false;
   } 
  
-  function getKeys() onlyAuthorized() returns(uint[20]) {
-      return owners;
-  } 
-
   function addKey(address key) execute(Operations.createLOC) {
     if (ownerIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
       owners[numAuthorizedKeys] = uint(key);        
@@ -118,6 +113,7 @@ contract Managed is Configurable, Shareable {
 
         for (uint i = index; i<owners.length-1; i++){
             owners[i] = owners[i+1];
+            memberNames[i] = memberNames[i+1];
         }
         delete owners[owners.length-1];
     }
