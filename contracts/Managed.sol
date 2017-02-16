@@ -7,7 +7,7 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) txs;
-  string[20] memberNames;
+  mapping (uint => string) memberNames;
   uint public numAuthorizedKeys = 1;
 
   struct Transaction {
