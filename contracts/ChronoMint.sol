@@ -1,13 +1,9 @@
 pragma solidity ^0.4.8;
 
-import "./Managed.sol";
+import "./ContractsManager.sol";
 import "./LOC.sol";
-import "./ChronoBankPlatformInterface.sol";
-import "./ERC20Interface.sol";
-import "./ExchangeInterface.sol";
 
-contract ChronoMint is Managed {
-  address internal platform;
+contract ChronoMint is ContractsManager {
   uint offeringCompaniesCounter;
   mapping(uint => address) offeringCompanies;
   mapping(address => uint) offeringCompaniesIDs;
@@ -18,50 +14,6 @@ contract ChronoMint is Managed {
          return true;
       }
       return false;
-  }
-  
-  function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       platform = _addr;
-       return true;
-     }
-     return false;
-  }
-
-  function claimExchangeOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       contracts[uint(Setting.exchangeContract)] = _addr;
-       return true;
-     }
-     return false;
-  }
-
-  function setExchangePrices(uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
-     return ExchangeInterface(contracts[uint(Setting.exchangeContract)]).setPrices(_buyPrice, _sellPrice);    
-  }
-
-  function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() returns(bool) {
-     if(platform != 0x0) {
-        return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
-     }
-     return false;
-  }
- 
-  function sendAsset(uint _name, address _to, uint _value) onlyAuthorized() returns(bool) {
-     return ERC20Interface(contracts[_name]).transfer(_to,_value);
-  }
- 
-  function getBalance(uint _name) constant returns(uint) {
-     return ERC20Interface(contracts[_name]).balanceOf(this);
-
-  }
-
-  function getAddress(uint name) constant returns(address) {
-    return contracts[name];
-  }
-
-  function setAddress(uint name, address value) onlyAuthorized() execute(Operations.editMint) {
-    contracts[name] = value;
   }
 
   function pendingsCount() constant returns(uint) {
@@ -134,12 +86,8 @@ contract ChronoMint is Managed {
       return offeringCompaniesCounter;
   }
 
-  function ChronoMint(address _eS, address _tpc, address _rc, address _ec, address _lhpc) {
+  function ChronoMint(address _eS, address _tpc, address _rc, address _ec, address _lhpc) ContractsManager(_tpc,_rc,_ec,_lhpc) {
     eternalStorage = _eS;
-    contracts[0] = _tpc;
-    othercontracts[0] = _rc;
-    othercontracts[1] = _ec;
-    contracts[1] = _lhpc;
     values[uint(Setting.securityPercentage)] = 1;
     values[uint(Setting.liquidityPercentage)] = 1;
     values[uint(Setting.insurancePercentage)] = 1;
