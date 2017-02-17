@@ -29,7 +29,6 @@ contract Shareable {
 
   // list of owners
   uint[20] owners;
-  uint constant c_maxOwners = 20;
   // index on the list of owners to allow reverse lookup
   mapping(uint => uint) ownerIndex;
   // the ongoing operations.

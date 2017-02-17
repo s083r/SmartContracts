@@ -11,8 +11,8 @@ contract('ChronoBankAssetWithFee', function(accounts) {
   afterEach('revert', reverter.revert);
 
   var UINT_256_MINUS_1 = '1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77';
-  var SYMBOL = bytes32(10);
-  var SYMBOL2 = bytes32(1000);
+  var SYMBOL = 'TIME';
+  var SYMBOL2 = 'LHT';
   var NAME = 'Test Name';
   var DESCRIPTION = 'Test Description';
   var VALUE = 1001;

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.8;
 
 import "./Owned.sol"; 
 import "./EternalStorage.sol";
@@ -6,9 +6,8 @@ import "./EternalStorage.sol";
 contract Configurable is Owned {
   enum Setting {name,website,controller,issueLimit,issued,redeemed,publishedHash,expDate,timeProxyContract,rewardsContract,exchangeContract,proxyContract,securityPercentage,liquidityPercentage,insurancePercentage,insuranceDuration,lhProxyContract}
   enum Status {maintenance, active, suspended, bankrupt}
-  string[20] internal settings;
-  uint[20] internal values;
-  address[20] internal contracts;
+  mapping(uint => string) internal settings;
+  mapping(uint => uint) internal values;
 
   address public eternalStorage;
 

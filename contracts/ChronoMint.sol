@@ -1,14 +1,11 @@
 pragma solidity ^0.4.8;
 
-import "./Managed.sol";
+import "./ContractsManager.sol";
 import "./LOC.sol";
-import "./ChronoBankPlatformInterface.sol";
-import "./ERC20Interface.sol";
-import "./ExchangeInterface.sol";
 
-contract ChronoMint is Managed {
-  address internal platform;
-  address[] offeringCompanies;
+contract ChronoMint is ContractsManager {
+  uint offeringCompaniesCounter;
+  mapping(uint => address) offeringCompanies;
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
 
@@ -17,50 +14,6 @@ contract ChronoMint is Managed {
          return true;
       }
       return false;
-  }
-  
-  function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       platform = _addr;
-       return true;
-     }
-     return false;
-  }
-
-  function claimExchangeOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       contracts[uint(Setting.exchangeContract)] = _addr;
-       return true;
-     }
-     return false;
-  }
-
-  function setExchangePrices(uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
-     return ExchangeInterface(contracts[uint(Setting.exchangeContract)]).setPrices(_buyPrice, _sellPrice);    
-  }
-
-  function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() returns(bool) {
-     if(platform != 0x0) {
-        return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
-     }
-     return false;
-  }
- 
-  function sendAsset(uint _name, address _to, uint _value) onlyAuthorized() returns(bool) {
-     return ERC20Interface(contracts[_name]).transfer(_to,_value);
-  }
- 
-  function getBalance(uint _name) constant returns(uint) {
-     return ERC20Interface(contracts[_name]).balanceOf(this);
-
-  }
-
-  function getAddress(uint name) constant returns(address) {
-    return contracts[name];
-  }
-
-  function setAddress(uint name, address value) onlyAuthorized() execute(Operations.editMint) {
-    contracts[name] = value;
   }
 
   function pendingsCount() constant returns(uint) {
@@ -76,8 +29,9 @@ contract ChronoMint is Managed {
   }
  
   function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Operations.editMint) {
-     offeringCompanies.push(_locAddr);
-     offeringCompaniesIDs[_locAddr] = offeringCompanies.length;
+     offeringCompanies[offeringCompaniesCounter] = _locAddr;
+     offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
+     offeringCompaniesCounter++;
   }
 
   function removeLOC(address _locAddr) onlyAuthorized() execute(Operations.editMint) returns (bool) {
@@ -87,18 +41,19 @@ contract ChronoMint is Managed {
   }
 
   function remove(uint i) {
-        if (i >= offeringCompanies.length) return;
+        if (i >= offeringCompaniesCounter) return;
 
-        for (; i<offeringCompanies.length-1; i++){
+        for (; i<offeringCompaniesCounter-1; i++){
             offeringCompanies[i] = offeringCompanies[i+1];
         }
-        offeringCompanies.length--;
+        offeringCompaniesCounter--;
     }
 
   function proposeLOC(string _name, string _website, uint _issueLimit, string _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
     address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash,_expDate);
-    offeringCompaniesIDs[locAddr] = offeringCompanies.length++;
+    offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
     offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
+    offeringCompaniesCounter++;
     newLOC(msg.sender, locAddr);
     return locAddr;
   }
@@ -119,20 +74,20 @@ contract ChronoMint is Managed {
     return offeringCompanies[_id];
   }
 
-  function getLOCs() onlyAuthorized() returns(address[]) {
-    return offeringCompanies;
+  function getLOCs() onlyAuthorized() returns(address[] result) {
+    result = new address[](offeringCompaniesCounter);
+    for(uint i=0; i<offeringCompaniesCounter; i++) {
+       result[i]=offeringCompanies[i];
+    }
+    return result;
   }
 
   function getLOCCount () onlyAuthorized() returns(uint) {
-      return offeringCompanies.length;
+      return offeringCompaniesCounter;
   }
 
-  function ChronoMint(address _eS, address _tpc, address _rc, address _ec, address _lhpc) {
+  function ChronoMint(address _eS, address _tpc, address _rc, address _ec, address _lhpc) ContractsManager(_tpc,_rc,_ec,_lhpc) {
     eternalStorage = _eS;
-    contracts[uint(Setting.timeProxyContract)] = _tpc;
-    contracts[uint(Setting.rewardsContract)] = _rc;
-    contracts[uint(Setting.exchangeContract)] = _ec;
-    contracts[uint(Setting.lhProxyContract)] = _lhpc;
     values[uint(Setting.securityPercentage)] = 1;
     values[uint(Setting.liquidityPercentage)] = 1;
     values[uint(Setting.insurancePercentage)] = 1;

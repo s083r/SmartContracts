@@ -7,8 +7,9 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) public txs;
-  string[20] memberNames;
+  mapping (uint => string) memberNames;
   uint public numAuthorizedKeys = 1;
+  event userUpdate(address key);
 
   struct Transaction {
     address to;
@@ -18,6 +19,7 @@ contract Managed is Configurable, Shareable {
 
   function setMemberName(address key, string _name) onlyAuthorized() returns(bool) {
      memberNames[ownerIndex[uint(key)]] = _name;
+     userUpdate(key);
      return true;
   }
 
@@ -92,6 +94,7 @@ contract Managed is Configurable, Shareable {
     if (ownerIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
       owners[numAuthorizedKeys] = uint(key);        
       ownerIndex[uint(key)] = numAuthorizedKeys;
+      userUpdate(key);
       numAuthorizedKeys++;
       if(numAuthorizedKeys > 2)
        {
@@ -104,6 +107,7 @@ contract Managed is Configurable, Shareable {
     if (ownerIndex[uint(key)] != uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
       remove(ownerIndex[uint(key)]);
       delete ownerIndex[uint(key)];
+      userUpdate(key);
       numAuthorizedKeys--;
       if(numAuthorizedKeys >= 2)
        {
