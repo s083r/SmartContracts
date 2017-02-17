@@ -1,5 +1,7 @@
 pragma solidity ^0.4.8;
 
+import {ERC20Interface as Asset} from "./ERC20Interface.sol";
+
 contract Vote {
 
   //defines the poll
@@ -7,51 +9,147 @@ contract Vote {
     address owner;
     string title;
     uint votelimit;
-    string options;
+    uint optionsCount;
     uint deadline;
     bool status;
     uint numVotes;
+    uint ipfsHashesCount;
+    mapping(uint => string) ipfsHashes;
+    mapping(bytes32 => uint) options;
+    mapping(uint => bytes32) optionsId;
   }
+
+    // ERC20 token that acts as shares.
+    Asset public sharesContract;
+
+   function Vote(Asset _sharesContract) {
+     sharesContract = _sharesContract;
+   }
+
+// Shares deposited by shareholder.
+    mapping(address => uint) public shares;
 
   // event tracking of all votes
-  event NewVote(string votechoice);
+  event NewVote(uint _choice);
  
-  address rewardsContract;
+    // Something went wrong.
+    event Error(bytes32 message);
+
+    // User deposited into current period.
+    event Deposit(address indexed who, uint indexed amount);
+
+    // Shares withdrawn by a shareholder.
+    event WithdrawShares(address indexed who, uint amount);
    
-  // declare a public poll called p
-  Poll public p;
+  // declare an polls array called polls
+  Poll[] polls;
+  uint pollsCount;
 
   //initiator function that stores the necessary poll information
-  function NewPoll(string _options, string _title, uint _votelimit, uint _deadline) {
-    p.owner = msg.sender;
-    p.options = _options;
-    p.title = _title;
-    p.votelimit = _votelimit;
-    p.deadline = _deadline;
-    p.status = true;
-    p.numVotes = 0;
+  function NewPoll(bytes32[] _options, string _title, uint _votelimit, uint _deadline) {
+    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,0,_deadline,true,0,0);
+    for(uint i = 0; i < _options.length; i++) {
+       polls[pollsCount].options[_options[i]] = 0;
+       polls[pollsCount].optionsId[i] = _options[i];
+       polls[pollsCount].optionsCount++;
+    }
+    pollsCount++; 
   }
 
+  /**
+     * Deposit shares and prove possession.
+     * Amount should be less than or equal to current allowance value.
+     *
+     * Proof should be repeated for each active period. To prove possesion without
+     * depositing more shares, specify 0 amount.
+     *
+     * @param _amount amount of shares to deposit, or 0 to just prove.
+     *
+     * @return success.
+     */
+    function deposit(uint _amount) returns(bool) {
+        return depositFor(msg.sender, _amount);
+    }
+
+   /**
+     * Deposit own shares and prove possession for arbitrary shareholder.
+     * Amount should be less than or equal to caller current allowance value.
+     *
+     * Proof should be repeated for each active period. To prove possesion without
+     * depositing more shares, specify 0 amount.
+     *
+     * This function meant to be used by some backend application to prove shares possesion
+     * of arbitrary shareholders.
+     *
+     * @param _address to deposit and prove for.
+     * @param _amount amount of shares to deposit, or 0 to just prove.
+     *
+     * @return success.
+     */
+    function depositFor(address _address, uint _amount) returns(bool) {
+        if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
+            Error("Shares transfer failed");
+            return false;
+        }
+
+        shares[_address] += _amount;
+
+        Deposit(_address, _amount);
+        return true;
+    }
+
+ /**
+     * Withdraw shares from the contract, updating the possesion proof in active period.
+     *
+     * @param _amount amount of shares to withdraw.
+     *
+     * @return success.
+     */
+    function withdrawShares(uint _amount) returns(bool) {
+        // Provide latest possesion proof.
+        deposit(0);
+        if (_amount > shares[msg.sender]) {
+            Error("Insufficient balance");
+            return false;
+        }
+
+        shares[msg.sender] -= _amount;
+
+    //    Period period = periods[lastPeriod()];
+    //    period.totalShares -= _amount;
+    //    period.shares[msg.sender] = shares[msg.sender];
+
+    //    if (!sharesContract.transfer(msg.sender, _amount)) {
+    //        throw;
+    //    }
+
+        WithdrawShares(msg.sender, _amount);
+        return true;
+    }
+
+
   //function for user vote. input is a string choice
-  function vote(string choice) returns (bool) {
+  function vote(uint _pollId, uint _choice) returns (bool) {
+    Poll p = polls[_pollId]; 
     if (msg.sender != p.owner || p.status != true) {
       return false;
     }
 
-    p.numVotes += 1;
-    NewVote(choice);
+    p.options[p.optionsId[_choice]] += shares[msg.sender];
+    NewVote(_choice);
 
     // if votelimit reached, end poll
     if (p.votelimit > 0) {
-      if (p.numVotes >= p.votelimit) {
-        endPoll();
+      if (p.options[p.optionsId[_choice]] >= p.votelimit) {
+        endPoll(_pollId);
       }
     }
     return true;
   }
 
   //when time or vote limit is reached, set the poll status to false
-  function endPoll() returns (bool) {
+  function endPoll(uint _pollId) returns (bool) {
+    Poll p = polls[_pollId];
     if (msg.sender != p.owner) {
       return false;
     }

@@ -27,6 +27,24 @@ contract Managed is Configurable, Shareable {
      return memberNames[ownerIndex[uint(key)]];
   }
 
+  function getMembers() constant returns(address[] result, bytes32[] result2)
+  {
+    result = new address[](numAuthorizedKeys-1);
+    result2 = new bytes32[](numAuthorizedKeys-1); 
+    for(uint i = 0; i<numAuthorizedKeys-1; i++)
+    {
+      result[i] = address(owners[i+1]);
+      result2[i] = stringToBytes32(memberNames[i+1]);
+    }
+    return (result,result2);
+  }
+
+function stringToBytes32(string memory source) returns (bytes32 result) {
+    assembly {
+        result := mload(add(source, 32))
+    }
+}
+
   function Managed() {
     address owner  = msg.sender;
     owners[numAuthorizedKeys] = uint(owner);
