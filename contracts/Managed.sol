@@ -6,7 +6,7 @@ import "./Shareable.sol";
 contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
-  mapping (bytes32 => Transaction) txs;
+  mapping (bytes32 => Transaction) public txs;
   string[20] memberNames;
   uint public numAuthorizedKeys = 1;
 
@@ -35,6 +35,10 @@ contract Managed is Configurable, Shareable {
 
   function getTxsType(bytes32 _hash) returns (uint) {
     return uint(txs[_hash].op);
+  }
+
+  function getTxsData(bytes32 _hash) constant returns(bytes) {
+    return txs[_hash].data;
   }
 
   function setRequired(uint _required) execute(Operations.changeReq) {
