@@ -243,7 +243,7 @@ contract ChronoBankPlatform is Owned {
      *
      * @return holder balance.
      */
-    function _balanceOf(uint _holderId, bytes32 _symbol) constant internal returns(uint) {
+    function _balanceOf(uint _holderId, bytes32 _symbol) constant returns(uint) {
         return assets[_symbol].wallets[_holderId].balance;
     }
 
@@ -254,7 +254,7 @@ contract ChronoBankPlatform is Owned {
      *
      * @return holder address.
      */
-    function _address(uint _holderId) constant internal returns(address) {
+    function _address(uint _holderId) constant returns(address) {
         return holders[_holderId].addr;
     }
 

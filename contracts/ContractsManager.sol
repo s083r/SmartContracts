@@ -32,6 +32,23 @@ contract ContractsManager is Managed {
       otherContractsCounter++;
   }
 
+ function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant returns(address[] result,uint[] result2) {
+   if(_num <= 100) {
+    result = new address[](_num);
+    result2 = new uint[](_num);
+    for(uint i = 0; i < _num; i++)
+    {
+       address owner = ChronoBankPlatformInterface(platform)._address(_startId);
+       uint balance = ChronoBankPlatformInterface(platform)._balanceOf(_startId,_symbol);
+       result[i] = owner;
+       result2[i] = balance;
+       _startId++;
+     }
+     return (result,result2);
+   }
+   throw;
+  }
+
   function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
      if(Owned(_addr).claimContractOwnership()) {
        platform = _addr;
