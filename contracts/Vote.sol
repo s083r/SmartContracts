@@ -14,6 +14,7 @@ contract Vote {
     bool status;
     uint numVotes;
     uint ipfsHashesCount;
+    mapping(address => uint) memberOption;
     mapping(uint => string) ipfsHashes;
     mapping(bytes32 => uint) options;
     mapping(uint => bytes32) optionsId;
@@ -28,6 +29,9 @@ contract Vote {
 
 // Shares deposited by shareholder.
     mapping(address => uint) public shares;
+
+// Polls ids member took part
+    mapping(address => uint[]) memberPolls;
 
   // event tracking of all votes
   event NewVote(uint _choice);
@@ -112,7 +116,11 @@ contract Vote {
             Error("Insufficient balance");
             return false;
         }
-
+        for(uint i=0;i<memberPolls[msg.sender].length;i++){
+           Poll p = polls[memberPolls[msg.sender][i]];
+           uint choice = p.memberOption[msg.sender];
+           p.options[p.optionsId[choice]] -= _amount;
+        }
         shares[msg.sender] -= _amount;
 
     //    Period period = periods[lastPeriod()];
@@ -136,6 +144,8 @@ contract Vote {
     }
 
     p.options[p.optionsId[_choice]] += shares[msg.sender];
+    p.memberOption[msg.sender] = _choice;
+    memberPolls[msg.sender].push(_pollId);
     NewVote(_choice);
 
     // if votelimit reached, end poll

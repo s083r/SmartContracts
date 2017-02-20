@@ -7,8 +7,8 @@ import "./ExchangeInterface.sol";
 
 contract ContractsManager is Managed {
   address internal platform;
-  uint contractsCounter;
-  uint otherContractsCounter;
+  uint public contractsCounter = 1;
+  uint public otherContractsCounter = 1;
   mapping(uint => address) internal contracts;
   mapping(uint => address) internal othercontracts;
   mapping(address => uint) internal contractsId;
@@ -47,6 +47,24 @@ contract ContractsManager is Managed {
      return (result,result2);
    }
    throw;
+  }
+
+  function getContracts() constant returns(address[] result) {
+  result = new address[](contractsCounter);
+  for(uint i=0; i<contractsCounter;i++) {
+    address contractAddr = contracts[i+1];
+    result[i] = contractAddr;
+  } 
+  return result;
+  }
+
+  function getOtherContracts() constant returns(address[] result) {
+  result = new address[](otherContractsCounter);
+  for(uint i=0; i<otherContractsCounter;i++) {
+    address contractAddr = othercontracts[i+1];
+    result[i] = contractAddr;
+  }
+  return result;
   }
 
   function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
@@ -89,10 +107,13 @@ contract ContractsManager is Managed {
   }
 
   function setAddress(address value) onlyAuthorized() execute(Operations.editMint) returns(uint) {
-    contracts[contractsCounter] = value;
-    contractsId[value] = contractsCounter;
-    updateContract(value);
-    return contractsCounter++;
+    if(contractsId[value] == 0) {
+      contracts[contractsCounter] = value;
+      contractsId[value] = contractsCounter;
+      updateContract(value);
+      return contractsCounter++;
+    }
+    return contractsId[value];
   }
 
   function removeAddress(address value) onlyAuthorized() execute(Operations.editMint) {
@@ -103,7 +124,7 @@ contract ContractsManager is Managed {
   function removeAddr(uint i) {
         if (i >= contractsCounter) return;
 
-        for (; i<contractsCounter-1; i++){
+        for (; i<contractsCounter; i++){
             contracts[i] = contracts[i+1];
         }
         contractsCounter--;
@@ -113,11 +134,15 @@ contract ContractsManager is Managed {
     return othercontracts[_id];
   }
 
-  function setOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) {
-    othercontracts[contractsCounter] = value;
-    othercontractsId[value] = otherContractsCounter;
-    updateOtherContract(value);
-    otherContractsCounter++;
+  function setOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) returns (uint) {
+    if(othercontractsId[value] == 0) {
+      othercontracts[contractsCounter] = value;
+      othercontractsId[value] = otherContractsCounter;
+      updateOtherContract(value);
+      otherContractsCounter++;
+      return otherContractsCounter; 
+    }
+    return othercontractsId[value];
   }
 
   function removeOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) {
@@ -128,7 +153,7 @@ contract ContractsManager is Managed {
   function removeOtherAddr(uint i) {
         if (i >= otherContractsCounter) return;
 
-        for (; i<otherContractsCounter-1; i++){
+        for (; i<otherContractsCounter; i++){
             othercontracts[i] = othercontracts[i+1];
         }
         otherContractsCounter--;
