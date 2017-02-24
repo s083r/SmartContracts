@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.8;
 
 import "./ChronoBankPlatform.sol";
 import {ChronoBankAssetInterface as ChronoBankAsset} from "./ChronoBankAssetInterface.sol";

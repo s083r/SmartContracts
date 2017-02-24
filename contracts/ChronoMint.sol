@@ -86,7 +86,7 @@ contract ChronoMint is ContractsManager {
       return offeringCompaniesCounter;
   }
 
-  function ChronoMint(address _eS, address _tpc, address _rc, address _ec, address _lhpc) ContractsManager(_tpc,_rc,_ec,_lhpc) {
+  function ChronoMint(address _eS, address _tpc) {
     eternalStorage = _eS;
     values[uint(Setting.securityPercentage)] = 1;
     values[uint(Setting.liquidityPercentage)] = 1;

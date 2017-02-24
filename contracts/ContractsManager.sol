@@ -16,22 +16,6 @@ contract ContractsManager is Managed {
   event updateContract(address contractAddress);
   event updateOtherContract(address contractAddress);
 
-  function ContractsManager(address _tpc, address _rc, address _ec, address _lhpc)
-  {
-      contracts[contractsCounter] = _tpc;
-      contractsId[_tpc] = contractsCounter;
-      contractsCounter++;
-      contracts[contractsCounter] = _lhpc;
-      contractsId[_lhpc] = contractsCounter;
-      contractsCounter++;
-      othercontracts[otherContractsCounter] = _rc;
-      othercontractsId[_rc] = otherContractsCounter;
-      otherContractsCounter++;
-      othercontracts[otherContractsCounter] = _ec;
-      othercontractsId[_ec] = otherContractsCounter;
-      otherContractsCounter++;
-  }
-
  function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant returns(address[] result,uint[] result2) {
    if(_num <= 100) {
     result = new address[](_num);
@@ -118,6 +102,7 @@ contract ContractsManager is Managed {
 
   function removeAddress(address value) onlyAuthorized() execute(Operations.editMint) {
     removeAddr(contractsId[value]);
+    delete contractsId[value];
     updateContract(value);
   }
 
@@ -127,6 +112,7 @@ contract ContractsManager is Managed {
         for (; i<contractsCounter; i++){
             contracts[i] = contracts[i+1];
         }
+	delete contracts[i+1];
         contractsCounter--;
     }
 
