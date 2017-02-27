@@ -518,6 +518,7 @@ contract ChronoBankPlatform is Owned {
      * @return success.
      */
     function changeOwnership(bytes32 _symbol, address _newOwner) onlyOwner(_symbol) returns(bool) {
+        if (_newOwner != 0x0) {
         Asset asset = assets[_symbol];
         uint newOwnerId = _createHolderId(_newOwner);
         // Should pass ownership to another holder.
@@ -532,6 +533,10 @@ contract ChronoBankPlatform is Owned {
         // Recursive Call: safe, all changes already made.
         eventsHistory.emitOwnershipChange(oldOwner, _address(newOwnerId), _symbol);
         return true;
+        } 
+        else {
+        return false;
+        }
     }
 
     /**

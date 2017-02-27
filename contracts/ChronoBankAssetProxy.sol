@@ -61,11 +61,11 @@ contract ChronoBankAssetProxy is ERC20 {
         return true;
     }
 
-function stringToBytes32(string memory source) returns (bytes32 result) {
-    assembly {
-        result := mload(add(source, 32))
+    function stringToBytes32(string memory source) returns (bytes32 result) {
+        assembly {
+           result := mload(add(source, 32))
+        }
     }
-}
 
     /**
      * Only platform is allowed to call.
@@ -144,7 +144,12 @@ function stringToBytes32(string memory source) returns (bytes32 result) {
      * @return success.
      */
     function transfer(address _to, uint _value) returns(bool) {
-        return _transferWithReference(_to, _value, "");
+        if (_to != 0x0) {
+          return _transferWithReference(_to, _value, "");
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -157,7 +162,12 @@ function stringToBytes32(string memory source) returns (bytes32 result) {
      * @return success.
      */
     function transferWithReference(address _to, uint _value, string _reference) returns(bool) {
-        return _transferWithReference(_to, _value, _reference);
+        if (_to != 0x0) {
+            return _transferWithReference(_to, _value, _reference);
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -196,31 +206,12 @@ function stringToBytes32(string memory source) returns (bytes32 result) {
      * @return success.
      */
     function transferFrom(address _from, address _to, uint _value) returns(bool) {
-        return _transferFromWithReference(_from, _to, _value, "");
-    }
-
-    /**
-     * Prforms allowance transfer of asset balance between holders adding specified comment.
-     *
-     * @param _from holder address to take from.
-     * @param _to holder address to give to.
-     * @param _value amount to transfer.
-     * @param _reference transfer comment to be included in a platform's Transfer event.
-     *
-     * @return success.
-     */
-    function transferFromWithReference(address _from, address _to, uint _value, string _reference) returns(bool) {
-        return _transferFromWithReference(_from, _to, _value, _reference);
-    }
-
-    /**
-     * Resolves asset implementation contract for the caller and forwards there arguments along with
-     * the caller address.
-     *
-     * @return success.
-     */
-    function _transferFromWithReference(address _from, address _to, uint _value, string _reference) internal returns(bool) {
-        return _getAsset().__transferFromWithReference(_from, _to, _value, _reference, msg.sender);
+        if (_to != 0x0) {
+            return _getAsset().__transferFromWithReference(_from, _to, _value, "", msg.sender);
+         }
+         else {
+             return false;
+         }
     }
 
     /**
@@ -249,17 +240,12 @@ function stringToBytes32(string memory source) returns (bytes32 result) {
      * @return success.
      */
     function approve(address _spender, uint _value) returns(bool) {
-        return _approve(_spender, _value);
-    }
-
-    /**
-     * Resolves asset implementation contract for the caller and forwards there arguments along with
-     * the caller address.
-     *
-     * @return success.
-     */
-    function _approve(address _spender, uint _value) internal returns(bool) {
-        return _getAsset().__approve(_spender, _value, msg.sender);
+        if (_spender != 0x0) {
+             return _getAsset().__approve(_spender, _value, msg.sender);
+        }
+        else {
+            return false;
+        }
     }
 
     /**
