@@ -61,7 +61,7 @@ contract ContractsManager is Managed {
 
   function claimExchangeOwnership(address _addr) onlyAuthorized() returns(bool) {
      if(Owned(_addr).claimContractOwnership()) {
-       othercontracts[1] = _addr;
+       setOtherAddress(_addr);
        return true;
      }
      return false;
@@ -122,7 +122,7 @@ contract ContractsManager is Managed {
 
   function setOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) returns (uint) {
     if(othercontractsId[value] == 0) {
-      othercontracts[contractsCounter] = value;
+      othercontracts[otherContractsCounter] = value;
       othercontractsId[value] = otherContractsCounter;
       updateOtherContract(value);
       otherContractsCounter++;
