@@ -7,7 +7,7 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) public txs;
-  mapping (uint => string) memberNames;
+  mapping (uint => bytes32) memberHashes;
   uint public numAuthorizedKeys = 1;
   event userUpdate(address key);
 
@@ -17,14 +17,14 @@ contract Managed is Configurable, Shareable {
     Operations op;
   }
 
-  function setMemberName(address key, string _name) onlyAuthorized() returns(bool) {
-     memberNames[ownerIndex[uint(key)]] = _name;
+  function setMemberHash(address key, bytes32 _name) onlyAuthorized() returns(bool) {
+     memberHashes[ownerIndex[uint(key)]] = _name;
      userUpdate(key);
      return true;
   }
 
-  function getMemberName(address key) constant returns(string) {
-     return memberNames[ownerIndex[uint(key)]];
+  function getMemberHash(address key) constant returns(bytes32) {
+     return memberHashes[ownerIndex[uint(key)]];
   }
 
   function getMembers() constant returns(address[] result, bytes32[] result2)
@@ -34,16 +34,10 @@ contract Managed is Configurable, Shareable {
     for(uint i = 0; i<numAuthorizedKeys-1; i++)
     {
       result[i] = address(owners[i+1]);
-      result2[i] = stringToBytes32(memberNames[i+1]);
+      result2[i] = memberHashes[i+1];
     }
     return (result,result2);
   }
-
-function stringToBytes32(string memory source) returns (bytes32 result) {
-    assembly {
-        result := mload(add(source, 32))
-    }
-}
 
   function Managed() {
     address owner  = msg.sender;
@@ -139,7 +133,7 @@ function stringToBytes32(string memory source) returns (bytes32 result) {
 
         for (uint i = index; i<owners.length-1; i++){
             owners[i] = owners[i+1];
-            memberNames[i] = memberNames[i+1];
+            memberHashes[i] = memberHashes[i+1];
         }
         delete owners[owners.length-1];
     }
