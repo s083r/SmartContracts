@@ -7,7 +7,7 @@ contract Vote {
   //defines the poll
   struct Poll {
     address owner;
-    string title;
+    bytes32 title;
     uint votelimit;
     uint optionsCount;
     uint deadline;
@@ -46,18 +46,27 @@ contract Vote {
     event WithdrawShares(address indexed who, uint amount);
    
   // declare an polls array called polls
-  Poll[] polls;
+  mapping(uint => Poll) public polls;
   uint pollsCount;
 
   //initiator function that stores the necessary poll information
-  function NewPoll(bytes32[] _options, string _title, uint _votelimit, uint _deadline) returns (uint) {
-    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,0,_deadline,true,0,0);
-    for(uint i = 0; i < _options.length; i++) {
-       polls[pollsCount].options[_options[i]] = 0;
+  function NewPoll(bytes32[16] _options, bytes32 _title, uint _votelimit, uint _count, uint _deadline) returns (uint) {
+    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,_count,_deadline,true,0,0);
+    for(uint i = 0; i < _count-1; i++) {
+      polls[pollsCount].options[_options[i]] = 0;
        polls[pollsCount].optionsId[i] = _options[i];
        polls[pollsCount].optionsCount++;
     }
     return pollsCount++; 
+  }
+
+  function getPollTitles() returns (bytes32[] result) {
+    result = new bytes32[](pollsCount);
+    for(uint i = 0; i<pollsCount; i++)
+    {
+      result[i] = polls[i].title;
+    }
+    return (result); 
   }
 
   /**
@@ -122,14 +131,6 @@ contract Vote {
            p.options[p.optionsId[choice]] -= _amount;
         }
         shares[msg.sender] -= _amount;
-
-    //    Period period = periods[lastPeriod()];
-    //    period.totalShares -= _amount;
-    //    period.shares[msg.sender] = shares[msg.sender];
-
-    //    if (!sharesContract.transfer(msg.sender, _amount)) {
-    //        throw;
-    //    }
 
         WithdrawShares(msg.sender, _amount);
         return true;
