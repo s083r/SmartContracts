@@ -50,14 +50,14 @@ contract Vote {
   uint pollsCount;
 
   //initiator function that stores the necessary poll information
-  function NewPoll(bytes32[] _options, string _title, uint _votelimit, uint _deadline) {
+  function NewPoll(bytes32[] _options, string _title, uint _votelimit, uint _deadline) returns (uint) {
     polls[pollsCount] = Poll(msg.sender,_title,_votelimit,0,_deadline,true,0,0);
     for(uint i = 0; i < _options.length; i++) {
        polls[pollsCount].options[_options[i]] = 0;
        polls[pollsCount].optionsId[i] = _options[i];
        polls[pollsCount].optionsCount++;
     }
-    pollsCount++; 
+    return pollsCount++; 
   }
 
   /**

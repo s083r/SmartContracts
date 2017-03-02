@@ -71,7 +71,7 @@ contract ContractsManager is Managed {
      return ExchangeInterface(othercontracts[1]).setPrices(_buyPrice, _sellPrice);
   }
 
-  function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() returns(bool) {
+  function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() execute(Operations.editMint) returns(bool) {
      if(platform != 0x0) {
         return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
      }
