@@ -7,7 +7,7 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) public txs;
-  mapping (uint => bytes32) memberHashes;
+  mapping (uint => string) memberHashes;
   uint public numAuthorizedKeys = 1;
   event userUpdate(address key);
 
@@ -17,26 +17,23 @@ contract Managed is Configurable, Shareable {
     Operations op;
   }
 
-  function setMemberHash(address key, bytes32 _name) onlyAuthorized() returns(bool) {
-     memberHashes[ownerIndex[uint(key)]] = _name;
-     userUpdate(key);
+  function setMemberHash(address key, string _hash) onlyAuthorized() returns(bool) {
+     memberHashes[ownerIndex[uint(key)]] = _hash;
      return true;
   }
 
-  function getMemberHash(address key) constant returns(bytes32) {
+  function getMemberHash(address key) constant returns(string) {
      return memberHashes[ownerIndex[uint(key)]];
   }
 
-  function getMembers() constant returns(address[] result, bytes32[] result2)
+  function getMembers() constant returns(address[] result)
   {
     result = new address[](numAuthorizedKeys-1);
-    result2 = new bytes32[](numAuthorizedKeys-1); 
     for(uint i = 0; i<numAuthorizedKeys-1; i++)
     {
       result[i] = address(owners[i+1]);
-      result2[i] = memberHashes[i+1];
     }
-    return (result,result2);
+    return (result);
   }
 
   function Managed() {
