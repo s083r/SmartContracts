@@ -22,6 +22,11 @@ contract Managed is Configurable, Shareable {
      return true;
   }
 
+  function setOwnHash(string _hash) returns(bool) {
+     memberHashes[ownerIndex[uint(msg.sender)]] = _hash;
+     return true;
+  }
+
   function getMemberHash(address key) constant returns(string) {
      return memberHashes[ownerIndex[uint(key)]];
   }

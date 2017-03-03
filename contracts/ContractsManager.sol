@@ -34,19 +34,17 @@ contract ContractsManager is Managed {
   }
 
   function getContracts() constant returns(address[] result) {
-  result = new address[](contractsCounter);
-  for(uint i=0; i<contractsCounter;i++) {
-    address contractAddr = contracts[i+1];
-    result[i] = contractAddr;
+  result = new address[](contractsCounter-1);
+  for(uint i=0; i<contractsCounter-1;i++) {
+    result[i] = contracts[i+1];
   } 
   return result;
   }
 
   function getOtherContracts() constant returns(address[] result) {
-  result = new address[](otherContractsCounter);
-  for(uint i=0; i<otherContractsCounter;i++) {
-    address contractAddr = othercontracts[i+1];
-    result[i] = contractAddr;
+  result = new address[](otherContractsCounter-1);
+  for(uint i=0; i<otherContractsCounter-1;i++) {
+    result[i] = othercontracts[i+1];
   }
   return result;
   }
