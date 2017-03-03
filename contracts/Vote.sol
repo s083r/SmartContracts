@@ -14,7 +14,7 @@ contract Vote {
     bool status;
     uint ipfsHashesCount;
     mapping(address => uint) memberOption;
-    mapping(uint => string) ipfsHashes;
+    mapping(uint => bytes32) ipfsHashes;
     mapping(bytes32 => uint) options;
     mapping(uint => bytes32) optionsId;
   }
@@ -148,6 +148,33 @@ contract Vote {
 
         WithdrawShares(msg.sender, _amount);
         return true;
+    }
+
+    modifier onlyCreator(uint _id) {
+        Poll p = polls[_id];
+        if(p.owner == msg.sender)
+        {
+          _;
+        }
+    }
+
+    function addIpfsHashToPoll(uint _id, bytes32 _hash) onlyCreator(_id) returns(bool) {
+        Poll p = polls[_id];
+        if(p.ipfsHashesCount < 5) {
+          p.ipfsHashes[p.ipfsHashesCount++] = _hash;
+          return true;
+        }
+        return false;
+    }
+
+    function getIpfsHashesFromPoll(uint _id) returns (bytes32[] result) {
+        Poll p = polls[_id];
+        result = new bytes32[](p.ipfsHashesCount);
+        for(uint i = 0; i < p.ipfsHashesCount; i++)
+        {
+           result[i] = p.ipfsHashes[i];
+        }
+        return result;
     }
 
 
