@@ -12,7 +12,6 @@ contract Vote {
     uint optionsCount;
     uint deadline;
     bool status;
-    uint numVotes;
     uint ipfsHashesCount;
     mapping(address => uint) memberOption;
     mapping(uint => string) ipfsHashes;
@@ -51,8 +50,8 @@ contract Vote {
 
   //initiator function that stores the necessary poll information
   function NewPoll(bytes32[16] _options, bytes32 _title, uint _votelimit, uint _count, uint _deadline) returns (uint) {
-    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,_count,_deadline,true,0,0);
-    for(uint i = 0; i < _count-1; i++) {
+    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,_count,_deadline,true,0);
+    for(uint i = 1; i < _count; i++) {
       polls[pollsCount].options[_options[i]] = 0;
        polls[pollsCount].optionsId[i] = _options[i];
        polls[pollsCount].optionsCount++;
@@ -67,6 +66,10 @@ contract Vote {
       result[i] = polls[i].title;
     }
     return (result); 
+  }
+
+  function getMemberPolls() returns (uint[]) {  
+    return memberPolls[msg.sender];
   }
 
   /**
@@ -111,6 +114,17 @@ contract Vote {
         return true;
     }
 
+    /**
+     * Returns shares amount deposited by a particular shareholder.
+     *
+     * @param _address shareholder address.
+     *
+     * @return shares amount.
+     */
+    function depositBalance(address _address) constant returns(uint) {
+        return shares[_address];
+    }
+
  /**
      * Withdraw shares from the contract, updating the possesion proof in active period.
      *
@@ -140,7 +154,7 @@ contract Vote {
   //function for user vote. input is a string choice
   function vote(uint _pollId, uint _choice) returns (bool) {
     Poll p = polls[_pollId]; 
-    if (msg.sender != p.owner || p.status != true) {
+    if (_choice == 0 || p.status != true || shares[msg.sender] == 0 || p.memberOption[msg.sender] != 0) {
       return false;
     }
 
