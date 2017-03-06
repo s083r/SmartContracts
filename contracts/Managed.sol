@@ -58,7 +58,7 @@ contract Managed is Configurable, Shareable {
   }
 
   function setRequired(uint _required) execute(Operations.changeReq) {
-    if(_required > 1 && numAuthorizedKeys < _required) {
+    if(_required > 1 && _required < numAuthorizedKeys) {
       required = _required; 
     }
   }

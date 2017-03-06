@@ -8,6 +8,7 @@ contract Vote {
   struct Poll {
     address owner;
     bytes32 title;
+    bytes32 description;
     uint votelimit;
     uint optionsCount;
     uint deadline;
@@ -15,7 +16,7 @@ contract Vote {
     uint ipfsHashesCount;
     mapping(address => uint) memberOption;
     mapping(uint => bytes32) ipfsHashes;
-    mapping(bytes32 => uint) options;
+    mapping(uint => uint) options;
     mapping(uint => bytes32) optionsId;
   }
 
@@ -32,6 +33,9 @@ contract Vote {
 // Polls ids member took part
     mapping(address => uint[]) memberPolls;
 
+  // event tracking new Polls
+    event New_Poll(uint _pollId);
+
   // event tracking of all votes
   event NewVote(uint _choice);
  
@@ -44,18 +48,20 @@ contract Vote {
     // Shares withdrawn by a shareholder.
     event WithdrawShares(address indexed who, uint amount);
    
-  // declare an polls array called polls
+  // declare an polls mapping called polls
   mapping(uint => Poll) public polls;
+  // Polls counter for mapping 
   uint pollsCount;
 
   //initiator function that stores the necessary poll information
-  function NewPoll(bytes32[16] _options, bytes32 _title, uint _votelimit, uint _count, uint _deadline) returns (uint) {
-    polls[pollsCount] = Poll(msg.sender,_title,_votelimit,_count,_deadline,true,0);
-    for(uint i = 1; i < _count; i++) {
-      polls[pollsCount].options[_options[i]] = 0;
+  function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) returns (uint) {
+    polls[pollsCount] = Poll(msg.sender,_title,_description,_votelimit,0,_deadline,true,0);
+    for(uint i = 1; i < _count+1; i++) {
+      polls[pollsCount].options[i] = 0;
        polls[pollsCount].optionsId[i] = _options[i];
        polls[pollsCount].optionsCount++;
     }
+    New_Poll(pollsCount);
     return pollsCount++; 
   }
 
@@ -70,6 +76,22 @@ contract Vote {
 
   function getMemberPolls() returns (uint[]) {  
     return memberPolls[msg.sender];
+  }
+
+  function getMemberVotesForPoll(uint _id) returns (uint result) {
+    Poll p = polls[_id];
+    result = p.memberOption[msg.sender];
+    return (result); 
+  }
+
+  function getOptionsVotesForPoll(uint _id) returns (uint[] result) {
+    Poll p = polls[_id];
+    result = new uint[](p.optionsCount);
+    for(uint i = 0; i < p.optionsCount; i++)
+    {
+      result[i] = p.options[i+1];
+    }
+    return result;
   }
 
   /**
@@ -142,7 +164,7 @@ contract Vote {
         for(uint i=0;i<memberPolls[msg.sender].length;i++){
            Poll p = polls[memberPolls[msg.sender][i]];
            uint choice = p.memberOption[msg.sender];
-           p.options[p.optionsId[choice]] -= _amount;
+           p.options[choice] -= _amount;
         }
         shares[msg.sender] -= _amount;
 
@@ -185,14 +207,14 @@ contract Vote {
       return false;
     }
 
-    p.options[p.optionsId[_choice]] += shares[msg.sender];
+    p.options[_choice] += shares[msg.sender];
     p.memberOption[msg.sender] = _choice;
     memberPolls[msg.sender].push(_pollId);
     NewVote(_choice);
 
     // if votelimit reached, end poll
     if (p.votelimit > 0) {
-      if (p.options[p.optionsId[_choice]] >= p.votelimit) {
+      if (p.options[_choice] >= p.votelimit) {
         endPoll(_pollId);
       }
     }
