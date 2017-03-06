@@ -51,7 +51,7 @@ contract Vote {
   // declare an polls mapping called polls
   mapping(uint => Poll) public polls;
   // Polls counter for mapping 
-  uint pollsCount;
+  uint public pollsCount;
 
   //initiator function that stores the necessary poll information
   function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) returns (uint) {
