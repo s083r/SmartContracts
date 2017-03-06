@@ -84,6 +84,16 @@ contract Vote {
     return (result); 
   }
 
+  function getOptionsForPoll(uint _id) returns (bytes32[] result) {
+    Poll p = polls[_id];
+    result = new bytes32[](p.optionsCount);
+    for(uint i = 0; i < p.optionsCount; i++)
+    {
+      result[i] = p.optionsId[i+1];
+    }
+    return result;
+  }
+
   function getOptionsVotesForPoll(uint _id) returns (uint[] result) {
     Poll p = polls[_id];
     result = new uint[](p.optionsCount);
