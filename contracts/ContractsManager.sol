@@ -65,8 +65,8 @@ contract ContractsManager is Managed {
      return false;
   }
 
-  function setExchangePrices(uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
-     return ExchangeInterface(othercontracts[1]).setPrices(_buyPrice, _sellPrice);
+  function setExchangePrices(address _ec, uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
+     return ExchangeInterface(_ec).setPrices(_buyPrice, _sellPrice);
   }
 
   function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() execute(Operations.editMint) returns(bool) {
@@ -98,6 +98,17 @@ contract ContractsManager is Managed {
     return contractsId[value];
   }
 
+  function changeAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
+    if(contractsId[_from] != 0) {
+      contracts[contractsId[_from]] = _to;
+      contractsId[_from] = contractsId[_to];
+      delete contractsId[_from];
+      updateOtherContract(_to);
+      return true;
+    }
+    return false;
+  }
+
   function removeAddress(address value) onlyAuthorized() execute(Operations.editMint) {
     removeAddr(contractsId[value]);
     delete contractsId[value];
@@ -127,6 +138,17 @@ contract ContractsManager is Managed {
       return otherContractsCounter; 
     }
     return othercontractsId[value];
+  }
+
+  function changeOtherAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
+    if(othercontractsId[_from] != 0) {
+      othercontracts[othercontractsId[_from]] = _to;
+      othercontractsId[_from] = othercontractsId[_to];
+      delete othercontractsId[_from];
+      updateOtherContract(_to); 
+      return true;
+    }
+    return false;
   }
 
   function removeOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) {

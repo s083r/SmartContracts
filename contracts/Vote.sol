@@ -58,7 +58,7 @@ contract Vote {
     polls[pollsCount] = Poll(msg.sender,_title,_description,_votelimit,0,_deadline,true,0);
     for(uint i = 1; i < _count+1; i++) {
       polls[pollsCount].options[i] = 0;
-       polls[pollsCount].optionsId[i] = _options[i];
+       polls[pollsCount].optionsId[i] = _options[i-1];
        polls[pollsCount].optionsCount++;
     }
     New_Poll(pollsCount);
