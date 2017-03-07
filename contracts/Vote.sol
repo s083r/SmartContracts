@@ -173,8 +173,10 @@ contract Vote {
         }
         for(uint i=0;i<memberPolls[msg.sender].length;i++){
            Poll p = polls[memberPolls[msg.sender][i]];
-           uint choice = p.memberOption[msg.sender];
-           p.options[choice] -= _amount;
+           if(p.status) {
+             uint choice = p.memberOption[msg.sender];
+             p.options[choice] -= _amount;
+           }
         }
         shares[msg.sender] -= _amount;
 
@@ -184,7 +186,7 @@ contract Vote {
 
     modifier onlyCreator(uint _id) {
         Poll p = polls[_id];
-        if(p.owner == msg.sender)
+        if(p.owner == msg.sender || this == msg.sender)
         {
           _;
         }
@@ -223,7 +225,7 @@ contract Vote {
     NewVote(_choice);
 
     // if votelimit reached, end poll
-    if (p.votelimit > 0) {
+    if (p.votelimit > 0 || p.deadline <= now) {
       if (p.options[_choice] >= p.votelimit) {
         endPoll(_pollId);
       }
@@ -232,11 +234,8 @@ contract Vote {
   }
 
   //when time or vote limit is reached, set the poll status to false
-  function endPoll(uint _pollId) returns (bool) {
+  function endPoll(uint _pollId) internal returns (bool) {
     Poll p = polls[_pollId];
-    if (msg.sender != p.owner) {
-      return false;
-    }
     p.status = false;
     return true;
   }
