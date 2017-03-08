@@ -32,7 +32,7 @@ contract Shareable {
   struct Member {
     address memberAddr;
     bytes32 hash1;
-    bytes32 hash2;
+    bytes14 hash2;
     bool isCBE;
   }
 
