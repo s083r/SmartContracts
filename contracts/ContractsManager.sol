@@ -101,9 +101,9 @@ contract ContractsManager is Managed {
   function changeAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
     if(contractsId[_from] != 0) {
       contracts[contractsId[_from]] = _to;
-      contractsId[_from] = contractsId[_to];
+      contractsId[_to] = contractsId[_from];
       delete contractsId[_from];
-      updateOtherContract(_to);
+      updateContract(_to);
       return true;
     }
     return false;
@@ -143,7 +143,7 @@ contract ContractsManager is Managed {
   function changeOtherAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
     if(othercontractsId[_from] != 0) {
       othercontracts[othercontractsId[_from]] = _to;
-      othercontractsId[_from] = othercontractsId[_to];
+      othercontractsId[_to] = othercontractsId[_from];
       delete othercontractsId[_from];
       updateOtherContract(_to); 
       return true;
