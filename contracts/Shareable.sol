@@ -27,10 +27,17 @@ contract Shareable {
   // the number of owners that must confirm the same operation before it is run.
   uint public required;
 
-  // list of owners
-  uint[20] owners;
-  // index on the list of owners to allow reverse lookup
-  mapping(uint => uint) ownerIndex;
+  mapping (uint => Member) public members;
+
+  struct Member {
+    address memberAddr;
+    bytes32 hash1;
+    bytes32 hash2;
+    bool isCBE;
+  }
+
+  mapping(uint => uint) userIndex;
+  uint public userCount = 1;
   // the ongoing operations.
   mapping(bytes32 => PendingState) pendings;
   bytes32[] pendingsIndex;
@@ -64,7 +71,8 @@ contract Shareable {
 
   // Revokes a prior confirmation of the given operation
   function revoke(bytes32 _operation) external {
-    uint index = ownerIndex[uint(msg.sender)];
+    if(isOwner(msg.sender)) {
+    uint index = userIndex[uint(msg.sender)];
     // make sure they're an owner
     if (index == 0) return;
     uint ownerIndexBit = 2**index;
@@ -74,33 +82,37 @@ contract Shareable {
       pending.ownersDone -= ownerIndexBit;
       Revoke(msg.sender, _operation);
     }
+    }
   }
 
   // Gets an owner by 0-indexed position (using numOwners as the count)
   function getOwner(uint ownerIndex) external constant returns (address) {
-    return address(owners[ownerIndex + 1]);
+    return address(members[userCount].memberAddr);
   }
 
   function isOwner(address _addr) constant returns (bool) {
-    return ownerIndex[uint(_addr)] > 0;
+    return members[userIndex[uint(_addr)]].isCBE;
   }
 
   function hasConfirmed(bytes32 _operation, address _owner) constant returns (bool) {
     var pending = pendings[_operation];
-    uint index = ownerIndex[uint(_owner)];
-    // make sure they're an owner
-    if (index == 0) return false;
+    if(isOwner(_owner)) {
+      uint index = userIndex[uint(_owner)];
+      // make sure they're an owner
+      if (index == 0) return false;
 
-    // determine the bit to set for this owner.
-    uint ownerIndexBit = 2**index;
-    return !(pending.ownersDone & ownerIndexBit == 0);
+      // determine the bit to set for this owner.
+      uint ownerIndexBit = 2**index;
+      return !(pending.ownersDone & ownerIndexBit == 0);
+    }
   }
 
   // INTERNAL METHODS
 
   function confirmAndCheck(bytes32 _operation) internal returns (bool) {
+    if(isOwner(msg.sender)) {
     // determine what index the present sender is:
-    uint index = ownerIndex[uint(msg.sender)];
+    uint index = userIndex[uint(msg.sender)];
     // make sure they're an owner
     if (index == 0) return;
 
@@ -133,6 +145,7 @@ contract Shareable {
           pending.yetNeeded--;
           pending.ownersDone |= ownerIndexBit;
         }
+    }
     }
   }
 

@@ -40,7 +40,7 @@ contract ChronoMint is ContractsManager {
     return true;
   }
 
-  function remove(uint i) {
+  function remove(uint i) internal {
         if (i >= offeringCompaniesCounter) return;
 
         for (; i<offeringCompaniesCounter-1; i++){

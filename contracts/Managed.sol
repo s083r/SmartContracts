@@ -7,8 +7,8 @@ contract Managed is Configurable, Shareable {
 
   enum Operations {createLOC,editLOC,addLOC,removeLOC,editMint,changeReq}
   mapping (bytes32 => Transaction) public txs;
-  mapping (uint => string) memberHashes;
-  uint public numAuthorizedKeys = 1;
+  uint adminCount;
+  event userCreate(address key);
   event userUpdate(address key);
 
   struct Transaction {
@@ -17,35 +17,45 @@ contract Managed is Configurable, Shareable {
     Operations op;
   }
 
-  function setMemberHash(address key, string _hash) onlyAuthorized() returns(bool) {
-     memberHashes[ownerIndex[uint(key)]] = _hash;
+  function setMemberHash(address key, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns(bool) {
+     if (userIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
+      members[userCount] = Member(key,0,0,false);
+      userIndex[uint(key)] = userCount;
+      userCount++;
+     }
+     members[userIndex[uint(key)]].hash1 = _hash1;
+     members[userIndex[uint(key)]].hash2 = _hash2;
+     userUpdate(key);
      return true;
   }
 
-  function setOwnHash(string _hash) returns(bool) {
-     memberHashes[ownerIndex[uint(msg.sender)]] = _hash;
+  function setOwnHash(bytes32 _hash1, bytes14 _hash2) returns(bool) {
+     if (userIndex[uint(msg.sender)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
+      members[userCount] = Member(msg.sender,0,0,false);
+      userIndex[uint(msg.sender)] = userCount;
+      userCount++;
+     }
+     members[userIndex[uint(msg.sender)]].hash1 = _hash1;
+     members[userIndex[uint(msg.sender)]].hash2 = _hash2;
+     userUpdate(msg.sender);
      return true;
-  }
-
-  function getMemberHash(address key) constant returns(string) {
-     return memberHashes[ownerIndex[uint(key)]];
   }
 
   function getMembers() constant returns(address[] result)
   {
-    result = new address[](numAuthorizedKeys-1);
-    for(uint i = 0; i<numAuthorizedKeys-1; i++)
+    result = new address[](userCount-1);
+    for(uint i = 0; i<userCount-1; i++)
     {
-      result[i] = address(owners[i+1]);
+      result[i] = address(members[i+1].memberAddr);
     }
     return (result);
   }
 
   function Managed() {
-    address owner  = msg.sender;
-    owners[numAuthorizedKeys] = uint(owner);
-    ownerIndex[uint(owner)] = numAuthorizedKeys;
-    numAuthorizedKeys++;
+    members[userCount] = Member(msg.sender,0,0,true);
+    userIndex[uint(msg.sender)] = userCount;
+    userCount++;
+    adminCount++;
     required = 1;
   }
 
@@ -58,7 +68,7 @@ contract Managed is Configurable, Shareable {
   }
 
   function setRequired(uint _required) execute(Operations.changeReq) {
-    if(_required > 1 && _required < numAuthorizedKeys) {
+    if(_required > 1 && _required < adminCount) {
       required = _required; 
     }
   }
@@ -98,19 +108,20 @@ contract Managed is Configurable, Shareable {
   }
   
   function isAuthorized(address key) returns(bool) {
-      if(ownerIndex[uint(key)] != uint(0x0) || this == key) {
+      if(isOwner(key) || this == key) {
         return true;
       }
       return false;
   } 
  
   function addKey(address key) execute(Operations.createLOC) {
-    if (ownerIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
-      owners[numAuthorizedKeys] = uint(key);        
-      ownerIndex[uint(key)] = numAuthorizedKeys;
+    if (userIndex[uint(key)] == uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
+      members[userCount] = Member(key,0,0,true);        
+      userIndex[uint(key)] = userCount;
       userUpdate(key);
-      numAuthorizedKeys++;
-      if(numAuthorizedKeys > 2)
+      userCount++;
+      adminCount++;
+      if(adminCount > 1)
        {
          required++;
        }
@@ -118,26 +129,26 @@ contract Managed is Configurable, Shareable {
   }
 
   function revokeKey(address key) execute(Operations.createLOC) {
-    if (ownerIndex[uint(key)] != uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
-      remove(ownerIndex[uint(key)]);
-      delete ownerIndex[uint(key)];
+    if (userIndex[uint(key)] != uint(0x0)) { // Make sure that the key being submitted isn't already CBE.
+      remove(userIndex[uint(key)]);
+      delete userIndex[uint(key)];
       userUpdate(key);
-      numAuthorizedKeys--;
-      if(numAuthorizedKeys >= 2)
+      userCount--;
+      adminCount--;
+      if(adminCount >= 1)
        {
          required--;
        }
     }
   }
 
- function remove(uint index){
-        if (index >= owners.length) return;
+   function remove(uint index) internal {
+        if (index > userCount) return;
 
-        for (uint i = index; i<owners.length-1; i++){
-            owners[i] = owners[i+1];
-            memberHashes[i] = memberHashes[i+1];
+        for (uint i = index; i<userCount-1; i++){
+            members[i] = members[i+1];
         }
-        delete owners[owners.length-1];
+        delete members[userCount-1];
     }
 
 
