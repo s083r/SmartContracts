@@ -15,6 +15,22 @@ contract Managed is Configurable, Shareable {
         Operations op;
     }
 
+    function Managed() {
+        members[userCount] = Member(msg.sender, 0, 0, true);
+        userIndex[uint(msg.sender)] = userCount;
+        userCount++;
+        adminCount++;
+        required = 1;
+    }
+
+    function createMemberIfNotExist(address key) internal {
+        if (userIndex[uint(key)] == uint(0x0)) {
+            members[userCount] = Member(key, 0, 0, false);
+            userIndex[uint(key)] = userCount;
+            userCount++;
+        }
+    }
+
     function setMemberHash(address key, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
         createMemberIfNotExist(key);
         members[userIndex[uint(key)]].hash1 = _hash1;
@@ -29,39 +45,24 @@ contract Managed is Configurable, Shareable {
         return true;
     }
 
-    function getMemberHash(address key) returns (bytes32 hash1, bytes14 hash2) {
+    function getMemberHash(address key) constant returns (bytes32 hash1, bytes14 hash2) {
         return (members[userIndex[uint(key)]].hash1, members[userIndex[uint(key)]].hash2);
-    }
-
-    function createMemberIfNotExist(address key) internal {
-        if (userIndex[uint(key)] == uint(0x0)) {
-            members[userCount] = Member(key, 0, 0, false);
-            userIndex[uint(key)] = userCount;
-            userCount++;
-        }
     }
 
     function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes1, bytes14[] hashes2) {
         addresses = new address[](adminCount);
         hashes1 = new bytes32[](adminCount);
         hashes2 = new bytes14[](adminCount);
+        uint j = 0;
         for (uint i = 1; i < userCount; i++) {
             if (members[i].isCBE) {
-                addresses[i] = members[i].memberAddr;
-                hashes1[i] = members[i].hash1;
-                hashes2[i] = members[i].hash2;
+                addresses[j] = members[i].memberAddr;
+                hashes1[j] = members[i].hash1;
+                hashes2[j] = members[i].hash2;
+                j++;
             }
         }
         return (addresses, hashes1, hashes2);
-    }
-
-    function Managed() {
-        createMemberIfNotExist(msg.sender);
-        members[userCount] = Member(msg.sender, 0, 0, true);
-        userIndex[uint(msg.sender)] = userCount;
-        userCount++;
-        adminCount++;
-        required = 1;
     }
 
     function getTxsType(bytes32 _hash) returns (uint) {

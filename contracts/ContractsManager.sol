@@ -6,161 +6,163 @@ import "./ERC20Interface.sol";
 import "./ExchangeInterface.sol";
 
 contract ContractsManager is Managed {
-  address internal platform;
-  uint public contractsCounter = 1;
-  uint public otherContractsCounter = 1;
-  mapping(uint => address) internal contracts;
-  mapping(uint => address) internal othercontracts;
-  mapping(address => uint) internal contractsId;
-  mapping(address => uint) internal othercontractsId;
-  event updateContract(address contractAddress);
-  event updateOtherContract(address contractAddress);
+    address internal platform;
+    uint public contractsCounter = 1;
+    uint public otherContractsCounter = 1;
+    mapping (uint => address) internal contracts;
+    mapping (uint => address) internal othercontracts;
+    mapping (address => uint) internal contractsId;
+    mapping (address => uint) internal othercontractsId;
 
- function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant returns(address[] result,uint[] result2) {
-   if(_num <= 100) {
-    result = new address[](_num);
-    result2 = new uint[](_num);
-    for(uint i = 0; i < _num; i++)
-    {
-       address owner = ChronoBankPlatformInterface(platform)._address(_startId);
-       uint balance = ChronoBankPlatformInterface(platform)._balanceOf(_startId,_symbol);
-       result[i] = owner;
-       result2[i] = balance;
-       _startId++;
-     }
-     return (result,result2);
-   }
-   throw;
-  }
+    event updateContract(address contractAddress);
+    event updateOtherContract(address contractAddress);
 
-  function getContracts() constant returns(address[] result) {
-  result = new address[](contractsCounter-1);
-  for(uint i=0; i<contractsCounter-1;i++) {
-    result[i] = contracts[i+1];
-  } 
-  return result;
-  }
-
-  function getOtherContracts() constant returns(address[] result) {
-  result = new address[](otherContractsCounter-1);
-  for(uint i=0; i<otherContractsCounter-1;i++) {
-    result[i] = othercontracts[i+1];
-  }
-  return result;
-  }
-
-  function claimPlatformOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       platform = _addr;
-       return true;
-     }
-     return false;
-  }
-
-  function claimExchangeOwnership(address _addr) onlyAuthorized() returns(bool) {
-     if(Owned(_addr).claimContractOwnership()) {
-       setOtherAddress(_addr);
-       return true;
-     }
-     return false;
-  }
-
-  function setExchangePrices(address _ec, uint _buyPrice, uint _sellPrice) onlyAuthorized() returns(bool) {
-     return ExchangeInterface(_ec).setPrices(_buyPrice, _sellPrice);
-  }
-
-  function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() execute(Operations.editMint) returns(bool) {
-     if(platform != 0x0) {
-        return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
-     }
-     return false;
-  }
-
-  function sendAsset(uint _id, address _to, uint _value) onlyAuthorized() returns(bool) {
-     return ERC20Interface(contracts[_id]).transfer(_to,_value);
-  }
-
-  function getBalance(uint _id) constant returns(uint) {
-     return ERC20Interface(contracts[_id]).balanceOf(this);
-  }
-
-  function getAddress(uint _id) constant returns(address) {
-    return contracts[_id];
-  }
-
-  function setAddress(address value) onlyAuthorized() execute(Operations.editMint) returns(uint) {
-    if(contractsId[value] == 0) {
-      contracts[contractsCounter] = value;
-      contractsId[value] = contractsCounter;
-      updateContract(value);
-      return contractsCounter++;
+    function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant returns (address[] result, uint[] result2) {
+        if (_num <= 100) {
+            result = new address[](_num);
+            result2 = new uint[](_num);
+            for (uint i = 0; i < _num; i++)
+            {
+                address owner = ChronoBankPlatformInterface(platform)._address(_startId);
+                uint balance = ChronoBankPlatformInterface(platform)._balanceOf(_startId, _symbol);
+                result[i] = owner;
+                result2[i] = balance;
+                _startId++;
+            }
+            return (result, result2);
+        }
+        throw;
     }
-    return contractsId[value];
-  }
 
-  function changeAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
-    if(contractsId[_from] != 0) {
-      contracts[contractsId[_from]] = _to;
-      contractsId[_to] = contractsId[_from];
-      delete contractsId[_from];
-      updateContract(_to);
-      return true;
+    function getContracts() constant returns (address[] result) {
+        result = new address[](contractsCounter - 1);
+        for (uint i = 0; i < contractsCounter - 1; i++) {
+            result[i] = contracts[i + 1];
+        }
+        return result;
     }
-    return false;
-  }
 
-  function removeAddress(address value) onlyAuthorized() execute(Operations.editMint) {
-    removeAddr(contractsId[value]);
-    delete contractsId[value];
-    updateContract(value);
-  }
+    function getOtherContracts() constant returns (address[] result) {
+        result = new address[](otherContractsCounter - 1);
+        for (uint i = 0; i < otherContractsCounter - 1; i++) {
+            result[i] = othercontracts[i + 1];
+        }
+        return result;
+    }
 
-  function removeAddr(uint i) {
+    function claimPlatformOwnership(address _addr) onlyAuthorized() returns (bool) {
+        if (Owned(_addr).claimContractOwnership()) {
+            platform = _addr;
+            return true;
+        }
+        return false;
+    }
+
+    function claimExchangeOwnership(address _addr) onlyAuthorized() returns (bool) {
+        if (Owned(_addr).claimContractOwnership()) {
+            setOtherAddress(_addr);
+            return true;
+        }
+        return false;
+    }
+
+    function setExchangePrices(address _ec, uint _buyPrice, uint _sellPrice) onlyAuthorized() returns (bool) {
+        return ExchangeInterface(_ec).setPrices(_buyPrice, _sellPrice);
+    }
+
+    function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() execute(Operations.editMint) returns (bool) {
+        if (platform != 0x0) {
+            return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
+        }
+        return false;
+    }
+
+    function sendAsset(uint _id, address _to, uint _value) onlyAuthorized() returns (bool) {
+        return ERC20Interface(contracts[_id]).transfer(_to, _value);
+    }
+
+    function getBalance(uint _id) constant returns (uint) {
+        return ERC20Interface(contracts[_id]).balanceOf(this);
+    }
+
+    function getAddress(uint _id) constant returns (address) {
+        return contracts[_id];
+    }
+
+    function setAddress(address value) onlyAuthorized() execute(Operations.editMint) returns (uint) {
+        if (contractsId[value] == 0) {
+            contracts[contractsCounter] = value;
+            contractsId[value] = contractsCounter;
+            updateContract(value);
+            return contractsCounter++;
+        }
+        return contractsId[value];
+    }
+
+    function changeAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns (bool) {
+        if (contractsId[_from] != 0) {
+            contracts[contractsId[_from]] = _to;
+            contractsId[_to] = contractsId[_from];
+            delete contractsId[_from];
+            updateContract(_to);
+            return true;
+        }
+        return false;
+    }
+
+    function removeAddress(address value) onlyAuthorized() execute(Operations.editMint) {
+        removeAddr(contractsId[value]);
+        delete contractsId[value];
+        updateContract(value);
+    }
+
+    function removeAddr(uint i) internal {
         if (i >= contractsCounter) return;
 
-        for (; i<contractsCounter; i++){
-            contracts[i] = contracts[i+1];
+        for (; i < contractsCounter; i++) {
+            contracts[i] = contracts[i + 1];
         }
-	delete contracts[i+1];
+        delete contracts[i + 1];
         contractsCounter--;
     }
 
-  function getOtherAddress(uint _id) constant returns(address) {
-    return othercontracts[_id];
-  }
-
-  function setOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) returns (uint) {
-    if(othercontractsId[value] == 0) {
-      othercontracts[otherContractsCounter] = value;
-      othercontractsId[value] = otherContractsCounter;
-      updateOtherContract(value);
-      otherContractsCounter++;
-      return otherContractsCounter; 
+    function getOtherAddress(uint _id) constant returns (address) {
+        return othercontracts[_id];
     }
-    return othercontractsId[value];
-  }
 
-  function changeOtherAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns(bool) {
-    if(othercontractsId[_from] != 0) {
-      othercontracts[othercontractsId[_from]] = _to;
-      othercontractsId[_to] = othercontractsId[_from];
-      delete othercontractsId[_from];
-      updateOtherContract(_to); 
-      return true;
+    function setOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) returns (uint) {
+        if (othercontractsId[value] == 0) {
+            othercontracts[otherContractsCounter] = value;
+            othercontractsId[value] = otherContractsCounter;
+            updateOtherContract(value);
+            otherContractsCounter++;
+            return otherContractsCounter;
+        }
+        return othercontractsId[value];
     }
-    return false;
-  }
 
-  function removeOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) {
-    removeOtherAddr(othercontractsId[value]);
-    updateOtherContract(value);
-  }
+    function changeOtherAddress(address _from, address _to) onlyAuthorized() execute(Operations.editMint) returns (bool) {
+        if (othercontractsId[_from] != 0) {
+            othercontracts[othercontractsId[_from]] = _to;
+            othercontractsId[_to] = othercontractsId[_from];
+            delete othercontractsId[_from];
+            updateOtherContract(_to);
+            return true;
+        }
+        return false;
+    }
 
-  function removeOtherAddr(uint i) {
+    function removeOtherAddress(address value) onlyAuthorized() execute(Operations.editMint) {
+        removeOtherAddr(othercontractsId[value]);
+        delete othercontractsId[value];
+        updateOtherContract(value);
+    }
+
+    function removeOtherAddr(uint i) internal {
         if (i >= otherContractsCounter) return;
 
-        for (; i<otherContractsCounter; i++){
-            othercontracts[i] = othercontracts[i+1];
+        for (; i < otherContractsCounter; i++) {
+            othercontracts[i] = othercontracts[i + 1];
         }
         otherContractsCounter--;
     }
