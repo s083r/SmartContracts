@@ -16,6 +16,7 @@ contract ContractsManager is Managed {
 
     event updateContract(address contractAddress);
     event updateOtherContract(address contractAddress);
+    event reissue(uint value, address locAddr);
 
     function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant returns (address[] result, uint[] result2) {
         if (_num <= 100) {
@@ -70,9 +71,12 @@ contract ContractsManager is Managed {
         return ExchangeInterface(_ec).setPrices(_buyPrice, _sellPrice);
     }
 
-    function reissueAsset(bytes32 _symbol, uint _value) onlyAuthorized() execute(Operations.editMint) returns (bool) {
+    function reissueAsset(bytes32 _symbol, uint _value, address _locAddr) onlyAuthorized() execute(Operations.editMint) returns (bool) {
         if (platform != 0x0) {
-            return ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value);
+            if(ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value)) {
+              reissue(_value, _locAddr);
+              return true; 
+	    }
         }
         return false;
     }
