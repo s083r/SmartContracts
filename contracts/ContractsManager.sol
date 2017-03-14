@@ -4,6 +4,7 @@ import "./Managed.sol";
 import "./ChronoBankPlatformInterface.sol";
 import "./ERC20Interface.sol";
 import "./ExchangeInterface.sol";
+import "./OwnedInterface.sol";
 
 contract ContractsManager is Managed {
     address internal platform;
@@ -53,7 +54,7 @@ contract ContractsManager is Managed {
     }
 
     function claimPlatformOwnership(address _addr) onlyAuthorized() returns (bool) {
-        if (Owned(_addr).claimContractOwnership()) {
+        if (OwnedInterface(_addr).claimContractOwnership()) {
             platform = _addr;
             return true;
         }
@@ -61,7 +62,7 @@ contract ContractsManager is Managed {
     }
 
     function claimExchangeOwnership(address _addr) onlyAuthorized() returns (bool) {
-        if (Owned(_addr).claimContractOwnership()) {
+        if (OwnedInterface(_addr).claimContractOwnership()) {
             setOtherAddress(_addr);
             return true;
         }

@@ -14,6 +14,17 @@ pragma solidity ^0.4.8;
 contract Shareable {
   // TYPES
 
+    enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
+    mapping (bytes32 => Transaction) public txs;
+    uint adminCount = 0;
+    event cbeUpdate(address key);
+
+    struct Transaction {
+        address to;
+        bytes data;
+        Operations op;
+    }
+
   // struct for the status of a pending operation.
   struct PendingState {
     uint yetNeeded;
@@ -42,6 +53,17 @@ contract Shareable {
   mapping(bytes32 => PendingState) pendings;
   bytes32[] pendingsIndex;
 
+  function pendingsCount() constant returns(uint) {
+    return pendingsIndex.length;
+  }
+
+  function pendingById(uint _id) constant returns(bytes32) {
+    return pendingsIndex[_id];
+  }
+
+  function pendingYetNeeded(bytes32 _hash) constant returns(uint) {
+    return pendings[_hash].yetNeeded;
+  }
 
   // EVENTS
 

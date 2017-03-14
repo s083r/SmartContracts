@@ -1,19 +1,10 @@
 pragma solidity ^0.4.8;
 
-import "./Configurable.sol";
 import "./Shareable.sol";
 
-contract Managed is Configurable, Shareable {
-    enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
-    mapping (bytes32 => Transaction) public txs;
-    uint adminCount = 0;
-    event cbeUpdate(address key);
-
-    struct Transaction {
-        address to;
-        bytes data;
-        Operations op;
-    }
+contract Managed {
+  
+    address shareable;
 
     function Managed() {
         members[userCount] = Member(msg.sender, 0, 0, true);

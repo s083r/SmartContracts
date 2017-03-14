@@ -1,9 +1,9 @@
 pragma solidity ^0.4.8;
 
-import "./ContractsManager.sol";
 import "./LOC.sol";
+import "./Managed.sol";
 
-contract ChronoMint is ContractsManager {
+contract ChronoMint is Managed {
   uint offeringCompaniesCounter;
   mapping(uint => address) offeringCompanies;
   mapping(address => uint) offeringCompaniesIDs;
@@ -16,18 +16,6 @@ contract ChronoMint is ContractsManager {
       return false;
   }
 
-  function pendingsCount() constant returns(uint) {
-    return pendingsIndex.length;
-  }
-  
-  function pendingById(uint _id) constant returns(bytes32) {
-    return pendingsIndex[_id];
-  }
-  
-  function pendingYetNeeded(bytes32 _hash) constant returns(uint) {
-    return pendings[_hash].yetNeeded;
-  }
- 
   function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Operations.editMint) {
      offeringCompanies[offeringCompaniesCounter] = _locAddr;
      offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
@@ -49,8 +37,8 @@ contract ChronoMint is ContractsManager {
         offeringCompaniesCounter--;
     }
 
-  function proposeLOC(string _name, string _website, uint _issueLimit, string _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
-    address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash,_expDate);
+  function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash1, bytes32 _publishedHash2, uint _expDate) onlyAuthorized() returns(address) {
+    address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash1, _publishedHash2, _expDate);
     offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
     offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
     offeringCompaniesCounter++;
@@ -58,23 +46,23 @@ contract ChronoMint is ContractsManager {
     return locAddr;
   }
 
-  function setLOCStatus(address _LOCaddr, Status status) onlyAuthorized() execute(Operations.editLOC) {
+  function setLOCStatus(address _LOCaddr, LOC.Status status) onlyAuthorized() execute(Operations.editLOC) {
      LOC(_LOCaddr).setStatus(status);
   }
 
-  function setLOCValue(address _LOCaddr, Setting name, uint value) onlyAuthorized() execute(Operations.editLOC) {
+  function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) onlyAuthorized() execute(Operations.editLOC) {
     LOC(_LOCaddr).setValue(uint(name),value);
   }
 
-  function setLOCString(address _LOCaddr, Setting name, string value) onlyAuthorized() {
+  function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) onlyAuthorized() {
     LOC(_LOCaddr).setString(uint(name),value);
   }
 
-  function getLOCbyID(uint _id) onlyAuthorized() returns(address) {
+  function getLOCbyID(uint _id) constant returns(address) {
     return offeringCompanies[_id];
   }
 
-  function getLOCs() onlyAuthorized() returns(address[] result) {
+  function getLOCs() constant returns(address[] result) {
     result = new address[](offeringCompaniesCounter);
     for(uint i=0; i<offeringCompaniesCounter; i++) {
        result[i]=offeringCompanies[i];
@@ -82,16 +70,8 @@ contract ChronoMint is ContractsManager {
     return result;
   }
 
-  function getLOCCount () onlyAuthorized() returns(uint) {
+  function getLOCCount () constant returns(uint) {
       return offeringCompaniesCounter;
-  }
-
-  function ChronoMint(address _eS, address _tpc) {
-    eternalStorage = _eS;
-    values[uint(Setting.securityPercentage)] = 1;
-    values[uint(Setting.liquidityPercentage)] = 1;
-    values[uint(Setting.insurancePercentage)] = 1;
-    values[uint(Setting.insuranceDuration)] = 1;
   }
 
   function()
