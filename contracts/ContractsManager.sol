@@ -19,6 +19,10 @@ contract ContractsManager is Managed {
     event updateOtherContract(address contractAddress);
     event reissue(uint value, address locAddr);
 
+  function init(address _userManager) {
+    userManager = _userManager;
+  }
+
     function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant
                 returns (address[] result, uint[] result2) {
         if (_num <= 100) {

@@ -4,10 +4,16 @@ import "./LOC.sol";
 import "./Managed.sol";
 
 contract ChronoMint is Managed {
+
   uint offeringCompaniesCounter;
   mapping(uint => address) offeringCompanies;
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
+
+  function init(address _userManager) {
+    userManager = _userManager;
+    UserManager(userManager).addMember(msg.sender,true);
+  }
 
   function isCBE(address key) constant returns(bool) {
       if (isAuthorized(msg.sender)) {

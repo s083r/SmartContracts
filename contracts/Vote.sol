@@ -1,8 +1,9 @@
 pragma solidity ^0.4.8;
 
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
+import "./Managed.sol";
 
-contract Vote {
+contract Vote is Managed {
 
   //defines the poll
   struct Poll {

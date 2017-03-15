@@ -1,5 +1,6 @@
 pragma solidity ^0.4.8;
 
+import "./UserManager.sol";
 
 /*
  * Shareable
@@ -14,9 +15,10 @@ pragma solidity ^0.4.8;
 contract Shareable {
   // TYPES
 
+    address userManager;
+
     enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
     mapping (bytes32 => Transaction) public txs;
-    uint adminCount = 0;
     event cbeUpdate(address key);
 
     struct Transaction {
@@ -35,26 +37,12 @@ contract Shareable {
 
   // FIELDS
 
-  // the number of owners that must confirm the same operation before it is run.
-  uint public required;
-
-  mapping (uint => Member) public members;
-
-  struct Member {
-    address memberAddr;
-    bytes32 hash1;
-    bytes14 hash2;
-    bool isCBE;
-  }
-
-  mapping(uint => uint) userIndex;
-  uint public userCount = 1;
   // the ongoing operations.
   mapping(bytes32 => PendingState) pendings;
-  bytes32[] pendingsIndex;
+  mapping(uint => bytes32) pendingsIndex;
 
   function pendingsCount() constant returns(uint) {
-    return pendingsIndex.length;
+    return UserManager(userManager).pending();
   }
 
   function pendingById(uint _id) constant returns(bytes32) {
@@ -94,7 +82,7 @@ contract Shareable {
   // Revokes a prior confirmation of the given operation
   function revoke(bytes32 _operation) external {
     if(isOwner(msg.sender)) {
-    uint index = userIndex[uint(msg.sender)];
+    uint index = UserManager(userManager).getMemberId(msg.sender);
     // make sure they're an owner
     if (index == 0) return;
     uint ownerIndexBit = 2**index;
@@ -109,17 +97,17 @@ contract Shareable {
 
   // Gets an owner by 0-indexed position (using numOwners as the count)
   function getOwner(uint ownerIndex) external constant returns (address) {
-    return address(members[userCount].memberAddr);
+    return UserManager(userManager).getMemberAddr(ownerIndex);
   }
 
   function isOwner(address _addr) constant returns (bool) {
-    return members[userIndex[uint(_addr)]].isCBE;
+    return UserManager(userManager).getCBE(_addr);
   }
 
   function hasConfirmed(bytes32 _operation, address _owner) constant returns (bool) {
     var pending = pendings[_operation];
     if(isOwner(_owner)) {
-      uint index = userIndex[uint(_owner)];
+      uint index = UserManager(userManager).getMemberId(_owner);
       // make sure they're an owner
       if (index == 0) return false;
 
@@ -134,7 +122,7 @@ contract Shareable {
   function confirmAndCheck(bytes32 _operation) internal returns (bool) {
     if(isOwner(msg.sender)) {
     // determine what index the present sender is:
-    uint index = userIndex[uint(msg.sender)];
+    uint index = UserManager(userManager).getMemberId(msg.sender);
     // make sure they're an owner
     if (index == 0) return;
 
@@ -142,10 +130,10 @@ contract Shareable {
     // if we're not yet working on this operation, switch over and reset the confirmation status.
     if (pending.yetNeeded == 0) {
       // reset count of confirmations needed.
-      pending.yetNeeded = required;
+      pending.yetNeeded = UserManager(userManager).required();
       // reset which owners have confirmed (none) - set our bitmap to 0.
       pending.ownersDone = 0;
-      pending.index = pendingsIndex.length++;
+      pending.index = UserManager(userManager).incrPend();
       pendingsIndex[pending.index] = _operation;
     }
     // determine the bit to set for this owner.
@@ -172,22 +160,24 @@ contract Shareable {
   }
 
   function removeOp(uint i) {
-    if (i >= pendingsIndex.length) return;
+    uint count = UserManager(userManager).pending();
+    if (i >= count) return;
 
-        while(i<pendingsIndex.length-1){
+        while(i<count-1){
             pendings[pendingsIndex[i+1]].index = pendings[pendingsIndex[i]].index;
             pendingsIndex[i] = pendingsIndex[i+1];
             i++;
         }
-        pendingsIndex.length--;
+        UserManager(userManager).decrPend();
     }
 
   function clearPending() internal {
-    uint length = pendingsIndex.length;
+    uint length = UserManager(userManager).pending();
     for (uint i = 0; i < length; ++i)
-    if (pendingsIndex[i] != 0)
+    if (pendingsIndex[i] != 0) {
       delete pendings[pendingsIndex[i]];
-    delete pendingsIndex;
+      delete pendingsIndex[i];
+    }
   }
 
 }

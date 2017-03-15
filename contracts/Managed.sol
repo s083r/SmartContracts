@@ -2,58 +2,30 @@ pragma solidity ^0.4.8;
 
 import "./Shareable.sol";
 
-contract Managed {
+contract Managed is Shareable {
   
-    address shareable;
-
-    function Managed() {
-        members[userCount] = Member(msg.sender, 0, 0, true);
-        userIndex[uint(msg.sender)] = userCount;
-        userCount++;
-        adminCount++;
-        required = 1;
-    }
-
     function createMemberIfNotExist(address key) internal {
-        if (userIndex[uint(key)] == uint(0x0)) {
-            members[userCount] = Member(key, 0, 0, false);
-            userIndex[uint(key)] = userCount;
-            userCount++;
-        }
+        UserManager(userManager).addMember(key,false);
     }
 
     function setMemberHash(address key, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
-        createMemberIfNotExist(key);
-        members[userIndex[uint(key)]].hash1 = _hash1;
-        members[userIndex[uint(key)]].hash2 = _hash2;
+//        createMemberIfNotExist(key);
+        UserManager(userManager).setHashes(key, _hash1, _hash2);
         return true;
     }
 
     function setOwnHash(bytes32 _hash1, bytes14 _hash2) returns (bool) {
         createMemberIfNotExist(msg.sender);
-        members[userIndex[uint(msg.sender)]].hash1 = _hash1;
-        members[userIndex[uint(msg.sender)]].hash2 = _hash2;
+        UserManager(userManager).setHashes(msg.sender, _hash1, _hash2);
         return true;
     }
 
-    function getMemberHash(address key) constant returns (bytes32 hash1, bytes14 hash2) {
-        return (members[userIndex[uint(key)]].hash1, members[userIndex[uint(key)]].hash2);
+    function getMemberHash(address key) constant returns (bytes32, bytes14) {
+        return UserManager(userManager).getHash(key);
     }
 
-    function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes1, bytes14[] hashes2) {
-        addresses = new address[](adminCount);
-        hashes1 = new bytes32[](adminCount);
-        hashes2 = new bytes14[](adminCount);
-        uint j = 0;
-        for (uint i = 1; i < userCount; i++) {
-            if (members[i].isCBE) {
-                addresses[j] = members[i].memberAddr;
-                hashes1[j] = members[i].hash1;
-                hashes2[j] = members[i].hash2;
-                j++;
-            }
-        }
-        return (addresses, hashes1, hashes2);
+    function required() constant returns (uint) {
+        return UserManager(userManager).required();
     }
 
     function getTxsType(bytes32 _hash) returns (uint) {
@@ -64,11 +36,11 @@ contract Managed {
         return txs[_hash].data;
     }
 
-    function setRequired(uint _required) execute(Operations.changeReq) {
-        if (_required > 1 && _required < adminCount) {
-            required = _required;
-        }
-    }
+ //   function setRequired(uint _required) execute(Operations.changeReq) {
+ //       if (_required > 1 && _required < adminCount) {
+ //           required = _required;
+ //       }
+ //   }
 
     modifier onlyAuthorized() {
         if (isAuthorized(msg.sender)) {
@@ -77,7 +49,7 @@ contract Managed {
     }
 
     modifier execute(Operations _type) {
-        if (required > 1) {
+        if (UserManager(userManager).required() > 1) {
             if (this != msg.sender) {
                 bytes32 _r = sha3(msg.data, "signature");
                 txs[_r].data = msg.data;
@@ -112,28 +84,17 @@ contract Managed {
     }
 
     function addKey(address key) execute(Operations.createLOC) {
-        createMemberIfNotExist(key);
-        if (!members[userIndex[uint(key)]].isCBE) { // Make sure that the key being submitted isn't already CBE
-            members[userIndex[uint(key)]].isCBE = true;
+      //  if (!UserManager(userManager).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
+            UserManager(userManager).addMember(key,true);
             cbeUpdate(key);
-            adminCount++;
-            if (adminCount > 1)
-            {
-                required++;
-            }
-        }
+       // }
     }
 
     function revokeKey(address key) execute(Operations.createLOC) {
         // Make sure that the key being revoked is exist and is CBE
-        if (userIndex[uint(key)] != uint(0x0) && members[userIndex[uint(key)]].isCBE) {
-            members[userIndex[uint(key)]].isCBE = false;
+        if (UserManager(userManager).getCBE(key)) {
+            UserManager(userManager).setCBE(key,false);
             cbeUpdate(key);
-            adminCount--;
-            if (adminCount >= 1)
-            {
-                required--;
-            }
         }
     }
 }
