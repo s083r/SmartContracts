@@ -1,9 +1,16 @@
 pragma solidity ^0.4.8;
 
-import "./Shareable.sol";
+import {PendingManager as Shareable} from "./PendingManager.sol";
+import "./UserManager.sol";
 
-contract Managed is Shareable {
-  
+contract Managed {
+ 
+    address userManager;
+    address shareable;
+
+    event cbeUpdate(address key);
+    event exec(bytes32 hash);
+
     function createMemberIfNotExist(address key) internal {
         UserManager(userManager).addMember(key,false);
     }
@@ -28,15 +35,7 @@ contract Managed is Shareable {
         return UserManager(userManager).required();
     }
 
-    function getTxsType(bytes32 _hash) returns (uint) {
-        return uint(txs[_hash].op);
-    }
-
-    function getTxsData(bytes32 _hash) constant returns (bytes) {
-        return txs[_hash].data;
-    }
-
- //   function setRequired(uint _required) execute(Operations.changeReq) {
+ //   function setRequired(uint _required) execute(Shareable.Operations.changeReq) {
  //       if (_required > 1 && _required < adminCount) {
  //           required = _required;
  //       }
@@ -48,49 +47,41 @@ contract Managed is Shareable {
         }
     }
 
-    modifier execute(Operations _type) {
+    modifier execute(Shareable.Operations _type) {
         if (UserManager(userManager).required() > 1) {
-            if (this != msg.sender) {
+           if(msg.sender != shareable) {
                 bytes32 _r = sha3(msg.data, "signature");
-                txs[_r].data = msg.data;
-                txs[_r].op = _type;
-                txs[_r].to = this;
-                confirm(_r);
-            }
-            else {
-                _;
-            }
+                Shareable(shareable).addTx(_r, msg.data,_type,this);
+                exec(_r);
+           }
+           else {
+            _;
+           }
         }
         else {
             _;
         }
     }
 
-    function confirm(bytes32 _h) onlymanyowners(_h) returns (bool) {
-        if (txs[_h].to != 0) {
-            if (!txs[_h].to.call(txs[_h].data)) {
-                throw;
-            }
-            delete txs[_h];
-            return true;
-        }
-    }
-
     function isAuthorized(address key) returns (bool) {
-        if (isOwner(key) || this == key) {
+        if (isOwner(key) || shareable == key) {
             return true;
         }
         return false;
     }
 
-    function addKey(address key) execute(Operations.createLOC) {
+  function isOwner(address _addr) constant returns (bool) {
+    return UserManager(userManager).getCBE(_addr);
+  }
+
+    function addKey(address key) execute(Shareable.Operations.createLOC) {
       //  if (!UserManager(userManager).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
             UserManager(userManager).addMember(key,true);
             cbeUpdate(key);
        // }
     }
 
-    function revokeKey(address key) execute(Operations.createLOC) {
+    function revokeKey(address key) execute(Shareable.Operations.createLOC) {
         // Make sure that the key being revoked is exist and is CBE
         if (UserManager(userManager).getCBE(key)) {
             UserManager(userManager).setCBE(key,false);

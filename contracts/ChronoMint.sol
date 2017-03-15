@@ -10,8 +10,9 @@ contract ChronoMint is Managed {
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
 
-  function init(address _userManager) {
+  function init(address _userManager, address _shareable) {
     userManager = _userManager;
+    shareable = _shareable;
     UserManager(userManager).addMember(msg.sender,true);
   }
 
@@ -22,13 +23,13 @@ contract ChronoMint is Managed {
       return false;
   }
 
-  function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Operations.editMint) {
+  function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Shareable.Operations.editMint) {
      offeringCompanies[offeringCompaniesCounter] = _locAddr;
      offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
      offeringCompaniesCounter++;
   }
 
-  function removeLOC(address _locAddr) onlyAuthorized() execute(Operations.editMint) returns (bool) {
+  function removeLOC(address _locAddr) onlyAuthorized() execute(Shareable.Operations.editMint) returns (bool) {
     remove(offeringCompaniesIDs[_locAddr]);
     delete offeringCompaniesIDs[_locAddr];
     return true;
@@ -52,11 +53,11 @@ contract ChronoMint is Managed {
     return locAddr;
   }
 
-  function setLOCStatus(address _LOCaddr, LOC.Status status) onlyAuthorized() execute(Operations.editLOC) {
+  function setLOCStatus(address _LOCaddr, LOC.Status status) onlyAuthorized() execute(Shareable.Operations.editLOC) {
      LOC(_LOCaddr).setStatus(status);
   }
 
-  function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) onlyAuthorized() execute(Operations.editLOC) {
+  function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) onlyAuthorized() execute(Shareable.Operations.editLOC) {
     LOC(_LOCaddr).setValue(uint(name),value);
   }
 

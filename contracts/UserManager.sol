@@ -54,6 +54,12 @@ contract UserManager {
     ownersCount++;
     return true;
   }
+
+  function getOwner(address _owner) constant returns(bool) {
+    if(ownersIndex[_owner] > 0)
+      return true;
+    return false;
+  }
  
   function deleteOwner(address _owner) onlyOwner() returns(bool) {
     delete ownersIndex[_owner];
