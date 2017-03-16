@@ -10,17 +10,9 @@ contract ChronoMint is Managed {
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
 
-  function init(address _userManager, address _shareable) {
-    userManager = _userManager;
+  function init(address _userStorage, address _shareable) {
+    userStorage = _userStorage;
     shareable = _shareable;
-    UserManager(userManager).addMember(msg.sender,true);
-  }
-
-  function isCBE(address key) constant returns(bool) {
-      if (isAuthorized(msg.sender)) {
-         return true;
-      }
-      return false;
   }
 
   function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Shareable.Operations.editMint) {

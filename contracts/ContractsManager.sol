@@ -19,8 +19,8 @@ contract ContractsManager is Managed {
     event updateOtherContract(address contractAddress);
     event reissue(uint value, address locAddr);
 
-  function init(address _userManager, address _shareable) {
-    userManager = _userManager;
+  function init(address _userStorage, address _shareable) {
+    userStorage = _userStorage;
     shareable = _shareable;
   }
 

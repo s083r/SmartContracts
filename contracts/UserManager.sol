@@ -1,144 +1,57 @@
 pragma solidity ^0.4.8;
 
-contract UserManager {
-  // FIELDS
+import "./Managed.sol";
 
-  // the number of owners that must confirm the same operation before it is run.
-  uint public required;
-  uint public pending = 0;
+contract UserManager is Managed {
 
-  mapping (uint => Member) public members;
-
-  struct Member {
-    address memberAddr;
-    bytes32 hash1;
-    bytes14 hash2;
-    bool isCBE;
+  function init(address _userStorage, address _shareable) {
+    userStorage = _userStorage;
+    shareable = _shareable;
+    UserStorage(userStorage).addMember(msg.sender,true);
   }
 
-  mapping(address => uint) userIndex;
-  uint public userCount = 1;
-  uint public adminCount = 0;
-
-  uint ownersCount = 1;
-  mapping (address => uint) public ownersIndex;
-
-  // simple single-sig function modifier.
-  modifier onlyOwner {
-    if (isOwner(msg.sender))
-      _;
-  }
-
-  function incrPend() returns (uint) {
-    return pending++;
-  }
-
-  function decrPend() returns (uint) {
-    return pending--;
-  }
-
-  function isOwner(address _addr) constant returns (bool) {
-    if(ownersIndex[_addr] != 0x0) {
-      return true;
+    function addKey(address key) execute(Shareable.Operations.createLOC) {
+      //  if (!UserStorage(userStorage).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
+            UserStorage(userStorage).addMember(key,true);
+            cbeUpdate(key);
+       // }
     }
-    return false;
-  }
 
-  function UserManager() {
-    ownersIndex[msg.sender] = ownersCount;
-    ownersCount++;
-  }
-
-  function addOwner(address _owner) onlyOwner() returns(bool) {
-    ownersIndex[_owner] = ownersCount;
-    ownersCount++;
-    return true;
-  }
-
-  function getOwner(address _owner) constant returns(bool) {
-    if(ownersIndex[_owner] > 0)
-      return true;
-    return false;
-  }
- 
-  function deleteOwner(address _owner) onlyOwner() returns(bool) {
-    delete ownersIndex[_owner];
-    return true;
-  }
-
-  function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes1, bytes14[] hashes2) {
-        addresses = new address[](adminCount);
-        hashes1 = new bytes32[](adminCount);
-        hashes2 = new bytes14[](adminCount);
-        uint j = 0;
-        for (uint i = 1; i < userCount; i++) {
-            if (members[i].isCBE) {
-                addresses[j] = members[i].memberAddr;
-                hashes1[j] = members[i].hash1;
-                hashes2[j] = members[i].hash2;
-                j++;
-            }
+    function revokeKey(address key) execute(Shareable.Operations.createLOC) {
+        // Make sure that the key being revoked is exist and is CBE
+        if (UserStorage(userStorage).getCBE(key)) {
+            UserStorage(userStorage).setCBE(key,false);
+            cbeUpdate(key);
         }
-        return (addresses, hashes1, hashes2);
     }
 
-  function addMember(address _member, bool _isCBE) onlyOwner() returns(bool) {
-    if (userIndex[_member] == 0) {
-      members[userCount] = Member(_member, 1, 1, _isCBE);
-      userIndex[_member] = userCount;
-      userCount++;
-      isCBE(_isCBE);
-      return true;
+    event cbeUpdate(address key);
+
+    function createMemberIfNotExist(address key) internal {
+        UserStorage(userStorage).addMember(key,false);
     }
-    return false;
-  } 
 
-  function isCBE(bool _isCBE) internal{
-    if(_isCBE) {
-      adminCount++;
-      required++;
+    function setMemberHash(address key, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
+        createMemberIfNotExist(key);
+        UserStorage(userStorage).setHashes(key, _hash1, _hash2);
+        return true;
     }
-    else {
-      adminCount--;
-      required--;
+
+    function setOwnHash(bytes32 _hash1, bytes14 _hash2) returns (bool) {
+        createMemberIfNotExist(msg.sender);
+        UserStorage(userStorage).setHashes(msg.sender, _hash1, _hash2);
+        return true;
     }
-  }
 
-  function setCBE(address _member, bool _isCBE) onlyOwner() returns(bool) {
-    members[userIndex[_member]].isCBE = _isCBE;
-    isCBE(_isCBE);
-    return true;
- }
+    function getMemberHash(address key) constant returns (bytes32, bytes14) {
+        return UserStorage(userStorage).getHash(key);
+    }
 
-  function setHashes(address _member, bytes32 _hash1, bytes14 _hash2) onlyOwner() returns(bool) {
-    members[userIndex[_member]].hash1 = _hash1;
-    members[userIndex[_member]].hash2 = _hash2;
-    return true;
-  }
+    function required() constant returns (uint) {
+        return UserStorage(userStorage).required();
+    }
 
-  function getHash(address _member) constant returns(bytes32,bytes14) {
-    return (members[userIndex[_member]].hash1, members[userIndex[_member]].hash2);
-  }
- 
-  function deleteMember(uint _id) onlyOwner() returns(bool) {
-    delete members[_id];
-    return true;
-  }
-
-  function getMember(address _member) constant returns(address) {
-    return members[userIndex[_member]].memberAddr; 
-  }
-
- function getMemberAddr(uint _id) constant returns(address) {
-    return members[_id].memberAddr;
- }
-
-  function getMemberId(address _member) constant returns(uint) {
-    return userIndex[_member];
-  }
-
-  function getCBE(address _member) constant returns(bool) {
-    return members[userIndex[_member]].isCBE;
-  }
-  
+    function setRequired(uint _required) execute(Shareable.Operations.changeReq) {
+        return UserStorage(userStorage).setRequired(_required);
+    }
 }

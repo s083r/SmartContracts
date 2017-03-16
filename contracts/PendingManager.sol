@@ -1,11 +1,11 @@
 pragma solidity ^0.4.8;
 
-import "./UserManager.sol";
+import "./UserStorage.sol";
 
 contract PendingManager {
   // TYPES
 
-    address userManager;
+    address userStorage;
 
     enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
  
@@ -26,8 +26,8 @@ contract PendingManager {
     uint index;
   }
 
-  function init(address _userManager) {
-    userManager = _userManager;
+  function init(address _userStorage) {
+    userStorage = _userStorage;
   }
 
   // FIELDS
@@ -35,9 +35,10 @@ contract PendingManager {
   // the ongoing operations.
   mapping(bytes32 => PendingState) pendings;
   mapping(uint => bytes32) pendingsIndex;
+  uint pendingCount;
 
   function pendingsCount() constant returns(uint) {
-    return UserManager(userManager).pending();
+    return pendingCount;
   }
 
   function pendingById(uint _id) constant returns(bytes32) {
@@ -102,7 +103,7 @@ contract PendingManager {
   // Revokes a prior confirmation of the given operation
   function revoke(bytes32 _operation) external {
     if(isOwner(msg.sender)) {
-    uint index = UserManager(userManager).getMemberId(msg.sender);
+    uint index = UserStorage(userStorage).getMemberId(msg.sender);
     // make sure they're an owner
     if (index == 0) return;
     uint ownerIndexBit = 2**index;
@@ -117,17 +118,17 @@ contract PendingManager {
 
   // Gets an owner by 0-indexed position (using numOwners as the count)
   function getOwner(uint ownerIndex) external constant returns (address) {
-    return UserManager(userManager).getMemberAddr(ownerIndex);
+    return UserStorage(userStorage).getMemberAddr(ownerIndex);
   }
 
   function isOwner(address _addr) constant returns (bool) {
-    return UserManager(userManager).getCBE(_addr);
+    return UserStorage(userStorage).getCBE(_addr);
   }
 
   function hasConfirmed(bytes32 _operation, address _owner) constant returns (bool) {
     var pending = pendings[_operation];
     if(isOwner(_owner)) {
-      uint index = UserManager(userManager).getMemberId(_owner);
+      uint index = UserStorage(userStorage).getMemberId(_owner);
       // make sure they're an owner
       if (index == 0) return false;
 
@@ -142,7 +143,7 @@ contract PendingManager {
   function confirmAndCheck(bytes32 _operation) internal returns (bool) {
     if(isOwner(msg.sender)) {
     // determine what index the present sender is:
-    uint index = UserManager(userManager).getMemberId(msg.sender);
+    uint index = UserStorage(userStorage).getMemberId(msg.sender);
     // make sure they're an owner
     if (index == 0) return;
 
@@ -150,10 +151,10 @@ contract PendingManager {
     // if we're not yet working on this operation, switch over and reset the confirmation status.
     if (pending.yetNeeded == 0) {
       // reset count of confirmations needed.
-      pending.yetNeeded = UserManager(userManager).required();
+      pending.yetNeeded = UserStorage(userStorage).required();
       // reset which owners have confirmed (none) - set our bitmap to 0.
       pending.ownersDone = 0;
-      pending.index = UserManager(userManager).incrPend();
+      pending.index = pendingCount++;
       pendingsIndex[pending.index] = _operation;
     }
     // determine the bit to set for this owner.
@@ -180,19 +181,18 @@ contract PendingManager {
   }
 
   function removeOp(uint i) {
-    uint count = UserManager(userManager).pending();
-    if (i >= count) return;
+    if (i >= pendingCount) return;
 
-        while(i<count-1){
+        while(i<pendingCount-1){
             pendings[pendingsIndex[i+1]].index = pendings[pendingsIndex[i]].index;
             pendingsIndex[i] = pendingsIndex[i+1];
             i++;
         }
-        UserManager(userManager).decrPend();
+        pendingCount--;
     }
 
   function clearPending() internal {
-    uint length = UserManager(userManager).pending();
+    uint length = pendingCount;
     for (uint i = 0; i < length; ++i)
     if (pendingsIndex[i] != 0) {
       delete pendings[pendingsIndex[i]];
