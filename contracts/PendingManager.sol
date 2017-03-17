@@ -9,7 +9,7 @@ contract PendingManager {
 
     enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
  
-    event Test(bytes32 test);
+    event Test(address test);
 
     mapping (bytes32 => Transaction) public txs;
 
@@ -141,9 +141,9 @@ contract PendingManager {
   // INTERNAL METHODS
 
   function confirmAndCheck(bytes32 _operation) internal returns (bool) {
-    if(isOwner(msg.sender)) {
+    if(isOwner(tx.origin)) {
     // determine what index the present sender is:
-    uint index = UserStorage(userStorage).getMemberId(msg.sender);
+    uint index = UserStorage(userStorage).getMemberId(tx.origin);
     // make sure they're an owner
     if (index == 0) return;
 
