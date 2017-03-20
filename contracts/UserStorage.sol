@@ -97,7 +97,8 @@ function setRequired(uint _required) onlyOwner() {
     }
     else {
       adminCount--;
-      required--;
+      if(adminCount >= 2)
+         required--;
     }
   }
 
