@@ -80,31 +80,26 @@ function setRequired(uint _required) onlyOwner() {
     }
 
   function addMember(address _member, bool _isCBE) onlyOwner() returns(bool) {
-    if (userIndex[_member] == 0) {
+    if (userIndex[_member] == uint(0x0)) {
       members[userCount] = Member(_member, 1, 1, _isCBE);
       userIndex[_member] = userCount;
       userCount++;
-      isCBE(_isCBE);
+    if(_isCBE) {
+      adminCount++;
+      required++;
+    }
       return true;
     }
     return false;
   } 
 
-  function isCBE(bool _isCBE) internal{
-    if(_isCBE) {
-      adminCount++;
-      required++;
-    }
-    else {
-      adminCount--;
-      if(adminCount >= 2)
-         required--;
-    }
-  }
-
   function setCBE(address _member, bool _isCBE) onlyOwner() returns(bool) {
     members[userIndex[_member]].isCBE = _isCBE;
-    isCBE(_isCBE);
+    if(!_isCBE) {
+      adminCount--;
+      if(adminCount >= 2)
+        required--;
+    }
     return true;
  }
 
