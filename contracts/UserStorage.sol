@@ -96,9 +96,9 @@ function setRequired(uint _required) onlyOwner() {
   function setCBE(address _member, bool _isCBE) onlyOwner() returns(bool) {
     members[userIndex[_member]].isCBE = _isCBE;
     if(!_isCBE) {
-      adminCount--;
       if(adminCount >= 2)
         required--;
+    adminCount--;
     }
     return true;
  }
