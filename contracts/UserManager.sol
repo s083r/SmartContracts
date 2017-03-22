@@ -3,32 +3,35 @@ pragma solidity ^0.4.8;
 import "./Managed.sol";
 
 contract UserManager is Managed {
+    event cbeUpdate(address key);
 
-  function init(address _userStorage, address _shareable) {
-    userStorage = _userStorage;
-    shareable = _shareable;
-    UserStorage(userStorage).addMember(msg.sender,true);
-  }
+    function init(address _userStorage, address _shareable) {
+        userStorage = _userStorage;
+        shareable = _shareable;
+        UserStorage(userStorage).addMember(msg.sender, true);
+    }
 
     function addKey(address key) execute(Shareable.Operations.createLOC) {
-      //  if (!UserStorage(userStorage).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
-            UserStorage(userStorage).addMember(key,true);
-            cbeUpdate(key);
-       // }
+        if (!UserStorage(userStorage).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
+            if (!UserStorage(userStorage).addMember(key, true)) { // member already exist
+                if (UserStorage(userStorage).setCBE(key, true)) {
+                    cbeUpdate(key);
+                }
+            } else {
+                cbeUpdate(key);
+            }
+        }
     }
 
     function revokeKey(address key) execute(Shareable.Operations.createLOC) {
-        // Make sure that the key being revoked is exist and is CBE
-        if (UserStorage(userStorage).getCBE(key)) {
-            UserStorage(userStorage).setCBE(key,false);
+        if (UserStorage(userStorage).getCBE(key)) { // Make sure that the key being revoked is exist and is CBE
+            UserStorage(userStorage).setCBE(key, false);
             cbeUpdate(key);
         }
     }
 
-    event cbeUpdate(address key);
-
     function createMemberIfNotExist(address key) internal {
-        UserStorage(userStorage).addMember(key,false);
+        UserStorage(userStorage).addMember(key, false);
     }
 
     function setMemberHash(address key, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
