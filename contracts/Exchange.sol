@@ -134,17 +134,21 @@ contract Exchange is Owned {
      */
     function buy(uint _amount, uint _price) payable returns(bool) {
         if (_price < sellPrice) {
+            Error("Price is to low");
             throw;
         }
         if (_balanceOf(this) < _amount) {
+            Error("Insufficient token balance");
             throw;
         }
 
         uint total = _mul(_amount, _price);
         if (msg.value != total) {
+            Error("Insufficient ether supply");
             throw;
         }
         if (!asset.transfer(msg.sender, _amount)) {
+            Error("Payment failed");
             throw;
         }
 
