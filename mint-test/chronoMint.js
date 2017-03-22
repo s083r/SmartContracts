@@ -13,7 +13,6 @@ var UserManager = artifacts.require("./UserManager.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
 var Shareable = artifacts.require("./PendingManager.sol");
 var LOC = artifacts.require("./LOC.sol");
-var EternalStorage = artifacts.require("./EternalStorage.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
 var Require = require("truffle-require");

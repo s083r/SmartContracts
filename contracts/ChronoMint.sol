@@ -10,8 +10,9 @@ contract ChronoMint is Managed {
   mapping(address => uint) offeringCompaniesIDs;
   event newLOC(address _from, address _LOC);
   event remLOC(address _from, address _LOC);
-  event updLOCStatus(address _from, address _LOC);
-  event updLOCValue(address _from, address _LOC);
+  event updLOCStatus(address _from, address _LOC, LOC.Status _status);
+  event updLOCValue(address _from, address _LOC, uint _value);
+  event updLOCString(address _from, address _LOC, bytes32 _value);
 
   function init(address _userStorage, address _shareable) {
     userStorage = _userStorage;
@@ -52,17 +53,17 @@ contract ChronoMint is Managed {
 
   function setLOCStatus(address _LOCaddr, LOC.Status status) onlyAuthorized() execute(Shareable.Operations.editLOC) {
      LOC(_LOCaddr).setStatus(status);
-     updLOCStatus(msg.sender, _LOCaddr);
+     updLOCStatus(msg.sender, _LOCaddr, status);
   }
 
   function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) onlyAuthorized() execute(Shareable.Operations.editLOC) {
     LOC(_LOCaddr).setValue(uint(name),value);
-    updLOCValue(msg.sender, _LOCaddr);  
+    updLOCValue(msg.sender, _LOCaddr, value);  
   }
 
   function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) onlyAuthorized() {
     LOC(_LOCaddr).setString(uint(name),value);
-    updLOCValue(msg.sender, _LOCaddr);
+    updLOCString(msg.sender, _LOCaddr, value);
   }
 
   function getLOCbyID(uint _id) constant returns(address) {

@@ -38,7 +38,7 @@ contract Vote is Managed {
     event New_Poll(uint _pollId);
 
   // event tracking of all votes
-  event NewVote(uint _choice);
+  event NewVote(uint _choice, uint _pollId);
  
     // Something went wrong.
     event Error(bytes32 message);
@@ -54,8 +54,13 @@ contract Vote is Managed {
   // Polls counter for mapping 
   uint public pollsCount;
 
+  function init(address _userStorage, address _shareable) {
+    userStorage = _userStorage;
+    shareable = _shareable;
+  }
+
   //initiator function that stores the necessary poll information
-  function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) returns (uint) {
+  function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) execute(Shareable.Operations.newPoll) returns (uint) {
     polls[pollsCount] = Poll(msg.sender,_title,_description,_votelimit,0,_deadline,true,0);
     for(uint i = 1; i < _count+1; i++) {
       polls[pollsCount].options[i] = 0;
@@ -223,7 +228,7 @@ contract Vote is Managed {
     p.options[_choice] += shares[msg.sender];
     p.memberOption[msg.sender] = _choice;
     memberPolls[msg.sender].push(_pollId);
-    NewVote(_choice);
+    NewVote(_choice, _pollId);
 
     // if votelimit reached, end poll
     if (p.votelimit > 0 || p.deadline <= now) {

@@ -10,7 +10,7 @@ var Rewards = artifacts.require("./Rewards.sol");
 var ChronoMint = artifacts.require("./ChronoMint.sol");
 var ContractsManager = artifacts.require("./ContractsManager.sol");
 var LOC = artifacts.require("./LOC.sol");
-var EternalStorage = artifacts.require("./EternalStorage.sol");
+var UserStorage = artifacts.require("./UserStorage.sol");
 var Vote = artifacts.require("./Vote.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
@@ -38,6 +38,7 @@ contract('Vote', function(accounts) {
     var lhProxyContract;
     var exchange;
     var rewards;
+    var userStorage;
     var vote;
     var loc_contracts = [];
     var labor_hour_token_contracts = [];
@@ -81,6 +82,9 @@ contract('Vote', function(accounts) {
             return ContractsManager.deployed()
         }).then(function (instance) {
             contractsManager = instance;
+            return UserStorage.deployed()
+        }).then(function (instance) {
+            userStorage = instance;
             return ChronoBankPlatformEmitter.deployed()
         }).then(function (instance) {
             chronoBankPlatformEmitter = instance;
@@ -227,6 +231,18 @@ contract('Vote', function(accounts) {
                 assert.equal(r,timeContract.address);
             });
         });
+
+    it("shows owner as a CBE key.", function() {
+        return chronoMint.isAuthorized.call(owner).then(function(r) {
+            assert.isOk(r);
+        });
+    });
+
+    it("check required signers is 1 key.", function() {
+        return userStorage.required.call().then(function(r) {
+            assert.equal(r,1);
+        });
+    });
 
     });
 

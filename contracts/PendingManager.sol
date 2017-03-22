@@ -7,7 +7,7 @@ contract PendingManager {
 
     address userStorage;
 
-    enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq}
+    enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq, newPoll}
  
     event Test(address test);
 
