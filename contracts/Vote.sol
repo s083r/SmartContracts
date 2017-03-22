@@ -1,7 +1,7 @@
 pragma solidity ^0.4.8;
 
-import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 import "./Managed.sol";
+import "./TimeHolder.sol";
 
 contract Vote is Managed {
 
@@ -21,15 +21,8 @@ contract Vote is Managed {
     mapping(uint => bytes32) optionsId;
   }
 
-    // ERC20 token that acts as shares.
-    Asset public sharesContract;
-
-   function Vote(Asset _sharesContract) {
-     sharesContract = _sharesContract;
-   }
-
-// Shares deposited by shareholder.
-    mapping(address => uint) public shares;
+    // TimeHolder contract.
+   address public timeHolder;
 
 // Polls ids member took part
     mapping(address => uint[]) memberPolls;
@@ -43,20 +36,15 @@ contract Vote is Managed {
     // Something went wrong.
     event Error(bytes32 message);
 
-    // User deposited into current period.
-    event Deposit(address indexed who, uint indexed amount);
-
-    // Shares withdrawn by a shareholder.
-    event WithdrawShares(address indexed who, uint amount);
-   
   // declare an polls mapping called polls
   mapping(uint => Poll) public polls;
   // Polls counter for mapping 
   uint public pollsCount;
 
-  function init(address _userStorage, address _shareable) {
+  function init(address _timeHolder, address _userStorage, address _shareable) {
     userStorage = _userStorage;
     shareable = _shareable;
+    timeHolder = _timeHolder;
   }
 
   //initiator function that stores the necessary poll information
@@ -110,83 +98,25 @@ contract Vote is Managed {
     return result;
   }
 
-  /**
-     * Deposit shares and prove possession.
-     * Amount should be less than or equal to current allowance value.
-     *
-     * Proof should be repeated for each active period. To prove possesion without
-     * depositing more shares, specify 0 amount.
-     *
-     * @param _amount amount of shares to deposit, or 0 to just prove.
-     *
-     * @return success.
-     */
-    function deposit(uint _amount) returns(bool) {
-        return depositFor(msg.sender, _amount);
-    }
-
-   /**
-     * Deposit own shares and prove possession for arbitrary shareholder.
-     * Amount should be less than or equal to caller current allowance value.
-     *
-     * Proof should be repeated for each active period. To prove possesion without
-     * depositing more shares, specify 0 amount.
-     *
-     * This function meant to be used by some backend application to prove shares possesion
-     * of arbitrary shareholders.
-     *
-     * @param _address to deposit and prove for.
-     * @param _amount amount of shares to deposit, or 0 to just prove.
-     *
-     * @return success.
-     */
-    function depositFor(address _address, uint _amount) returns(bool) {
-        if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
-            Error("Shares transfer failed");
-            return false;
+    function deposit(address _address, uint _amount, uint _total) returns(bool) {
+        for(uint i=0;i<memberPolls[_address].length;i++){
+           Poll p = polls[memberPolls[_address][i]];
+           if(p.status) {
+             uint choice = p.memberOption[_address];
+             p.options[choice] += _amount;
+           }
         }
-
-        shares[_address] += _amount;
-
-        Deposit(_address, _amount);
         return true;
     }
 
-    /**
-     * Returns shares amount deposited by a particular shareholder.
-     *
-     * @param _address shareholder address.
-     *
-     * @return shares amount.
-     */
-    function depositBalance(address _address) constant returns(uint) {
-        return shares[_address];
-    }
-
- /**
-     * Withdraw shares from the contract, updating the possesion proof in active period.
-     *
-     * @param _amount amount of shares to withdraw.
-     *
-     * @return success.
-     */
-    function withdrawShares(uint _amount) returns(bool) {
-        // Provide latest possesion proof.
-        deposit(0);
-        if (_amount > shares[msg.sender]) {
-            Error("Insufficient balance");
-            return false;
-        }
-        for(uint i=0;i<memberPolls[msg.sender].length;i++){
-           Poll p = polls[memberPolls[msg.sender][i]];
+    function withdrawn(address _address, uint _amount, uint _total) returns(bool) {
+        for(uint i=0;i<memberPolls[_address].length;i++){
+           Poll p = polls[memberPolls[_address][i]];
            if(p.status) {
-             uint choice = p.memberOption[msg.sender];
+             uint choice = p.memberOption[_address];
              p.options[choice] -= _amount;
            }
         }
-        shares[msg.sender] -= _amount;
-
-        WithdrawShares(msg.sender, _amount);
         return true;
     }
 
@@ -221,11 +151,11 @@ contract Vote is Managed {
   //function for user vote. input is a string choice
   function vote(uint _pollId, uint _choice) returns (bool) {
     Poll p = polls[_pollId]; 
-    if (_choice == 0 || p.status != true || shares[msg.sender] == 0 || p.memberOption[msg.sender] != 0) {
+    if (_choice == 0 || p.status != true || TimeHolder(timeHolder).shares(msg.sender) == 0 || p.memberOption[msg.sender] != 0) {
       return false;
     }
 
-    p.options[_choice] += shares[msg.sender];
+    p.options[_choice] += TimeHolder(timeHolder).shares(msg.sender);
     p.memberOption[msg.sender] = _choice;
     memberPolls[msg.sender].push(_pollId);
     NewVote(_choice, _pollId);

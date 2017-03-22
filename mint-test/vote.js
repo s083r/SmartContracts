@@ -10,6 +10,7 @@ var Rewards = artifacts.require("./Rewards.sol");
 var ChronoMint = artifacts.require("./ChronoMint.sol");
 var ContractsManager = artifacts.require("./ContractsManager.sol");
 var LOC = artifacts.require("./LOC.sol");
+var TimeHolder = artifacts.require("./TimeHolder.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
 var Vote = artifacts.require("./Vote.sol");
 var Reverter = require('./helpers/reverter');
@@ -40,6 +41,7 @@ contract('Vote', function(accounts) {
     var rewards;
     var userStorage;
     var vote;
+    var timeHolder;
     var loc_contracts = [];
     var labor_hour_token_contracts = [];
     var Status = {maintenance:0,active:1, suspended:2, bankrupt:3};
@@ -85,6 +87,14 @@ contract('Vote', function(accounts) {
             return UserStorage.deployed()
         }).then(function (instance) {
             userStorage = instance;
+            return Vote.deployed()
+        }).then(function(instance) {
+            vote = instance;
+            return TimeHolder.deployed()
+        }).then(function (instance) {
+            timeHolder = instance;
+            return timeHolder.addListener(vote.address)
+        }).then(function () {
             return ChronoBankPlatformEmitter.deployed()
         }).then(function (instance) {
             chronoBankPlatformEmitter = instance;
@@ -203,9 +213,6 @@ contract('Vote', function(accounts) {
         }).then(function () {
             return contractsManager.setAddress(ChronoBankAssetProxy.address, {from: accounts[0]})
         }).then(function () {
-            return Vote.deployed()
-        }).then(function(instance) {
-            vote = instance;
             return contractsManager.setAddress(ChronoBankAssetWithFeeProxy.address, {from: accounts[0]})
         }).then(function(instance) {
             web3.eth.sendTransaction({to: Exchange.address, value: BALANCE_ETH, from: accounts[0]});
@@ -263,37 +270,37 @@ contract('Vote', function(accounts) {
         });
 
        it("owner should be able to approve 50 TIME to Vote", function() {
-        return timeProxyContract.approve.call(vote.address, 50, {from: accounts[0]}).then((r) => {
-            return timeProxyContract.approve(vote.address, 50, {from: accounts[0]}).then(() => {
+        return timeProxyContract.approve.call(timeHolder.address, 50, {from: accounts[0]}).then((r) => {
+            return timeProxyContract.approve(timeHolder.address, 50, {from: accounts[0]}).then(() => {
                 assert.isOk(r);
             });
         });
        });
 
        it("should be able to deposit 50 TIME from owner", function() {
-        return vote.deposit.call(50, {from: accounts[0]}).then((r) => {
-            return vote.deposit(50, {from: accounts[0]}).then(() => {
+        return timeHolder.deposit.call(50, {from: accounts[0]}).then((r) => {
+            return timeHolder.deposit(50, {from: accounts[0]}).then(() => {
                 assert.isOk(r);
             });
         });
        });
 
        it("should show 50 TIME owner balance", function() {
-        return vote.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
+        return timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
                 assert.equal(r,50);
         });
        });
 
        it("should be able to withdraw 25 TIME from owner", function() {
-        return vote.withdrawShares.call(25, {from: accounts[0]}).then((r) => {
-        	return vote.withdrawShares(25, {from: accounts[0]}).then(() => {
+        return timeHolder.withdrawShares.call(25, {from: accounts[0]}).then((r) => {
+        	return timeHolder.withdrawShares(25, {from: accounts[0]}).then(() => {
                 	assert.isOk(r);
                 });
         });
        });
 
        it("should show 25 TIME owner balance", function() {
-        return vote.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
+        return timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
                 assert.equal(r,25);
         });
        });
@@ -430,23 +437,23 @@ contract('Vote', function(accounts) {
         });
 
        it("owner1 should be able to approve 50 TIME to Vote", function() {
-        return timeProxyContract.approve.call(vote.address, 50, {from: owner1}).then((r) => {
-            return timeProxyContract.approve(vote.address, 50, {from: owner1}).then(() => {
+        return timeProxyContract.approve.call(timeHolder.address, 50, {from: owner1}).then((r) => {
+            return timeProxyContract.approve(timeHolder.address, 50, {from: owner1}).then(() => {
                 assert.isOk(r);
             });
         });
        });
 
        it("should be able to deposit 50 TIME from owner", function() {
-        return vote.deposit.call(50, {from: owner1}).then((r) => {
-            return vote.deposit(50, {from: owner1}).then(() => {
+        return timeHolder.deposit.call(50, {from: owner1}).then((r) => {
+            return timeHolder.deposit(50, {from: owner1}).then(() => {
                 assert.isOk(r);
             });
         });
        });
 
        it("should show 50 TIME owner1 balance", function() {
-        return vote.depositBalance.call(owner1, {from: owner1}).then((r) => {
+        return timeHolder.depositBalance.call(owner1, {from: owner1}).then((r) => {
                 assert.equal(r,50);
         });
        });
@@ -487,8 +494,8 @@ contract('Vote', function(accounts) {
       });
 
        it("should be able to withdraw 5 TIME from owner1", function() {
-        return vote.withdrawShares.call(5, {from: owner1}).then((r) => {
-                return vote.withdrawShares(5, {from: owner1}).then(() => {
+        return timeHolder.withdrawShares.call(5, {from: owner1}).then((r) => {
+                return timeHolder.withdrawShares(5, {from: owner1}).then(() => {
                         assert.isOk(r);
                 });
         });

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 
-import {ERC20Interface as Asset} from "./ERC20Interface.sol";
+import "./TimeHolder.sol";
 
 /**
  * @title Universal decentralized ERC20 tokens rewards contract.
@@ -36,22 +36,17 @@ contract Rewards {
     // Structure of a particular period.
     struct Period {
         uint startDate;                                           // Period starting date, also
-                                                                  // prev period closing date.
-        uint totalShares;                                         // Shares to distribute rewards.
+        uint totalShares; 
         mapping(address => uint) assetBalances;                   // Rewards for distribution.
         mapping(address => uint) shares;                          // Shareholder shares in period.
         mapping(address => mapping(address => bool)) calculated;  // Flag that indicates that rewards
                                                                   // already distributed for holder.
     }
 
-    // ERC20 token that acts as shares.
-    Asset public sharesContract;
+    address public timeHolder;
 
     // Minimum period length, in days.
     uint public closeInterval;
-
-    // Shares deposited by shareholder.
-    mapping(address => uint) public shares;
 
     // Asset rewards accumulated for shareholder.
     mapping(address => mapping(address => uint)) rewards;
@@ -61,9 +56,6 @@ contract Rewards {
 
     // Periods list. Last one is always active.
     Period[] periods;
-
-    // User deposited into current period.
-    event Deposit(address indexed who, uint indexed amount, uint indexed period);
 
     // Period closed/started.
     event PeriodClosed();
@@ -77,86 +69,30 @@ contract Rewards {
     // Reward withdrawn for a shareholder.
     event WithdrawReward(address indexed assetAddress, address indexed who, uint amount);
 
-    // Shares withdrawn by a shareholder.
-    event WithdrawShares(address indexed who, uint amount);
-
     // Something went wrong.
     event Error(bytes32 message);
 
     /**
-     * Sets shares contract and period minimum length.
+     * Sets TimeHolder contract and period minimum length.
      * Starts the first period.
      *
      * Can be set only once.
      *
-     * @param _sharesContract ERC20 token address to act as shares.
+     * @param _timeHolder TIME deposit contract address.
      * @param _closeIntervalDays period minimum length, in days.
      *
      * @return success.
      */
-    function init(Asset _sharesContract, uint _closeIntervalDays) returns(bool) {
+    function init(address _timeHolder, uint _closeIntervalDays) returns(bool) {
         if (periods.length > 0) {
             return false;
         }
-
-        sharesContract = _sharesContract;
+        
+        timeHolder = _timeHolder;
         closeInterval = _closeIntervalDays;
         periods.length++;
         periods[0].startDate = now;
 
-        return true;
-    }
-
-    /**
-     * Deposit shares and prove possession.
-     * Amount should be less than or equal to current allowance value.
-     *
-     * Proof should be repeated for each active period. To prove possesion without
-     * depositing more shares, specify 0 amount.
-     *
-     * @param _amount amount of shares to deposit, or 0 to just prove.
-     *
-     * @return success.
-     */
-    function deposit(uint _amount) returns(bool) {
-        return depositFor(msg.sender, _amount);
-    }
-
-    /**
-     * Deposit own shares and prove possession for arbitrary shareholder.
-     * Amount should be less than or equal to caller current allowance value.
-     *
-     * Proof should be repeated for each active period. To prove possesion without
-     * depositing more shares, specify 0 amount.
-     *
-     * This function meant to be used by some backend application to prove shares possesion
-     * of arbitrary shareholders.
-     *
-     * @param _address to deposit and prove for.
-     * @param _amount amount of shares to deposit, or 0 to just prove.
-     *
-     * @return success.
-     */
-    function depositFor(address _address, uint _amount) returns(bool) {
-        if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
-            Error("Shares transfer failed");
-            return false;
-        }
-
-        shares[_address] += _amount;
-
-        // Add deposit to last unclosed period.
-        Period period = periods[lastPeriod()];
-        if (period.shares[_address] == 0) {
-            period.totalShares += shares[_address];
-        } else {
-            period.totalShares += _amount;
-        }
-
-        // Prove shares possesion.
-        period.shares[_address] = shares[_address];
-
-        Deposit(_address, _amount, lastPeriod());
         return true;
     }
 
@@ -182,19 +118,8 @@ contract Rewards {
         return true;
     }
 
-    /**
-     * Register rewards asset for last closed period distribution.
-     *
-     * Can only be done once per period per asset.
-     *
-     * Should be repeated for every new closed period and asset.
-     *
-     * @param _asset rewards asset contract address.
-     *
-     * @return success.
-     */
-    function registerAsset(Asset _asset) returns(bool) {
-        if (sharesContract == _asset) {
+       function registerAsset(Asset _asset) returns(bool) {
+        if (TimeHolder(timeHolder).sharesContract() == _asset) {
             Error("Asset is already registered");
             return false;
         }
@@ -208,6 +133,21 @@ contract Rewards {
         rewardsLeft[_asset] += period.assetBalances[_asset];
 
         AssetRegistration(_asset, period.assetBalances[_asset]);
+        return true;
+    }
+
+    function deposit(address _address, uint _amount, uint _total) returns(bool) {
+        // Add deposit to last unclosed period.
+        Period period = periods[lastPeriod()];
+        if (period.shares[_address] == 0) {
+            period.totalShares += _total;
+        } else {
+            period.totalShares += _amount;
+        }
+
+        // Prove shares possesion.
+        period.shares[_address] = _total;
+
         return true;
     }
 
@@ -295,35 +235,6 @@ contract Rewards {
     }
 
     /**
-     * Withdraw shares from the contract, updating the possesion proof in active period.
-     *
-     * @param _amount amount of shares to withdraw.
-     *
-     * @return success.
-     */
-    function withdrawShares(uint _amount) returns(bool) {
-        // Provide latest possesion proof.
-        deposit(0);
-        if (_amount > shares[msg.sender]) {
-            Error("Insufficient balance");
-            return false;
-        }
-
-        shares[msg.sender] -= _amount;
-
-        Period period = periods[lastPeriod()];
-        period.totalShares -= _amount;
-        period.shares[msg.sender] = shares[msg.sender];
-
-        if (!sharesContract.transfer(msg.sender, _amount)) {
-            throw;
-        }
-
-        WithdrawShares(msg.sender, _amount);
-        return true;
-    }
-
-    /**
      * Withdraw accumulated reward of a specified rewards asset.
      *
      * Withdrawal is made for caller and total amount.
@@ -406,15 +317,13 @@ contract Rewards {
         return true;
     }
 
-    /**
-     * Returns shares amount deposited by a particular shareholder.
-     *
-     * @param _address shareholder address.
-     *
-     * @return shares amount.
-     */
-    function depositBalance(address _address) constant returns(uint) {
-        return shares[_address];
+    function withdrawn(address _address, uint _amount, uint _total) returns(bool) {
+
+        Period period = periods[lastPeriod()];
+        period.totalShares -= _amount;
+        period.shares[_address] = _total;
+
+        return true;
     }
 
     /**
