@@ -42,7 +42,9 @@ contract UserStorage {
     function setRequired(uint _required) onlyOwner() {
         if (_required > 1 && adminCount >= _required) {
             required = _required;
+            return true;
         }
+        return false;
     }
 
     function addOwner(address _owner) onlyOwner() returns (bool) {

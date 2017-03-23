@@ -58,7 +58,7 @@ contract UserManager is Managed {
         return UserStorage(userStorage).required();
     }
 
-    function setRequired(uint _required) execute(Shareable.Operations.changeReq) {
+    function setRequired(uint _required) execute(Shareable.Operations.changeReq) returns (bool) {
         return UserStorage(userStorage).setRequired(_required);
     }
 }
