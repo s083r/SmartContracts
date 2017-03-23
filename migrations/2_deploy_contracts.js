@@ -10,6 +10,7 @@ var Exchange = artifacts.require("./Exchange.sol");
 var Rewards = artifacts.require("./Rewards.sol");
 var TimeHolder = artifacts.require("./TimeHolder.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
+var UserManager = artifacts.require("./UserManager.sol");
 var FakeCoin = artifacts.require("./FakeCoin.sol");
 var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
 var FakeCoin3 = artifacts.require("./FakeCoin3.sol");
@@ -26,6 +27,7 @@ module.exports = function(deployer) {
   deployer.deploy(Exchange);
   deployer.deploy(Rewards);
   deployer.deploy(TimeHolder);
+  deployer.deploy(UserManager);
   deployer.deploy(UserStorage);
   deployer.deploy(FakeCoin);
   deployer.deploy(FakeCoin2);

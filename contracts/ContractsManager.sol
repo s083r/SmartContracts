@@ -23,9 +23,13 @@ contract ContractsManager is Managed {
     event updateOtherContract(address contractAddress);
     event reissue(uint value, address locAddr);
 
-  function init(address _userStorage, address _shareable) {
+  function init(address _userStorage, address _shareable) returns (bool) {
+    if (userStorage != 0x0) {
+      return false;
+    }
     userStorage = _userStorage;
     shareable = _shareable;
+    return true;
   }
 
     function setContractHash(uint _id, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {

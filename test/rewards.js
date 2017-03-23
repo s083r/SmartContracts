@@ -3,6 +3,7 @@ var TimeHolder = artifacts.require("./TimeHolder.sol");
 var FakeCoin = artifacts.require("./FakeCoin.sol");
 var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
 var FakeCoin3 = artifacts.require("./FakeCoin3.sol");
+var UserManager = artifacts.require("./UserManager.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
@@ -14,6 +15,7 @@ contract('Rewards', (accounts) => {
   let reward;
   let timeHolder;
   let userStorage;
+  let userManager;
   let shares;
   let asset1;
   let asset2;
@@ -21,7 +23,7 @@ contract('Rewards', (accounts) => {
   const ZERO_INTERVAL = 0;
   const SHARES_BALANCE = 1000;
 
-  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL).then(() => timeHolder.init(userStorage.address, shares.address)).then(() => timeHolder.addListener(reward.address)); };
+  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL).then(() => userStorage.addOwner(userManager.address)).then(() => userManager.init(userStorage.address, 0x1)).then(() => timeHolder.init(userStorage.address, shares.address)).then(() => timeHolder.addListener(reward.address)); };
 
   let assertSharesBalance = (address, expectedBalance) => {
     return shares.balanceOf(address)
@@ -70,6 +72,8 @@ contract('Rewards', (accounts) => {
     timeHolder = instance});
     UserStorage.deployed().then(function(instance) {
     userStorage = instance});
+    UserManager.deployed().then(function(instance) {
+    userManager = instance});
     FakeCoin.deployed().then(function(instance) {
     shares = instance 
 // init shares

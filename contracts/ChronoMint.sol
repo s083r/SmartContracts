@@ -11,12 +11,16 @@ contract ChronoMint is Managed {
   event newLOC(address _from, address _LOC);
   event remLOC(address _from, address _LOC);
   event updLOCStatus(address _from, address _LOC, LOC.Status _status);
-  event updLOCValue(address _from, address _LOC, uint _value);
-  event updLOCString(address _from, address _LOC, bytes32 _value);
+  event updLOCValue(address _from, address _LOC, uint _value, uint _name);
+  event updLOCString(address _from, address _LOC, bytes32 _value, uint _name);
 
-  function init(address _userStorage, address _shareable) {
+  function init(address _userStorage, address _shareable) returns(bool) {
+    if (userStorage != 0x0) {
+       return false;
+    }
     userStorage = _userStorage;
     shareable = _shareable;
+    return true;
   }
 
   function addLOC (address _locAddr) onlyAuthorized() onlyAuthorized() execute(Shareable.Operations.editMint) {
@@ -58,12 +62,12 @@ contract ChronoMint is Managed {
 
   function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) onlyAuthorized() execute(Shareable.Operations.editLOC) {
     LOC(_LOCaddr).setValue(uint(name),value);
-    updLOCValue(msg.sender, _LOCaddr, value);  
+    updLOCValue(msg.sender, _LOCaddr, value, name);  
   }
 
   function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) onlyAuthorized() {
     LOC(_LOCaddr).setString(uint(name),value);
-    updLOCString(msg.sender, _LOCaddr, value);
+    updLOCString(msg.sender, _LOCaddr, value, name);
   }
 
   function getLOCbyID(uint _id) constant returns(address) {

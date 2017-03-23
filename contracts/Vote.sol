@@ -41,10 +41,14 @@ contract Vote is Managed {
   // Polls counter for mapping 
   uint public pollsCount;
 
-  function init(address _timeHolder, address _userStorage, address _shareable) {
+  function init(address _timeHolder, address _userStorage, address _shareable) returns (bool) {
+    if (userStorage != 0x0) {
+      return false;
+    }
     userStorage = _userStorage;
     shareable = _shareable;
     timeHolder = _timeHolder;
+    return true;
   }
 
   //initiator function that stores the necessary poll information

@@ -318,7 +318,7 @@ contract Rewards {
     }
 
     function withdrawn(address _address, uint _amount, uint _total) returns(bool) {
-
+        deposit(_address,0,_total+_amount);
         Period period = periods[lastPeriod()];
         period.totalShares -= _amount;
         period.shares[_address] = _total;

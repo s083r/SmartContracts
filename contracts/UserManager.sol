@@ -5,10 +5,14 @@ import "./Managed.sol";
 contract UserManager is Managed {
     event cbeUpdate(address key);
 
-    function init(address _userStorage, address _shareable) {
+    function init(address _userStorage, address _shareable) returns (bool) {
+        if (userStorage != 0x0) {
+            return false;
+        }
         userStorage = _userStorage;
         shareable = _shareable;
         UserStorage(userStorage).addMember(msg.sender, true);
+        return true;
     }
 
     function addKey(address key) execute(Shareable.Operations.createLOC) {

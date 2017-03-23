@@ -31,12 +31,15 @@ contract TimeHolder is Managed {
      * @return success.
      */
     function init(address _userStorage, Asset _sharesContract) returns(bool) {
+        if (userStorage != 0x0) {
+            return false;
+        }
         userStorage = _userStorage;
         sharesContract = _sharesContract;
         return true;
     }
 
-    function addListener(address _listener) returns(bool) {
+    function addListener(address _listener) onlyAuthorized() returns(bool) {
         if(listenerIndex[_listener] == uint(0x0)) {
           listeners[listenersCount] = _listener;
           listenerIndex[_listener] = listenersCount;
@@ -101,7 +104,7 @@ contract TimeHolder is Managed {
      */
     function withdrawShares(uint _amount) returns(bool) {
         // Provide latest possesion proof.
-        deposit(0);
+        //deposit(0);
         if (_amount > shares[msg.sender]) {
             Error("Insufficient balance");
             return false;
