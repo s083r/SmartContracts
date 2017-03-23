@@ -39,7 +39,7 @@ contract UserStorage {
         ownersCount++;
     }
 
-    function setRequired(uint _required) onlyOwner() {
+    function setRequired(uint _required) onlyOwner() returns(bool) {
         if (_required > 1 && adminCount >= _required) {
             required = _required;
             return true;
