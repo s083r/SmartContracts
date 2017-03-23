@@ -11,8 +11,8 @@ contract ChronoMint is Managed {
   event newLOC(address _from, address _LOC);
   event remLOC(address _from, address _LOC);
   event updLOCStatus(address _from, address _LOC, LOC.Status _status);
-  event updLOCValue(address _from, address _LOC, uint _value, uint _name);
-  event updLOCString(address _from, address _LOC, bytes32 _value, uint _name);
+  event updLOCValue(address _from, address _LOC, uint _value, Configurable.Setting _name);
+  event updLOCString(address _from, address _LOC, bytes32 _value, Configurable.Setting _name);
 
   function init(address _userStorage, address _shareable) returns(bool) {
     if (userStorage != 0x0) {

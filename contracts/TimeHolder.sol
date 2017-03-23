@@ -41,6 +41,8 @@ contract TimeHolder is Managed {
 
     function addListener(address _listener) onlyAuthorized() returns(bool) {
         if(listenerIndex[_listener] == uint(0x0)) {
+          ListenerInterface(_listener).deposit(this,0,0);
+          ListenerInterface(_listener).withdrawn(this,0,0);
           listeners[listenersCount] = _listener;
           listenerIndex[_listener] = listenersCount;
           listenersCount++;
