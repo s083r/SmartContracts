@@ -3,7 +3,7 @@ pragma solidity ^0.4.8;
 contract UserStorage {
     // FIELDS
     // the number of owners that must confirm the same operation before it is run.
-    uint public required;
+    uint public required = 1;
 
     mapping (uint => Member) public members;
     struct Member {
@@ -97,13 +97,12 @@ contract UserStorage {
     function setCBE(address _member, bool _isCBE) onlyOwner() returns (bool) {
         members[userIndex[_member]].isCBE = _isCBE;
         if (!_isCBE) {
-            if (adminCount >= 2) {
+            adminCount--;
+            if (adminCount < required) {
                 required--;
             }
-            adminCount--;
         } else {
             adminCount++;
-            required++;
         }
         return true;
     }

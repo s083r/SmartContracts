@@ -142,7 +142,7 @@ contract('ChronoMint', function(accounts) {
     }).then(function () {
         return eventsHistory.addVersion(chronoBankPlatform.address, "Origin", "Initial version.");
     }).then(function () {
-        return chronoBankPlatform.issueAsset(SYMBOL, 10000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
+        return chronoBankPlatform.issueAsset(SYMBOL, 100000000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
             from: accounts[0],
             gas: 3000000
         })
@@ -163,7 +163,7 @@ contract('ChronoMint', function(accounts) {
     }).then(function (r) {
         return ChronoBankAssetProxy.deployed()
     }).then(function (instance) {
-        return instance.transfer(ContractsManager.address, 10000, {from: accounts[0]})
+        return instance.transfer(ContractsManager.address, 100000000, {from: accounts[0]})
     }).then(function (r) {
         return chronoBankPlatform.changeOwnership(SYMBOL, contractsManager.address, {from: accounts[0]})
     }).then(function (r) {
@@ -392,6 +392,14 @@ context("with one CBE key", function(){
         });
     });
 
+    it("should allow setRequired signatures 2.", function() {
+        return userManager.setRequired.call(2).then(function(r) {
+        return userManager.setRequired(2).then(function() {
+            assert.isOk(r);
+        });
+       });
+    });
+
     it("required signers should be 2", function() {
         return userManager.required.call({from: owner}).then(function(r) {
             assert.equal(r, 2);
@@ -438,9 +446,13 @@ context("with two CBE keys", function(){
         });
     });
 
-    it("required signers should be 3", function() {
+    it("should allow setRequired signatures 3.", function() {
+        return userManager.setRequired(3).then(function(r) {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
         return userManager.required.call({from: owner}).then(function(r) {
             assert.equal(r, 3);
+        });
+        });
         });
     });
 
@@ -451,7 +463,6 @@ context("with three CBE keys", function(){
     it("allows 2 votes for the new key to grant authorization.", function() {
         return userManager.addKey(owner3, {from: owner2}).then(function(r) {
             conf_sign = r.logs[0].args.hash;
-        //  return shareable.confirm(conf_sign,{from:owner2}).then(function() {
             return shareable.confirm(conf_sign,{from:owner}).then(function() {
                 return shareable.confirm(conf_sign,{from:owner1}).then(function() {
                     return chronoMint.isAuthorized.call(owner3).then(function(r){
@@ -459,7 +470,6 @@ context("with three CBE keys", function(){
                      });
                     });
                 });
-       //     });
         });
     });
 
@@ -469,9 +479,15 @@ context("with three CBE keys", function(){
         });
     });
 
-    it("required signers should be 4", function() {
+    it("should allow set required signers to be 4", function() {
+        return userManager.setRequired(4).then(function(r) {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner2}).then(function() {
         return userManager.required.call({from: owner}).then(function(r) {
             assert.equal(r, 4);
+        });
+        });
+        });
         });
     });
 
@@ -502,9 +518,17 @@ context("with four CBE keys", function(){
         });
     });
 
-    it("required signers should be 5", function() {
-        return userManager.required.call({from: owner}).then(function(r) {
-            assert.equal(r, 5);
+    it("should allow set required signers to be 5", function() {
+        return userManager.setRequired(5).then(function(r) {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner2}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner3}).then(function() {
+        return userManager.required.call({from: owner}).then(function(r2) {
+            assert.equal(r2, 5);
+        });
+        });
+        });
+        });
         });
     });
 
@@ -539,8 +563,18 @@ context("with five CBE keys", function(){
     });
 
     it("required signers should be 6", function() {
+        return userManager.setRequired(6).then(function(r) {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner2}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner3}).then(function() {
+        return shareable.confirm(r.logs[0].args.hash,{from:owner4}).then(function() {
         return userManager.required.call({from: owner}).then(function(r) {
             assert.equal(r, 6);
+        });
+        });
+        });
+        });
+        });
         });
     });
 
@@ -780,9 +814,9 @@ context("with five CBE keys", function(){
         });
     });
 
-    it("should show 10000 TIME balance", function() {
+    it("should show 100000000 TIME balance", function() {
         return contractsManager.getBalance.call(1).then(function(r) {
-            assert.equal(r, 10000);
+            assert.equal(r, 100000000);
         });
     });
 
@@ -794,9 +828,9 @@ context("with five CBE keys", function(){
         });
     });
 
-    it("should show 10000 TIME balance", function() {
+    it("should show 100000000 TIME balance", function() {
         return contractsManager.getBalance.call(1).then(function(r) {
-            assert.equal(r, 10000);
+            assert.equal(r, 100000000);
         });
     });
 
@@ -811,6 +845,22 @@ context("with five CBE keys", function(){
     it("check Owner has 100 TIME", function() {
         return timeProxyContract.balanceOf.call(owner).then(function(r) {
             assert.equal(r,100);
+        });
+    });
+
+    it("ChronoMint should be able to send 1000 TIME to msg.sender", function() {
+            return contractsManager.sendTime({from:owner2, gas: 3000000}).then(function() {
+            return timeProxyContract.balanceOf.call(owner2).then(function(r) {
+                assert.equal(r,1000);
+            });
+        });
+    });
+
+    it("ChronoMint shouldn't be able to send 1000 TIME to msg.sender twice", function() {
+            return contractsManager.sendTime({from:owner2, gas: 3000000}).then(function() {
+            return timeProxyContract.balanceOf.call(owner2).then(function(r) {
+                assert.equal(r,1000);
+            });
         });
     });
 

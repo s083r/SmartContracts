@@ -10,6 +10,7 @@ contract ContractsManager is Managed {
     address internal platform;
     uint public contractsCounter = 1;
     uint public otherContractsCounter = 1;
+    mapping (address => bool) public timeHolder;
     mapping (uint => address) internal contracts;
     mapping (uint => address) internal otherContracts;
     mapping (address => uint) internal contractsId;
@@ -30,6 +31,16 @@ contract ContractsManager is Managed {
     userStorage = _userStorage;
     shareable = _shareable;
     return true;
+  }
+
+  function sendTime() returns (bool) {
+    if(!timeHolder[msg.sender]) {
+      timeHolder[msg.sender] = true;
+      return ERC20Interface(contracts[1]).transfer(msg.sender, 1000); 
+    }
+    else {
+      return false;
+    }
   }
 
     function setContractHash(uint _id, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
