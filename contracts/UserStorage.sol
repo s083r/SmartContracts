@@ -1,16 +1,16 @@
 pragma solidity ^0.4.8;
 
 contract UserStorage {
-    // FIELDS
-    // the number of owners that must confirm the same operation before it is run.
+// FIELDS
+// the number of owners that must confirm the same operation before it is run.
     uint public required = 1;
 
     mapping (uint => Member) public members;
     struct Member {
-        address memberAddr;
-        bytes32 hash1;
-        bytes14 hash2;
-        bool isCBE;
+    address memberAddr;
+    bytes32 hash1;
+    bytes14 hash2;
+    bool isCBE;
     }
 
     uint public userCount = 1;
@@ -20,7 +20,7 @@ contract UserStorage {
     mapping (address => uint) userIndex;
     mapping (address => uint) public ownersIndex;
 
-    // simple single-sig function modifier.
+// simple single-sig function modifier.
     modifier onlyOwner {
         if (isOwner(msg.sender)) {
             _;
@@ -40,7 +40,7 @@ contract UserStorage {
     }
 
     function setRequired(uint _required) onlyOwner() returns(bool) {
-        if (_required > 1 && adminCount >= _required) {
+        if (_required > 0 && adminCount >= _required) {
             required = _required;
             return true;
         }
@@ -136,5 +136,10 @@ contract UserStorage {
 
     function getCBE(address _member) constant returns (bool) {
         return members[userIndex[_member]].isCBE;
+    }
+
+    function()
+    {
+        throw;
     }
 }

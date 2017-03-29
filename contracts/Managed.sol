@@ -11,13 +11,12 @@ contract Managed {
     event exec(bytes32 hash);
 
     modifier onlyAuthorized() {
-        if (isAuthorized(msg.sender)) {
+        if (isAuthorized(msg.sender) || msg.sender == shareable) {
             _;
         }
     }
 
     modifier execute(Shareable.Operations _type) {
-        if (UserStorage(userStorage).required() > 1) {
            if(msg.sender != shareable) {
                 bytes32 _r = sha3(msg.data, "signature");
                 Shareable(shareable).addTx(_r, msg.data,_type,this);
@@ -26,21 +25,10 @@ contract Managed {
            else {
             _;
            }
-        }
-        else {
-            _;
-        }
     }
 
     function isAuthorized(address key) returns (bool) {
-        if (isOwner(key) || shareable == key) {
-            return true;
-        }
-        return false;
+        return UserStorage(userStorage).getCBE(key);
     }
-
-  function isOwner(address _addr) constant returns (bool) {
-    return UserStorage(userStorage).getCBE(_addr);
-  }
 
 }

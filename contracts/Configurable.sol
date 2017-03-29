@@ -1,7 +1,6 @@
 pragma solidity ^0.4.8;
 
-import "./Owned.sol"; 
-import "./EternalStorage.sol";
+import "./Owned.sol";
 
 contract Configurable is Owned {
   enum Setting {name,website,controller,issueLimit,issued,redeemed,publishedHash1,expDate,timeProxyContract,rewardsContract,exchangeContract,proxyContract,securityPercentage,liquidityPercentage,insurancePercentage,insuranceDuration,lhProxyContract,publishedHash2}
