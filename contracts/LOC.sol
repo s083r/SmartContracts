@@ -30,7 +30,7 @@ contract LOC is Configurable {
     }
 
     function setIssued(uint _issued) onlyContractOwner returns(bool) {
-        values[uint(Setting.issued)] = _issued;
+        values[uint(Setting.issued)] += _issued;
         return true;
     }
 

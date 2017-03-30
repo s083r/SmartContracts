@@ -55,7 +55,7 @@ contract Rewards {
     mapping(address => uint) public rewardsLeft;
 
 // Periods list. Last one is always active.
-    Period[] periods;
+    Period[] public periods;
 
 // Period closed/started.
     event PeriodClosed();

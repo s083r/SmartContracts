@@ -7,6 +7,8 @@ import "./ExchangeInterface.sol";
 import "./OwnedInterface.sol";
 import "./LOCInterface.sol";
 import "./ChronoMintInterface.sol";
+import "./FeeInterface.sol";
+import "./ChronoBankAssetProxyInterface.sol";
 
 contract ContractsManager is Managed {
     address internal platform;
@@ -122,9 +124,11 @@ contract ContractsManager is Managed {
         if (platform != 0x0) {
             if(_value <= LOCInterface(_locAddr).getIssueLimit() &&  LOCInterface(_locAddr).getIssued() < LOCInterface(_locAddr).getIssueLimit()) {
                 if(ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value)) {
-                    sendAsset(2,_locAddr,_value);
+                    address assetProxy = ChronoBankPlatformInterface(platform).proxies(_symbol);
+                    uint feePercent = FeeInterface(ChronoBankAssetProxyInterface(assetProxy).getLatestVersion()).feePercent();
+                    uint amount = (_value * 10000)/(10000 + feePercent);
+                    sendAsset(_symbol,_locAddr,amount);
                     address Mint = LOCInterface(_locAddr).getContractOwner();
-                    //ChronoMintInterface(Mint).setLOCIssued(_locAddr,_value);
                     reissue(_value, _locAddr);
                     return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, _value);
                 }
@@ -133,8 +137,8 @@ contract ContractsManager is Managed {
         return false;
     }
 
-    function sendAsset(uint _id, address _to, uint _value) onlyAuthorized() returns (bool) {
-        return ERC20Interface(contracts[_id]).transfer(_to, _value);
+    function sendAsset(bytes32 _symbol, address _to, uint _value) onlyAuthorized() returns (bool) {
+        return ERC20Interface(ChronoBankPlatformInterface(platform).proxies(_symbol)).transfer(_to, _value);
     }
 
     function getBalance(uint _id) constant returns (uint) {

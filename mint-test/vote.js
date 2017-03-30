@@ -256,8 +256,8 @@ contract('Vote', function(accounts) {
     context("owner shares deposit", function(){
 
         it("ChronoMint should be able to send 100 TIME to owner", function() {
-            return contractsManager.sendAsset.call(1,owner,100).then(function(r) {
-                return contractsManager.sendAsset(1,owner,100,{from: accounts[0], gas: 3000000}).then(function() {
+            return contractsManager.sendAsset.call('TIME',owner,100).then(function(r) {
+                return contractsManager.sendAsset('TIME',owner,100,{from: accounts[0], gas: 3000000}).then(function() {
                     assert.isOk(r);
                 });
             });
@@ -449,8 +449,8 @@ contract('Vote', function(accounts) {
     context("owner1 shares deposit and voting", function(){
 
         it("ChronoMint should be able to send 50 TIME to owner1", function() {
-            return contractsManager.sendAsset.call(1,owner1,50).then(function(r) {
-                return contractsManager.sendAsset(1,owner1,50,{from: accounts[0], gas: 3000000}).then(function() {
+            return contractsManager.sendAsset.call('TIME',owner1,50).then(function(r) {
+                return contractsManager.sendAsset('TIME',owner1,50,{from: accounts[0], gas: 3000000}).then(function() {
                     assert.isOk(r);
                 });
             });
@@ -462,7 +462,7 @@ contract('Vote', function(accounts) {
             });
         });
 
-        it("owner1 should be able to approve 50 TIME to Vote", function() {
+        it("owner1 should be able to approve 50 TIME to TimeHolder", function() {
             return timeProxyContract.approve.call(timeHolder.address, 50, {from: owner1}).then((r) => {
                     return timeProxyContract.approve(timeHolder.address, 50, {from: owner1}).then(() => {
                         assert.isOk(r);
