@@ -42,6 +42,8 @@ contract Vote is Managed {
 // Polls counter for mapping
     uint public pollsCount;
 
+    uint public activePollsCount;
+
     function init(address _timeHolder, address _userStorage, address _shareable) returns (bool) {
         if (userStorage != 0x0) {
             return false;
@@ -115,7 +117,7 @@ contract Vote is Managed {
     function deposit(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
         for(uint i=0;i<memberPolls[_address].length;i++){
             Poll p = polls[memberPolls[_address][i]];
-            if(p.status) {
+            if(p.status && p.active) {
                 uint choice = p.memberOption[_address];
                 p.options[choice] += _amount;
             }
@@ -126,7 +128,7 @@ contract Vote is Managed {
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
         for(uint i=0;i<memberPolls[_address].length;i++){
             Poll p = polls[memberPolls[_address][i]];
-            if(p.status) {
+            if(p.status && p.active) {
                 uint choice = p.memberOption[_address];
                 p.options[choice] -= _amount;
                 if(_total == 0) {
@@ -200,13 +202,18 @@ contract Vote is Managed {
     function endPoll(uint _pollId) internal returns (bool) {
         Poll p = polls[_pollId];
         p.status = false;
+        activePollsCount--;
         return true;
     }
 
     function activatePoll(uint _pollId) execute(Shareable.Operations.endPoll) returns (bool) {
-        Poll p = polls[_pollId];
-        p.active = true;
-        return true;
+        if(activePollsCount < 20) {
+            Poll p = polls[_pollId];
+            p.active = true;
+            activePollsCount++;
+            return true;
+        }
+        return false;
     }
 
     function adminEndPoll(uint _pollId) execute(Shareable.Operations.endPoll) returns (bool) {
