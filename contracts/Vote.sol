@@ -129,9 +129,22 @@ contract Vote is Managed {
             if(p.status) {
                 uint choice = p.memberOption[_address];
                 p.options[choice] -= _amount;
+                if(_total == 0) {
+		            delete p.memberOption[_address];
+                    remove(i, _address);
+                }
             }
         }
         return true;
+    }
+
+    function remove(uint i, address _address) internal {
+        if (i >= memberPolls[_address].length) return;
+
+        for (; i<memberPolls[_address].length-1; i++){
+            memberPolls[_address][i] = memberPolls[_address][i+1];
+        }
+        memberPolls[_address].length--;
     }
 
     modifier onlyCreator(uint _id) {

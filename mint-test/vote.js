@@ -530,7 +530,21 @@ contract('Vote', function(accounts) {
         it("should be able to show number of Votes for each Option for Poll 0", function() {
             return vote.getOptionsVotesForPoll.call(0).then((r) => {
                     assert.equal(r[0],25);
-            assert.equal(r[1],45);
+                    assert.equal(r[1],45);
+        });
+        });
+
+        it("should be able to withdraw 45 TIME from owner1", function() {
+            return timeHolder.withdrawShares.call(45, {from: owner1}).then((r) => {
+                    return timeHolder.withdrawShares(45, {from: owner1}).then(() => {
+                        assert.isOk(r);
+        });
+        });
+        });
+
+        it("should show empty list owner1 took part", function() {
+            return vote.getMemberPolls.call({from: owner1}).then((r) => {
+                    assert.equal(r.length,1);
         });
         });
 
@@ -557,6 +571,7 @@ contract('Vote', function(accounts) {
         it("should be able to show number of Votes for each Option for Poll 1", function() {
             return vote.getOptionsVotesForPoll.call(1).then((r) => {
                     assert.equal(r[0],75);
+                    assert.equal(r[1],0);
         });
         });
 
