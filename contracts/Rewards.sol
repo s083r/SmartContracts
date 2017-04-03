@@ -38,6 +38,7 @@ contract Rewards {
     uint startDate;                                           // Period starting date, also
     uint totalShares;
     mapping(address => uint) assetBalances;                   // Rewards for distribution.
+    uint shareholdersCount;
     mapping(address => uint) shares;                          // Shareholder shares in period.
     mapping(address => mapping(address => bool)) calculated;  // Flag that indicates that rewards
     // already distributed for holder.
@@ -100,6 +101,10 @@ contract Rewards {
         return periods.length;
     }
 
+    function periodUnique(uint _period) constant returns(uint) {
+        return periods[_period].shareholdersCount;
+    }
+
     modifier onlyTimeHolder() {
         if (msg.sender == timeHolder) {
             _;
@@ -150,6 +155,7 @@ contract Rewards {
         Period period = periods[lastPeriod()];
         if (period.shares[_address] == 0) {
             period.totalShares += _total;
+            period.shareholdersCount++;
         } else {
             period.totalShares += _amount;
         }
@@ -331,7 +337,8 @@ contract Rewards {
         Period period = periods[lastPeriod()];
         period.totalShares -= _amount;
         period.shares[_address] = _total;
-
+        if(period.shares[_address] == 0)
+		period.shareholdersCount--;
         return true;
     }
 
