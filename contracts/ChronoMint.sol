@@ -12,7 +12,7 @@ contract ChronoMint is Managed {
     event newLOC(address _from, address _LOC);
     event remLOC(address _from, address _LOC);
     event updLOCStatus(address _from, address _LOC, LOC.Status _status);
-    event updLOCValue(address _from, address _LOC, uint _value, bool _revoke, Configurable.Setting _name);
+    event updLOCValue(address _from, address _LOC, uint _value, Configurable.Setting _name);
     event updLOCString(address _from, address _LOC, bytes32 _value, Configurable.Setting _name);
 
     function init(address _userStorage, address _shareable, address _contractManager) returns(bool) {
@@ -31,9 +31,9 @@ contract ChronoMint is Managed {
         }
     }
 
-    function setLOCIssued(address _LOCaddr, uint _issued, bool _revoke) isContractManager returns (bool) {
-        updLOCValue(this, _LOCaddr, _issued, _revoke, Configurable.Setting.issued);
-        return LOC(_LOCaddr).setIssued(_issued, _revoke);
+    function setLOCIssued(address _LOCaddr, uint _issued) isContractManager returns (bool) {
+        updLOCValue(this, _LOCaddr, _issued, Configurable.Setting.issued);
+        return LOC(_LOCaddr).setIssued(_issued);
     }
 
     function addLOC (address _locAddr) execute(Shareable.Operations.editMint) {
@@ -75,7 +75,7 @@ contract ChronoMint is Managed {
 
     function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) execute(Shareable.Operations.editLOC) {
         LOC(_LOCaddr).setValue(uint(name),value);
-        updLOCValue(msg.sender, _LOCaddr, value, false, name);
+        updLOCValue(msg.sender, _LOCaddr, value, name);
     }
 
     function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) onlyAuthorized() {
