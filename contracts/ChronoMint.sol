@@ -31,12 +31,8 @@ contract ChronoMint is Managed {
         }
     }
 
-    function sendLOCAsset(address _LOCaddr, address _lhAddr, address _to, uint _value) execute(Shareable.Operations.editMint) returns (bool) {
-        return LOC(_LOCaddr).sendAsset(_lhAddr,_to, _value);
-    }
-
-    function setLOCIssued(address _LOCaddr, uint _issued) isContractManager returns (bool) {
-        return LOC(_LOCaddr).setIssued(_issued);
+    function setLOCIssued(address _LOCaddr, uint _issued, bool _revoke) isContractManager returns (bool) {
+        return LOC(_LOCaddr).setIssued(_issued, _revoke);
     }
 
     function addLOC (address _locAddr) execute(Shareable.Operations.editMint) {

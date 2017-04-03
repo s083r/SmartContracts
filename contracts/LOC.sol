@@ -29,8 +29,11 @@ contract LOC is Configurable {
         return values[uint(Setting.issued)];
     }
 
-    function setIssued(uint _issued) onlyContractOwner returns(bool) {
-        values[uint(Setting.issued)] += _issued;
+    function setIssued(uint _issued, bool _revoke) onlyContractOwner returns(bool) {
+        if(!_revoke)
+            values[uint(Setting.issued)] += _issued;
+        else
+            values[uint(Setting.issued)] -= _issued;
         return true;
     }
 
@@ -48,10 +51,6 @@ contract LOC is Configurable {
 
     function setWebsite(bytes32 _website) onlyContractOwner {
         settings[uint(Setting.website)] = _website;
-    }
-
-    function sendAsset(address _lhAddr, address _to, uint _value) onlyContractOwner returns (bool) {
-        return ERC20Interface(_lhAddr).transfer(_to, _value);
     }
 
     function()

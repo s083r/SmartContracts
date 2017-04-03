@@ -35,7 +35,6 @@ contract('ChronoMint', function(accounts) {
     var chronoMint;
     var contractsManager;
     var shareable;
-    var rewardContract;
     var platform;
     var timeContract;
     var lhContract;
@@ -540,16 +539,16 @@ contract('ChronoMint', function(accounts) {
 
     });
 
-    context("with five CBE keys", function(){
-        it("collects 4 vote to addKey and granting auth.", function() {
-            return userManager.addKey(owner5, {from: owner4}).then(function(r) {
+    context("with five CBE keys", function() {
+        it("collects 4 vote to addKey and granting auth.", function () {
+            return userManager.addKey(owner5, {from: owner4}).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner}).then(function() {
-                    return shareable.confirm(conf_sign,{from:owner1}).then(function() {
-                        return shareable.confirm(conf_sign,{from:owner2}).then(function() {
-                            return shareable.confirm(conf_sign,{from:owner3}).then(function() {
+                return shareable.confirm(conf_sign, {from: owner}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                            return shareable.confirm(conf_sign, {from: owner3}).then(function () {
                                 // return shareable.confirm(conf_sign,{from:owner4}).then(function() {
-                                return chronoMint.isAuthorized.call(owner5).then(function(r){
+                                return chronoMint.isAuthorized.call(owner5).then(function (r) {
                                     assert.isOk(r);
                                 });
                                 //  });
@@ -560,21 +559,21 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("can show all members", function() {
-            return userStorage.getCBEMembers.call().then(function(r) {
+        it("can show all members", function () {
+            return userStorage.getCBEMembers.call().then(function (r) {
                 assert.equal(r[0][0], owner);
                 assert.equal(r[0][1], owner1);
                 assert.equal(r[0][2], owner2);
             });
         });
 
-        it("required signers should be 6", function() {
-            return userManager.setRequired(6).then(function(r) {
-                return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
-                    return shareable.confirm(r.logs[0].args.hash,{from:owner2}).then(function() {
-                        return shareable.confirm(r.logs[0].args.hash,{from:owner3}).then(function() {
-                            return shareable.confirm(r.logs[0].args.hash,{from:owner4}).then(function() {
-                                return userManager.required.call({from: owner}).then(function(r) {
+        it("required signers should be 6", function () {
+            return userManager.setRequired(6).then(function (r) {
+                return shareable.confirm(r.logs[0].args.hash, {from: owner1}).then(function () {
+                    return shareable.confirm(r.logs[0].args.hash, {from: owner2}).then(function () {
+                        return shareable.confirm(r.logs[0].args.hash, {from: owner3}).then(function () {
+                            return shareable.confirm(r.logs[0].args.hash, {from: owner4}).then(function () {
+                                return userManager.required.call({from: owner}).then(function (r) {
                                     assert.equal(r, 6);
                                 });
                             });
@@ -585,62 +584,62 @@ contract('ChronoMint', function(accounts) {
         });
 
 
-        it("pending operation counter should be 0", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("pending operation counter should be 0", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("collects 1 call and 1 vote for setAddress as 2 votes for a new address", function() {
-            return contractsManager.setAddress("0x19789eeec7aac794b49f370783623a421df3f177").then(function(r) {
+        it("collects 1 call and 1 vote for setAddress as 2 votes for a new address", function () {
+            return contractsManager.setAddress("0x19789eeec7aac794b49f370783623a421df3f177").then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign, {from:owner1}).then(function() {
-                    return contractsManager.getAddress.call(3).then(function(r){
+                return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                    return contractsManager.getAddress.call(3).then(function (r) {
                         assert.notEqual(r, '0x19789eeec7aac794b49f370783623a421df3f177');
                     });
                 });
             });
         });
 
-        it("pending operation counter should be 1", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("pending operation counter should be 1", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 1);
             });
         });
 
-        it("confirmation yet needed should be 4", function() {
-            return shareable.pendingYetNeeded.call(conf_sign).then(function(r) {
-                assert.equal(r,4);
+        it("confirmation yet needed should be 4", function () {
+            return shareable.pendingYetNeeded.call(conf_sign).then(function (r) {
+                assert.equal(r, 4);
             });
         });
 
-        it("check owner hasConfirmed new addrees", function() {
-            return shareable.hasConfirmed.call(conf_sign, owner).then(function(r) {
+        it("check owner hasConfirmed new addrees", function () {
+            return shareable.hasConfirmed.call(conf_sign, owner).then(function (r) {
                 assert.isOk(r);
             });
         });
 
-        it("revoke owner1 and check not hasConfirmed new addrees", function() {
-            return shareable.revoke(conf_sign,{from:owner}).then(function() {
-                return shareable.hasConfirmed.call(conf_sign, owner).then(function(r) {
+        it("revoke owner1 and check not hasConfirmed new addrees", function () {
+            return shareable.revoke(conf_sign, {from: owner}).then(function () {
+                return shareable.hasConfirmed.call(conf_sign, owner).then(function (r) {
                     assert.isNotOk(r);
                 });
             });
         });
 
-        it("check confirmation yet needed should be 5", function() {
-            return shareable.pendingYetNeeded.call(conf_sign).then(function(r) {
-                assert.equal(r,5);
+        it("check confirmation yet needed should be 5", function () {
+            return shareable.pendingYetNeeded.call(conf_sign).then(function (r) {
+                assert.equal(r, 5);
             });
         });
 
-        it("allows owner and 5 more votes to set new address.", function() {
-            return shareable.confirm(conf_sign, {from: owner}).then(function() {
-                return shareable.confirm(conf_sign, {from: owner2}).then(function() {
-                    return shareable.confirm(conf_sign, {from: owner3}).then(function() {
-                        return shareable.confirm(conf_sign, {from: owner4}).then(function() {
-                            return shareable.confirm(conf_sign, {from: owner5}).then(function() {
-                                return contractsManager.getAddress.call(3).then(function(r){
+        it("allows owner and 5 more votes to set new address.", function () {
+            return shareable.confirm(conf_sign, {from: owner}).then(function () {
+                return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner3}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                            return shareable.confirm(conf_sign, {from: owner5}).then(function () {
+                                return contractsManager.getAddress.call(3).then(function (r) {
                                     assert.equal(r, '0x19789eeec7aac794b49f370783623a421df3f177');
                                 });
                             });
@@ -650,43 +649,43 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("pending operation counter should be 0", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("pending operation counter should be 0", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("allows a CBE to propose an LOC.", function() {
-            return chronoMint.proposeLOC(bytes32("Bob's Hard Workers"), bytes32("www.ru"), 1000000, bytes32("QmTeW79w7QQ6Npa3b1d5tANreCDxF2iD"),bytes32("aAPsDvW6KtLmfB"),unix).then(function(r){
+        it("allows a CBE to propose an LOC.", function () {
+            return chronoMint.proposeLOC(bytes32("Bob's Hard Workers"), bytes32("www.ru"), 1000000, bytes32("QmTeW79w7QQ6Npa3b1d5tANreCDxF2iD"), bytes32("aAPsDvW6KtLmfB"), unix).then(function (r) {
                 loc_contracts[0] = LOC.at(r.logs[0].args._LOC);
-                return loc_contracts[0].status.call().then(function(r){
+                return loc_contracts[0].status.call().then(function (r) {
                     assert.equal(r, Status.maintenance);
                 });
             });
         });
 
-        it("Proposed LOC should increment LOCs counter", function() {
-            return chronoMint.getLOCCount.call().then(function(r){
+        it("Proposed LOC should increment LOCs counter", function () {
+            return chronoMint.getLOCCount.call().then(function (r) {
                 assert.equal(r, 1);
             });
         });
 
-        it("ChronoMint should be able to return LOCs array with proposed LOC address", function() {
-            return chronoMint.getLOCs.call().then(function(r){
+        it("ChronoMint should be able to return LOCs array with proposed LOC address", function () {
+            return chronoMint.getLOCs.call().then(function (r) {
                 assert.equal(r[0], loc_contracts[0].address);
             });
         });
 
 
-        it("allows 5 CBE members to activate an LOC.", function() {
-            return chronoMint.setLOCStatus(loc_contracts[0].address, Status.active, {from: owner}).then(function(r) {
+        it("allows 5 CBE members to activate an LOC.", function () {
+            return chronoMint.setLOCStatus(loc_contracts[0].address, Status.active, {from: owner}).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner1}).then(function(r) {
-                    return shareable.confirm(conf_sign,{from:owner2}).then(function(r) {
-                        return shareable.confirm(conf_sign,{from:owner3}).then(function(r) {
-                            return shareable.confirm(conf_sign,{from:owner4}).then(function(r) {
-                                return shareable.confirm(conf_sign,{from:owner5}).then(function(r) {
-                                    return loc_contracts[0].status.call().then(function(r){
+                return shareable.confirm(conf_sign, {from: owner1}).then(function (r) {
+                    return shareable.confirm(conf_sign, {from: owner2}).then(function (r) {
+                        return shareable.confirm(conf_sign, {from: owner3}).then(function (r) {
+                            return shareable.confirm(conf_sign, {from: owner4}).then(function (r) {
+                                return shareable.confirm(conf_sign, {from: owner5}).then(function (r) {
+                                    return loc_contracts[0].status.call().then(function (r) {
                                         assert.equal(r, Status.active);
                                     });
                                 });
@@ -697,19 +696,19 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("pending operation counter should be 0", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("pending operation counter should be 0", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("collects call to setValue and first vote for a new value ", function() {
-            return chronoMint.setLOCValue(loc_contracts[0].address,12,22).then(function(r) {
+        it("collects call to setValue and first vote for a new value ", function () {
+            return chronoMint.setLOCValue(loc_contracts[0].address, 12, 22).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return loc_contracts[0].getValue.call(12).then(function(r){
+                return loc_contracts[0].getValue.call(12).then(function (r) {
                     assert.notEqual(r, 22);
-                    return shareable.confirm(conf_sign, {from: owner1}).then(function() {
-                        return loc_contracts[0].getValue.call(12).then(function(r){
+                    return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                        return loc_contracts[0].getValue.call(12).then(function (r) {
                             assert.notEqual(r, 22);
                         });
                     });
@@ -717,39 +716,39 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("check operation type is editLOC", function() {
-            return shareable.getTxsType.call(conf_sign).then(function(r) {
-                assert.equal(r,1);
-            });
-        });
-
-        it("should increment pending operation counter ", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("check operation type is editLOC", function () {
+            return shareable.getTxsType.call(conf_sign).then(function (r) {
                 assert.equal(r, 1);
             });
         });
 
-        it("allows a CBE to propose revocation of an authorized key.", function() {
-            return userManager.revokeKey(owner5, {from:owner}).then(function(r) {
+        it("should increment pending operation counter ", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
+                assert.equal(r, 1);
+            });
+        });
+
+        it("allows a CBE to propose revocation of an authorized key.", function () {
+            return userManager.revokeKey(owner5, {from: owner}).then(function (r) {
                 conf_sign2 = r.logs[0].args.hash;
-                return userManager.isAuthorized.call(owner5).then(function(r){
+                return userManager.isAuthorized.call(owner5).then(function (r) {
                     assert.isOk(r);
                 });
             });
         });
 
-        it("should increment pending operation counter ", function() {
-            return shareable.pendingsCount.call().then(function(r) {
+        it("should increment pending operation counter ", function () {
+            return shareable.pendingsCount.call().then(function (r) {
                 assert.equal(r, 2);
             });
         });
 
-        it("allows a 3 more votes to set new value.", function() {
-            return shareable.confirm(conf_sign, {from: owner2}).then(function() {
-                return shareable.confirm(conf_sign, {from: owner3}).then(function() {
-                    return shareable.confirm(conf_sign, {from: owner4}).then(function() {
-                        return shareable.confirm(conf_sign, {from: owner5}).then(function() {
-                            return loc_contracts[0].getValue.call(12).then(function(r){
+        it("allows a 3 more votes to set new value.", function () {
+            return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                return shareable.confirm(conf_sign, {from: owner3}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner5}).then(function () {
+                            return loc_contracts[0].getValue.call(12).then(function (r) {
                                 assert.equal(r, 22);
                             });
                         });
@@ -758,35 +757,35 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("doesn't allow non CBE to change settings for the contract.", function() {
-            return loc_contracts[0].setValue(3, 2000).then(function() {
-                return loc_contracts[0].getValue.call(3).then(function(r){
+        it("doesn't allow non CBE to change settings for the contract.", function () {
+            return loc_contracts[0].setValue(3, 2000).then(function () {
+                return loc_contracts[0].getValue.call(3).then(function (r) {
                     assert.equal(r, '1000000');
                 });
             });
         });
 
-        it("allows CBE controller to change the name of the LOC", function() {
-            return chronoMint.setLOCString(loc_contracts[0].address,0,bytes32("Tom's Hard Workers")).then(function() {
-                return loc_contracts[0].getName.call().then(function(r){
+        it("allows CBE controller to change the name of the LOC", function () {
+            return chronoMint.setLOCString(loc_contracts[0].address, 0, bytes32("Tom's Hard Workers")).then(function () {
+                return loc_contracts[0].getName.call().then(function (r) {
                     assert.equal(r, bytes32("Tom's Hard Workers"));
                 });
             });
         });
 
-        it("should decrement pending operation counter ", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("should decrement pending operation counter ", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 1);
             });
         });
 
-        it("allows 5 CBE member vote for the revocation to revoke authorization.", function() {
-            return shareable.confirm(conf_sign2,{from:owner1}).then(function() {
-                return shareable.confirm(conf_sign2,{from:owner2}).then(function() {
-                    return shareable.confirm(conf_sign2,{from:owner3}).then(function() {
-                        return shareable.confirm(conf_sign2,{from:owner4}).then(function() {
-                            return shareable.confirm(conf_sign2,{from:owner5}).then(function() {
-                                return chronoMint.isAuthorized.call(owner5).then(function(r){
+        it("allows 5 CBE member vote for the revocation to revoke authorization.", function () {
+            return shareable.confirm(conf_sign2, {from: owner1}).then(function () {
+                return shareable.confirm(conf_sign2, {from: owner2}).then(function () {
+                    return shareable.confirm(conf_sign2, {from: owner3}).then(function () {
+                        return shareable.confirm(conf_sign2, {from: owner4}).then(function () {
+                            return shareable.confirm(conf_sign2, {from: owner5}).then(function () {
+                                return chronoMint.isAuthorized.call(owner5).then(function (r) {
                                     assert.isNotOk(r);
                                 });
                             });
@@ -796,152 +795,166 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("required signers should be 5", function() {
-            return userManager.required.call({from: owner}).then(function(r) {
+        it("required signers should be 5", function () {
+            return userManager.required.call({from: owner}).then(function (r) {
                 assert.equal(r, 5);
             });
         });
 
-        it("should decrement pending operation counter ", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("should decrement pending operation counter ", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("can provide TimeProxyContract address.", function() {
-            return contractsManager.getAddress.call(1).then(function(r) {
-                assert.equal(r,timeProxyContract.address);
+        it("can provide TimeProxyContract address.", function () {
+            return contractsManager.getAddress.call(1).then(function (r) {
+                assert.equal(r, timeProxyContract.address);
             });
         });
 
-        it("should show 200 TIME balance", function() {
-            return contractsManager.getBalance.call(1).then(function(r) {
+        it("should show 200 TIME balance", function () {
+            return contractsManager.getBalance.call(1).then(function (r) {
                 assert.equal(r, 2000);
             });
         });
 
-        it("should not be abble to reIssue 5000 more TIME", function() {
+        it("should not be abble to reIssue 5000 more TIME", function () {
             return contractsManager.reissueAsset.call(SYMBOL, 5000, 0x10, {from: accounts[0]}).then((r) => {
-          //          return contractsManager.reissueAsset(SYMBOL, 5000, 0x10, {from: accounts[0]}).then(() => {
-                        assert.isNotOk(r);
-        //});
-        });
+                    assert.isNotOk(r);
+        })
+            ;
         });
 
-        it("should show 200 TIME balance", function() {
-            return contractsManager.getBalance.call(1).then(function(r) {
+        it("should show 200 TIME balance", function () {
+            return contractsManager.getBalance.call(1).then(function (r) {
                 assert.equal(r, 2000);
             });
         });
 
-        it("ChronoMint should be able to send 100 TIME to owner", function() {
-            return contractsManager.sendAsset.call('TIME',owner,100).then(function(r) {
-                return contractsManager.sendAsset('TIME',owner,100,{from: accounts[0], gas: 3000000}).then(function() {
+        it("ChronoMint should be able to send 100 TIME to owner", function () {
+            return contractsManager.sendAsset.call('TIME', owner, 100).then(function (r) {
+                return contractsManager.sendAsset('TIME', owner, 100, {
+                    from: accounts[0],
+                    gas: 3000000
+                }).then(function () {
                     assert.isOk(r);
                 });
             });
         });
 
-        it("check Owner has 100 TIME", function() {
-            return timeProxyContract.balanceOf.call(owner).then(function(r) {
-                assert.equal(r,100);
+        it("check Owner has 100 TIME", function () {
+            return timeProxyContract.balanceOf.call(owner).then(function (r) {
+                assert.equal(r, 100);
             });
         });
 
-        it("ChronoMint should be able to send 1000 TIME to msg.sender", function() {
-            return contractsManager.sendTime({from:owner2, gas: 3000000}).then(function() {
-                return timeProxyContract.balanceOf.call(owner2).then(function(r) {
-                    assert.equal(r,1000);
+        it("ChronoMint should be able to send 1000 TIME to msg.sender", function () {
+            return contractsManager.sendTime({from: owner2, gas: 3000000}).then(function () {
+                return timeProxyContract.balanceOf.call(owner2).then(function (r) {
+                    assert.equal(r, 1000);
                 });
             });
         });
 
-        it("ChronoMint shouldn't be able to send 1000 TIME to msg.sender twice", function() {
-            return contractsManager.sendTime({from:owner2, gas: 3000000}).then(function() {
-                return timeProxyContract.balanceOf.call(owner2).then(function(r) {
-                    assert.equal(r,1000);
+        it("ChronoMint shouldn't be able to send 1000 TIME to msg.sender twice", function () {
+            return contractsManager.sendTime({from: owner2, gas: 3000000}).then(function () {
+                return timeProxyContract.balanceOf.call(owner2).then(function (r) {
+                    assert.equal(r, 1000);
                 });
             });
         });
 
-        it("ChronoMint should be able to send 100 TIME to owner1", function() {
-            return contractsManager.sendAsset.call('TIME',owner1,100).then(function(r) {
-                return contractsManager.sendAsset('TIME',owner1,100,{from: accounts[0], gas: 3000000}).then(function() {
+        it("ChronoMint should be able to send 100 TIME to owner1", function () {
+            return contractsManager.sendAsset.call('TIME', owner1, 100).then(function (r) {
+                return contractsManager.sendAsset('TIME', owner1, 100, {
+                    from: accounts[0],
+                    gas: 3000000
+                }).then(function () {
                     assert.isOk(r);
                 });
             });
         });
 
-        it("check Owner1 has 100 TIME", function() {
-            return timeProxyContract.balanceOf.call(owner1).then(function(r) {
-                assert.equal(r,100);
+        it("check Owner1 has 100 TIME", function () {
+            return timeProxyContract.balanceOf.call(owner1).then(function (r) {
+                assert.equal(r, 100);
             });
         });
 
-        it("can provide account balances for Y account started from X", function() {
-            return contractsManager.getAssetBalances.call('TIME',1,2).then(function(r) {
-                assert.equal(r[0].length,2);
+        it("can provide account balances for Y account started from X", function () {
+            return contractsManager.getAssetBalances.call('TIME', 1, 2).then(function (r) {
+                assert.equal(r[0].length, 2);
             });
         });
 
-        it("owner should be able to approve 50 TIME to Reward", function() {
+        it("owner should be able to approve 50 TIME to Reward", function () {
             return timeProxyContract.approve.call(rewards.address, 50, {from: accounts[0]}).then((r) => {
                     return timeProxyContract.approve(rewards.address, 50, {from: accounts[0]}).then(() => {
                         assert.isOk(r);
-        });
-        });
+        })
+            ;
+        })
+            ;
         });
 
-        it("can provide LHProxyContract address.", function() {
-            return contractsManager.getAddress.call(2).then(function(r) {
-                assert.equal(r,lhProxyContract.address);
+        it("can provide LHProxyContract address.", function () {
+            return contractsManager.getAddress.call(2).then(function (r) {
+                assert.equal(r, lhProxyContract.address);
             });
         });
 
-        it("should show 0 LHT balance", function() {
-            return contractsManager.getBalance.call(2).then(function(r) {
+        it("should show 0 LHT balance", function () {
+            return contractsManager.getBalance.call(2).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("should show LOC issue limit", function() {
-            return loc_contracts[0].getIssueLimit.call().then(function(r) {
+        it("should show LOC issue limit", function () {
+            return loc_contracts[0].getIssueLimit.call().then(function (r) {
                 assert.equal(r, 1000000);
             });
         });
 
-        it("should show LOC owner is ChronoMint", function() {
-            return loc_contracts[0].getContractOwner.call().then(function(r) {
+        it("should show LOC owner is ChronoMint", function () {
+            return loc_contracts[0].getContractOwner.call().then(function (r) {
                 assert.equal(r, chronoMint.address);
             });
         });
 
-        it("shouldn't be abble to Issue 1100000 LHT for LOC according to issueLimit", function() {
-            return contractsManager.reissueAsset(SYMBOL2, 1100000, loc_contracts[0].address, {from: owner, gas: 3000000}).then((r) => {
-            conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner4}).then(function() {
-                    return shareable.confirm(conf_sign,{from:owner1}).then(function() {
-                        return shareable.confirm(conf_sign,{from:owner2}).then(function() {
-                            return shareable.confirm(conf_sign,{from:owner3}).then(function() {
-                                return lhProxyContract.balanceOf.call(loc_contracts[0].address).then(function(r2) {
-                                    assert.equal(r2, 0);
-                                });
+        it("shouldn't be abble to Issue 1100000 LHT for LOC according to issueLimit", function () {
+            return contractsManager.reissueAsset(SYMBOL2, 1100000, loc_contracts[0].address, {
+                from: owner,
+                gas: 3000000
+            }).then((r) => {
+                conf_sign = r.logs[0].args.hash;
+            return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner3}).then(function () {
+                            return lhProxyContract.balanceOf.call(contractsManager.address).then(function (r2) {
+                                assert.equal(r2, 0);
                             });
                         });
                     });
                 });
-        });
+            });
+        })
+            ;
         });
 
-        it("should be abble to Issue 1000000 LHT for LOC according to issueLimit", function() {
-            return contractsManager.reissueAsset(SYMBOL2, 1000000, loc_contracts[0].address, {from: owner, gas: 3000000}).then(function(r) {
+        it("should be abble to Issue 1000000 LHT for LOC according to issueLimit", function () {
+            return contractsManager.reissueAsset(SYMBOL2, 1000000, loc_contracts[0].address, {
+                from: owner,
+                gas: 3000000
+            }).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner4}).then(function() {
-                    return shareable.confirm(conf_sign,{from:owner1}).then(function() {
-                        return shareable.confirm(conf_sign,{from:owner2}).then(function() {
-                            return shareable.confirm(conf_sign,{from:owner3}).then(function() {
-                                return lhProxyContract.balanceOf.call(loc_contracts[0].address).then(function(r2) {
-                                    assert.equal(r2, 990099);
+                return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                            return shareable.confirm(conf_sign, {from: owner3}).then(function () {
+                                return lhProxyContract.balanceOf.call(contractsManager.address).then(function (r2) {
+                                    assert.equal(r2, 1000000);
                                 });
                             });
                         });
@@ -950,15 +963,18 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("should be abble to Issue 1000 LHT for LOC according to issued and issueLimit", function() {
-            return contractsManager.reissueAsset(SYMBOL2, 1000, loc_contracts[0].address, {from: owner, gas: 3000000}).then(function(r) {
+        it("shouldn't be abble to Issue 1000 LHT for LOC according to issued and issueLimit", function () {
+            return contractsManager.reissueAsset(SYMBOL2, 1000, loc_contracts[0].address, {
+                from: owner,
+                gas: 3000000
+            }).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner4}).then(function() {
-                    return shareable.confirm(conf_sign,{from:owner1}).then(function() {
-                        return shareable.confirm(conf_sign,{from:owner2}).then(function() {
-                            return shareable.confirm(conf_sign,{from:owner3}).then(function() {
-                                return lhProxyContract.balanceOf.call(loc_contracts[0].address).then(function(r2) {
-                                    assert.equal(r2, 990099);
+                return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner1}).then(function () {
+                        return shareable.confirm(conf_sign, {from: owner2}).then(function () {
+                            return shareable.confirm(conf_sign, {from: owner3}).then(function () {
+                                return lhProxyContract.balanceOf.call(contractsManager.address).then(function (r2) {
+                                    assert.equal(r2, 1000000);
                                 });
                             });
                         });
@@ -967,102 +983,132 @@ contract('ChronoMint', function(accounts) {
             });
         });
 
-        it("shouldn't increment pending operation counter ", function() {
-            return shareable.pendingsCount.call({from: owner}).then(function(r) {
+        it("shouldn't increment pending operation counter ", function () {
+            return shareable.pendingsCount.call({from: owner}).then(function (r) {
                 assert.equal(r, 0);
             });
         });
 
-        it("should show LOC issued 1000000", function() {
-            return loc_contracts[0].getIssued.call().then(function(r) {
+        it("should show LOC issued 1000000", function () {
+            return loc_contracts[0].getIssued.call().then(function (r) {
                 assert.equal(r, 1000000);
             });
         });
 
-        it("should show 1% of issued 1000000 on rewards contract balance", function() {
-            return lhProxyContract.balanceOf.call(rewards.address).then(function(r) {
-                assert.equal(r, 9901);
-            });
-        });
-
-        it("should be able to set Buy and Sell Exchange rates", function() {
-            return contractsManager.setExchangePrices(exchange.address,10,20,{
-                from: accounts[0],
+        it("should be abble to Revoke 500000 LHT for LOC according to issueLimit", function () {
+            return contractsManager.revokeAsset(SYMBOL2, 500000, loc_contracts[0].address, {
+                from: owner,
                 gas: 3000000
-            }).then(function() {
-                return exchange.buyPrice.call().then(function(r) {
-                    return exchange.sellPrice.call().then(function(r2) {
-                        assert.equal(r,10);
-                        assert.equal(r2,20);
-                    });
-                });
-            });
-        });
-
-        it("shouldn't be able to send 100 LHT from LOC to exchange", function() {
-            return chronoMint.sendLOCAsset(loc_contracts[0].address,lhProxyContract.address,exchange.address,100, {from: owner, gas: 3000000}).then(function(r) {
+            }).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return shareable.confirm(conf_sign,{from:owner4}).then(function() {
-                    return shareable.confirm(conf_sign,{from:owner1}).then(function() {
+                return shareable.confirm(conf_sign, {from: owner4}).then(function () {
+                    return shareable.confirm(conf_sign, {from: owner1}).then(function () {
                         return shareable.confirm(conf_sign, {from: owner2}).then(function () {
                             return shareable.confirm(conf_sign, {from: owner3}).then(function () {
-                                return lhProxyContract.balanceOf.call(exchange.address).then(function (r2) {
-                                    assert.equal(r2, 100);
+                                return lhProxyContract.balanceOf.call(contractsManager.address).then(function (r2) {
+                                    assert.equal(r2, 500000);
                                 });
                             });
                         });
+                    })
+                });
+            });
+        });
+
+        it("should show LOC issued 500000", function () {
+            return loc_contracts[0].getIssued.call().then(function (r) {
+                assert.equal(r, 500000);
+            });
+        });
+
+        it("should be able to send 500000 LHT to exchange", function () {
+            return contractsManager.sendAsset('LHT', exchange.address, 500000, {
+                from: owner,
+                gas: 3000000
+            }).then(function () {
+                return lhProxyContract.balanceOf.call(exchange.address).then(function (r) {
+                    assert.equal(r, 495049);
+                });
+            });
+        });
+
+        it("should show 1% of transfered to exchange 500000 on rewards contract balance", function () {
+            return lhProxyContract.balanceOf.call(rewards.address).then(function (r) {
+                assert.equal(r, 4951);
+            });
+        });
+
+        it("should be able to set Buy and Sell Exchange rates", function () {
+            return contractsManager.setExchangePrices(exchange.address, 10, 20, {
+                from: accounts[0],
+                gas: 3000000
+            }).then(function () {
+                return exchange.buyPrice.call().then(function (r) {
+                    return exchange.sellPrice.call().then(function (r2) {
+                        assert.equal(r, 10);
+                        assert.equal(r2, 20);
                     });
                 });
             });
         });
 
-        it("checks that Exchange has 1000 ETH and 100 LHT", function() {
-            return lhProxyContract.balanceOf.call(exchange.address).then(function(r2) {
-                assert.equal(web3.eth.getBalance(exchange.address),1000);
-                assert.equal(r2,100);
+        it("checks that Exchange has 1000 ETH and 100 LHT", function () {
+            return lhProxyContract.balanceOf.call(exchange.address).then(function (r2) {
+                assert.equal(web3.eth.getBalance(exchange.address), 1000);
+                assert.equal(r2, 495049);
             });
         });
 
-        it("should allow owner to buy 10 LHT for 20 Eth each", function() {
-            return exchange.buy(10,20,{value:10*20}).then(function() {
-                return lhProxyContract.balanceOf.call(owner).then(function(r) {
-                    assert.equal(r,10);
+        it("should allow owner to buy 10 LHT for 20 Eth each", function () {
+            return exchange.buy(10, 20, {value: 10 * 20}).then(function () {
+                return lhProxyContract.balanceOf.call(owner).then(function (r) {
+                    assert.equal(r, 10);
                 });
             });
         });
 
-        it("should allow owner to sell 9 LHT for 10 Eth each", function() {
-            return lhProxyContract.approve(exchange.address,10).then(function() {
+        it("should allow owner to sell 9 LHT for 10 Eth each", function () {
+            return lhProxyContract.approve(exchange.address, 10).then(function () {
                 var old_balance = web3.eth.getBalance(owner);
-                return exchange.sell(9,10, {from: owner, gas: 300000}).then(function(r) {
-                    return lhProxyContract.balanceOf.call(owner).then(function(r) {
-                        assert.equal(r,0);
+                return exchange.sell(9, 10, {from: owner, gas: 300000}).then(function (r) {
+                    return lhProxyContract.balanceOf.call(owner).then(function (r) {
+                        assert.equal(r, 0);
                     });
                 });
             });
         });
 
-        it("check Owner has 100 TIME", function() {
-            return timeProxyContract.balanceOf.call(owner).then(function(r) {
-                assert.equal(r,100);
+        it("check Owner has 100 TIME", function () {
+            return timeProxyContract.balanceOf.call(owner).then(function (r) {
+                assert.equal(r, 100);
             });
         });
 
-        it("owner should be able to approve 100 TIME to TimeHolder", function() {
+        it("owner should be able to approve 100 TIME to TimeHolder", function () {
             return timeProxyContract.approve.call(timeHolder.address, 100, {from: owner}).then((r) => {
                     return timeProxyContract.approve(timeHolder.address, 100, {from: owner}).then(() => {
                         assert.isOk(r);
-        });
-        });
+        })
+            ;
+        })
+            ;
         });
 
-        it("should be able to deposit 100 TIME from owner", function() {
+        it("should be able to deposit 100 TIME from owner", function () {
             return timeHolder.deposit(100, {from: owner}).then(() => {
                     return timeHolder.depositBalance(owner, {from: owner}).then((r) => {
-                        assert.equal(r,100);
+                        assert.equal(r, 100);
+        })
+            ;
+        })
+            ;
         });
-        });
-        });
+
+        it("should return periods length = 1", function () {
+            return rewards.periodsLength.call().then((r) => {
+                assert.equal(r, 1);
+        })
+        })
 
         it("should be able posible to close rewards period and destribute rewards", function() {
             return rewards.closePeriod({from: owner}).then(() => {
@@ -1075,8 +1121,8 @@ contract('ChronoMint', function(accounts) {
                                             return lhProxyContract.balanceOf.call(owner).then((r4) => {
                                                 assert.equal(r1, 100);
                                                 assert.equal(r2, 100);
-                                                assert.equal(r3, 9904); //issue reward + exchage sell + exchange buy
-                                                assert.equal(r4, 9904);
+                                                assert.equal(r3, 4953); //issue reward + exchage sell + exchange buy
+                                                assert.equal(r4, 4953);
         })
         })
         })

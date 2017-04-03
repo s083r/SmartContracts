@@ -124,13 +124,22 @@ contract ContractsManager is Managed {
         if (platform != 0x0) {
             if(_value <= LOCInterface(_locAddr).getIssueLimit() &&  LOCInterface(_locAddr).getIssued() < LOCInterface(_locAddr).getIssueLimit()) {
                 if(ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value)) {
-                    address assetProxy = ChronoBankPlatformInterface(platform).proxies(_symbol);
-                    uint feePercent = FeeInterface(ChronoBankAssetProxyInterface(assetProxy).getLatestVersion()).feePercent();
-                    uint amount = (_value * 10000)/(10000 + feePercent);
-                    sendAsset(_symbol,_locAddr,amount);
                     address Mint = LOCInterface(_locAddr).getContractOwner();
                     reissue(_value, _locAddr);
-                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, _value);
+                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256,bool)")), _locAddr, _value, false);
+                }
+            }
+        }
+        return false;
+    }
+
+    function revokeAsset(bytes32 _symbol, uint _value, address _locAddr) execute(Shareable.Operations.editMint) returns (bool) {
+        if (platform != 0x0) {
+            if(_value <= LOCInterface(_locAddr).getIssueLimit()) {
+                if(ChronoBankPlatformInterface(platform).revokeAsset(_symbol, _value)) {
+                    address Mint = LOCInterface(_locAddr).getContractOwner();
+                    reissue(_value, _locAddr);
+                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256,bool)")), _locAddr, _value, true);
                 }
             }
         }
@@ -138,6 +147,12 @@ contract ContractsManager is Managed {
     }
 
     function sendAsset(bytes32 _symbol, address _to, uint _value) onlyAuthorized() returns (bool) {
+        if(_symbol == bytes32('LHT')) {
+            address assetProxy = ChronoBankPlatformInterface(platform).proxies(_symbol);
+            uint feePercent = FeeInterface(ChronoBankAssetProxyInterface(assetProxy).getLatestVersion()).feePercent();
+            uint amount = (_value * 10000)/(10000 + feePercent);
+            return ERC20Interface(ChronoBankPlatformInterface(platform).proxies(_symbol)).transfer(_to, amount);
+        }
         return ERC20Interface(ChronoBankPlatformInterface(platform).proxies(_symbol)).transfer(_to, _value);
     }
 

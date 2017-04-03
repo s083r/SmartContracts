@@ -96,6 +96,10 @@ contract Rewards {
         return true;
     }
 
+    function periodsLength() constant returns(uint) {
+        return periods.length;
+    }
+
     modifier onlyTimeHolder() {
         if (msg.sender == timeHolder) {
             _;

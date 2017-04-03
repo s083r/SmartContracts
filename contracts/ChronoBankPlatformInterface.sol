@@ -21,6 +21,7 @@ contract ChronoBankPlatformInterface {
     function _address(uint _holderId) returns(address); 
 
     function reissueAsset(bytes32 _symbol, uint _value) returns(bool);
+    function revokeAsset(bytes32 _symbol, uint _value) returns(bool);
 
     // Asset symbol to asset proxy mapping.
     mapping(bytes32 => address) public proxies;
