@@ -122,11 +122,12 @@ contract ContractsManager is Managed {
 
     function reissueAsset(bytes32 _symbol, uint _value, address _locAddr) execute(Shareable.Operations.editMint) returns (bool) {
         if (platform != 0x0) {
-            if(_value <= LOCInterface(_locAddr).getIssueLimit() &&  LOCInterface(_locAddr).getIssued() < LOCInterface(_locAddr).getIssueLimit()) {
+            uint issued = LOCInterface(_locAddr).getIssued();
+            if(_value <= LOCInterface(_locAddr).getIssueLimit() - issued) {
                 if(ChronoBankPlatformInterface(platform).reissueAsset(_symbol, _value)) {
                     address Mint = LOCInterface(_locAddr).getContractOwner();
                     reissue(_value, _locAddr);
-                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256,bool)")), _locAddr, _value, false);
+                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, issued + _value);
                 }
             }
         }
@@ -135,11 +136,12 @@ contract ContractsManager is Managed {
 
     function revokeAsset(bytes32 _symbol, uint _value, address _locAddr) execute(Shareable.Operations.editMint) returns (bool) {
         if (platform != 0x0) {
-            if(_value <= LOCInterface(_locAddr).getIssueLimit()) {
+            uint issued = LOCInterface(_locAddr).getIssued();
+            if(_value <= issued) {
                 if(ChronoBankPlatformInterface(platform).revokeAsset(_symbol, _value)) {
                     address Mint = LOCInterface(_locAddr).getContractOwner();
                     reissue(_value, _locAddr);
-                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256,bool)")), _locAddr, _value, true);
+                    return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, issued - _value);
                 }
             }
         }
