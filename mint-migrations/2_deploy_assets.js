@@ -1,3 +1,5 @@
+const truffleConfig = require('../truffle-config.js');
+
 var ChronoBankPlatform = artifacts.require("./ChronoBankPlatform.sol");
 var ChronoBankPlatformEmitter = artifacts.require("./ChronoBankPlatformEmitter.sol");
 var EventsHistory = artifacts.require("./EventsHistory.sol");
@@ -8,6 +10,9 @@ var ChronoBankAssetWithFee = artifacts.require("./ChronoBankAssetWithFee.sol");
 var Exchange = artifacts.require("./Exchange.sol");
 var Rewards = artifacts.require("./Rewards.sol");
 module.exports = function(deployer,network) {
+ console.log(network);
+  if(network != 'development');
+    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x1000')
     return deployer.deploy(EventsHistory).then(function () {
         return deployer.deploy(ChronoBankPlatform).then(function () {
             return deployer.deploy(ChronoBankAsset).then(function () {
