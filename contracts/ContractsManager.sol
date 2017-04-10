@@ -20,9 +20,7 @@ contract ContractsManager is Managed {
     mapping (address => uint) internal contractsId;
     mapping (address => uint) internal otherContractsId;
     mapping (uint => bytes32) internal contractsHash1;
-    mapping (uint => bytes14) internal contractsHash2;
     mapping (uint => bytes32) internal otherContractsHash1;
-    mapping (uint => bytes14) internal otherContractsHash2;
 
     event updateContract(address contractAddress);
     event updateOtherContract(address contractAddress);
@@ -47,24 +45,22 @@ contract ContractsManager is Managed {
         }
     }
 
-    function setContractHash(uint _id, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
+    function setContractHash(uint _id, bytes32 _hash1) onlyAuthorized() returns (bool) {
         contractsHash1[_id] = _hash1;
-        contractsHash2[_id] = _hash2;
         return true;
     }
 
-    function setOtherContractHash(uint _id, bytes32 _hash1, bytes14 _hash2) onlyAuthorized() returns (bool) {
+    function setOtherContractHash(uint _id, bytes32 _hash1) onlyAuthorized() returns (bool) {
         otherContractsHash1[_id] = _hash1;
-        otherContractsHash2[_id] = _hash2;
         return true;
     }
 
-    function getContractHash(uint _id) constant returns (bytes32, bytes14) {
-        return (contractsHash1[_id], contractsHash2[_id]);
+    function getContractHash(uint _id) constant returns (bytes32) {
+        return (contractsHash1[_id]);
     }
 
-    function getOtherContractHash(uint _id) constant returns (bytes32, bytes14) {
-        return (otherContractsHash1[_id],otherContractsHash2[_id]);
+    function getOtherContractHash(uint _id) constant returns (bytes32) {
+        return (otherContractsHash1[_id]);
     }
 
     function getAssetBalances(bytes32 _symbol, uint _startId, uint _num) constant
