@@ -39,15 +39,15 @@ contract UserManager is Managed {
         UserStorage(userStorage).addMember(key, false);
     }
 
-    function setMemberHash(address key, bytes32 _hash1) onlyAuthorized() returns (bool) {
+    function setMemberHash(address key, bytes32 _hash) onlyAuthorized() returns (bool) {
         createMemberIfNotExist(key);
-        UserStorage(userStorage).setHashes(key, _hash1);
+        UserStorage(userStorage).setHashes(key, _hash);
         return true;
     }
 
-    function setOwnHash(bytes32 _hash1) returns (bool) {
+    function setOwnHash(bytes32 _hash) returns (bool) {
         createMemberIfNotExist(msg.sender);
-        UserStorage(userStorage).setHashes(msg.sender, _hash1);
+        UserStorage(userStorage).setHashes(msg.sender, _hash);
         return true;
     }
 

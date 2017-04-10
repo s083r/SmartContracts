@@ -8,7 +8,7 @@ contract UserStorage {
     mapping (uint => Member) public members;
     struct Member {
     address memberAddr;
-    bytes32 hash1;
+    bytes32 hash;
     bool isCBE;
     }
 
@@ -64,18 +64,18 @@ contract UserStorage {
         return true;
     }
 
-    function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes1) {
+    function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes) {
         addresses = new address[](adminCount);
-        hashes1 = new bytes32[](adminCount);
+        hashes = new bytes32[](adminCount);
         uint j = 0;
         for (uint i = 1; i < userCount; i++) {
             if (members[i].isCBE) {
                 addresses[j] = members[i].memberAddr;
-                hashes1[j] = members[i].hash1;
+                hashes[j] = members[i].hash;
                 j++;
             }
         }
-        return (addresses, hashes1);
+        return (addresses, hashes);
     }
 
     function addMember(address _member, bool _isCBE) onlyOwner() returns (bool) {
@@ -104,13 +104,13 @@ contract UserStorage {
         return true;
     }
 
-    function setHashes(address _member, bytes32 _hash1) onlyOwner() returns (bool) {
-        members[userIndex[_member]].hash1 = _hash1;
+    function setHashes(address _member, bytes32 _hash) onlyOwner() returns (bool) {
+        members[userIndex[_member]].hash = _hash;
         return true;
     }
 
     function getHash(address _member) constant returns (bytes32) {
-        return (members[userIndex[_member]].hash1);
+        return (members[userIndex[_member]].hash);
     }
 
     function deleteMember(uint _id) onlyOwner() returns (bool) {
