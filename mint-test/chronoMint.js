@@ -15,6 +15,7 @@ var Shareable = artifacts.require("./PendingManager.sol");
 var LOC = artifacts.require("./LOC.sol");
 var TimeHolder = artifacts.require("./TimeHolder.sol");
 var Reverter = require('./helpers/reverter');
+var bytes32fromBase58 = require('./helpers/bytes32fromBase58');
 var bytes32 = require('./helpers/bytes32');
 var Require = require("truffle-require");
 var Config = require("truffle-config");
@@ -387,12 +388,10 @@ contract('ChronoMint', function(accounts) {
         it("allow CBE member to set his IPFS orbit-db hash", function() {
             return userManager.setMemberHash(
                 owner,
-                bytes32('QmTeW79w7QQ6Npa3b1d5tANreCDxF2iD'),
-                bytes32('aAPsDvW6KtLmfB', true)
+                bytes32fromBase58('Qma5WFy18Uw82xVufv75gjnLJxGbAKFJCjFWTWAmYABhqP')
             ).then(function(){
                 return userManager.getMemberHash.call(owner).then(function(r){
-                    assert.equal(r[0], bytes32('QmTeW79w7QQ6Npa3b1d5tANreCDxF2iD'));
-                    assert.equal(r[1], bytes32('aAPsDvW6KtLmfB', true));
+                    assert.equal(r[0], bytes32fromBase58('Qma5WFy18Uw82xVufv75gjnLJxGbAKFJCjFWTWAmYABhqP'));
                 });
             });
         });
