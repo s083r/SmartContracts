@@ -10,8 +10,13 @@ var TimeHolder = artifacts.require("./TimeHolder.sol");
 var Vote = artifacts.require("./Vote.sol");
 module.exports = function(deployer, network) {
  console.log(network);
-  if(network != 'development');
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x1000')
+  if(network != 'development')
+  {
+    if(network == 'kovan')
+    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x3000')
+    else 
+    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, 3000)
+  }
     return deployer.deploy(UserStorage).then(function () {
         return deployer.deploy(UserManager).then(function () {
             return deployer.deploy(TimeHolder).then(function () {
@@ -20,19 +25,19 @@ module.exports = function(deployer, network) {
                         return deployer.deploy(Vote,ChronoBankAssetProxy.address).then(function () {
                             return deployer.deploy(ContractsManager).then(function () {
                                 return UserStorage.deployed().then(function (instance) {
-                                    instance.addOwner(UserManager.address);
+                                    return instance.addOwner(UserManager.address).then(function () {
                                     return ChronoMint.deployed().then(function (instance) {
-                                        instance.init(UserStorage.address, Shareable.address, ContractsManager.address);
+                                        return instance.init(UserStorage.address, Shareable.address, ContractsManager.address).then(function () {
                                         return ContractsManager.deployed().then(function (instance) {
-                                            instance.init(UserStorage.address, Shareable.address);
+                                            return instance.init(UserStorage.address, Shareable.address).then(function () {
                                             return Vote.deployed().then(function (instance) {
-                                                instance.init(TimeHolder.address, UserStorage.address, Shareable.address);
+                                                return instance.init(TimeHolder.address, UserStorage.address, Shareable.address).then(function () {
                                                 return Shareable.deployed().then(function (instance) {
-                                                    instance.init(UserStorage.address);
+                                                    return instance.init(UserStorage.address).then(function () {
                                                     return UserManager.deployed().then(function (instance) {
-                                                        instance.init(UserStorage.address, Shareable.address);
+                                                        return instance.init(UserStorage.address, Shareable.address).then(function () {
                                                         return TimeHolder.deployed().then(function (instance) {
-                                                            instance.init(UserStorage.address, ChronoBankAssetProxy.address);
+                                                            return instance.init(UserStorage.address, ChronoBankAssetProxy.address).then(function () {
                                                         });
                                                     });
                                                 });
@@ -46,5 +51,12 @@ module.exports = function(deployer, network) {
                 });
             });
         });
+    });
+    });
+    });
+    });
+    });
+    });
+    });
     });
 }
