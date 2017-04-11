@@ -59,8 +59,8 @@ contract ChronoMint is Managed {
         offeringCompaniesCounter--;
     }
 
-    function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash1, uint _expDate) onlyAuthorized() returns(address) {
-        address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash1, _expDate);
+    function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
+        address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash, _expDate);
         offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
         offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
         offeringCompaniesCounter++;

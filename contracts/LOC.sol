@@ -6,12 +6,12 @@ import "./ERC20Interface.sol";
 contract LOC is Configurable {
     Status public status;
 
-    function LOC(bytes32 _name, bytes32 _website, address _controller, uint _issueLimit, bytes32 _publishedHash1, uint _expDate){
+    function LOC(bytes32 _name, bytes32 _website, address _controller, uint _issueLimit, bytes32 _publishedHash, uint _expDate){
         status = Status.maintenance;
         contractOwner = _controller;
         settings[uint(Setting.name)] = _name;
         settings[uint(Setting.website)] = _website;
-        settings[uint(Setting.publishedHash1)] = _publishedHash1;
+        settings[uint(Setting.publishedHash)] = _publishedHash;
         values[uint(Setting.issueLimit)] = _issueLimit;
         values[uint(Setting.expDate)] = _expDate;
     }
