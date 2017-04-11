@@ -361,7 +361,7 @@ contract('ChronoMint', function(accounts) {
                 bytes32("Bob's Hard Workers"),
                 bytes32("www.ru"),
                 1000,
-                bytes32fromBase58('QmTeW79w7QQ6Npa3b1d5tANreCDxF2iDaAPsDvW6KtLmfB'),
+                bytes32fromBase58("QmTeW79w7QQ6Npa3b1d5tANreCDxF2iDaAPsDvW6KtLmfB"),
                 unix
             ).then(function(r){
                 loc_contracts[0] = LOC.at(r.logs[0].args._LOC);
@@ -665,7 +665,7 @@ contract('ChronoMint', function(accounts) {
                 bytes32("Bob's Hard Workers"),
                 bytes32("www.ru"),
                 1000000,
-                bytes32("QmTeW79w7QQ6Npa3b1d5tANreCDxF2iDaAPsDvW6KtLmfB"),
+                bytes32fromBase58("QmTeW79w7QQ6Npa3b1d5tANreCDxF2iDaAPsDvW6KtLmfB"),
                 unix
             ).then(function (r) {
                 loc_contracts[0] = LOC.at(r.logs[0].args._LOC);
