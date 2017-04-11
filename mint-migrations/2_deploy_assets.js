@@ -11,8 +11,12 @@ var Exchange = artifacts.require("./Exchange.sol");
 var Rewards = artifacts.require("./Rewards.sol");
 module.exports = function(deployer,network) {
  console.log(network);
-  if(network != 'development');
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x1000')
+  if(network != 'development')
+  { if(network == 'kovan')
+    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x3000')
+    else 
+    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, 3000)
+  }  
     return deployer.deploy(EventsHistory).then(function () {
         return deployer.deploy(ChronoBankPlatform).then(function () {
             return deployer.deploy(ChronoBankAsset).then(function () {

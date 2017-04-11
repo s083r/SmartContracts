@@ -61,6 +61,7 @@ contract PendingManager {
 // we record owner and operation (hash) alongside it.
     event Confirmation(address owner, bytes32 operation);
     event Revoke(address owner, bytes32 operation);
+    event Done(bytes);
 
 /// MODIFIERS
 
@@ -165,6 +166,7 @@ contract PendingManager {
             // ok - check if count is enough to go ahead.
                 if (pending.yetNeeded <= 1) {
                 // enough confirmations: reset and run interior.
+                    Done(txs[_operation].data);
                     delete pendingsIndex[pendings[_operation].index];
                     removeOp(pendings[_operation].index);
                     delete pendings[_operation];
