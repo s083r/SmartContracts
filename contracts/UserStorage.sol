@@ -8,8 +8,7 @@ contract UserStorage {
     mapping (uint => Member) public members;
     struct Member {
     address memberAddr;
-    bytes32 hash1;
-    bytes14 hash2;
+    bytes32 hash;
     bool isCBE;
     }
 
@@ -65,25 +64,23 @@ contract UserStorage {
         return true;
     }
 
-    function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes1, bytes14[] hashes2) {
+    function getCBEMembers() constant returns (address[] addresses, bytes32[] hashes) {
         addresses = new address[](adminCount);
-        hashes1 = new bytes32[](adminCount);
-        hashes2 = new bytes14[](adminCount);
+        hashes = new bytes32[](adminCount);
         uint j = 0;
         for (uint i = 1; i < userCount; i++) {
             if (members[i].isCBE) {
                 addresses[j] = members[i].memberAddr;
-                hashes1[j] = members[i].hash1;
-                hashes2[j] = members[i].hash2;
+                hashes[j] = members[i].hash;
                 j++;
             }
         }
-        return (addresses, hashes1, hashes2);
+        return (addresses, hashes);
     }
 
     function addMember(address _member, bool _isCBE) onlyOwner() returns (bool) {
         if (userIndex[_member] == uint(0x0)) {
-            members[userCount] = Member(_member, 1, 1, _isCBE);
+            members[userCount] = Member(_member, 1, _isCBE);
             userIndex[_member] = userCount;
             userCount++;
             if (_isCBE) {
@@ -107,14 +104,13 @@ contract UserStorage {
         return true;
     }
 
-    function setHashes(address _member, bytes32 _hash1, bytes14 _hash2) onlyOwner() returns (bool) {
-        members[userIndex[_member]].hash1 = _hash1;
-        members[userIndex[_member]].hash2 = _hash2;
+    function setHashes(address _member, bytes32 _hash) onlyOwner() returns (bool) {
+        members[userIndex[_member]].hash = _hash;
         return true;
     }
 
-    function getHash(address _member) constant returns (bytes32, bytes14) {
-        return (members[userIndex[_member]].hash1, members[userIndex[_member]].hash2);
+    function getHash(address _member) constant returns (bytes32) {
+        return (members[userIndex[_member]].hash);
     }
 
     function deleteMember(uint _id) onlyOwner() returns (bool) {

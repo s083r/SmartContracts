@@ -12,14 +12,14 @@ var providerUrl = "https://testnet.infura.io";
 var engine = new ProviderEngine();
 var address;
 
-fs.readFile('/Users/mikefluff/Downloads/Unknown1.css', 'utf8', function (err,data) {
-var wallet = Wallet.fromV3(data, 'QWEpoi123', true);
-address = "0x" + wallet.getAddress().toString("hex");
-console.log(address);
-engine.addProvider(new WalletSubprovider(wallet, {}));
-engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(providerUrl)));
-engine.start(); // Required by the provider engine.
-});
+// fs.readFile('/Users/mikefluff/Downloads/Unknown1.css', 'utf8', function (err,data) {
+// var wallet = Wallet.fromV3(data, 'QWEpoi123', true);
+// address = "0x" + wallet.getAddress().toString("hex");
+// console.log(address);
+// engine.addProvider(new WalletSubprovider(wallet, {}));
+// engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(providerUrl)));
+// engine.start(); // Required by the provider engine.
+// });
 
 module.exports = {
 networks: {
