@@ -5,21 +5,19 @@ var ProviderEngine = require("web3-provider-engine");
 var WalletSubprovider = require('web3-provider-engine/subproviders/wallet.js');
 var Web3Subprovider = require("web3-provider-engine/subproviders/web3.js");
 var Web3 = require("web3");
-
-fs = require('fs')
+var FilterSubprovider = require('web3-provider-engine/subproviders/filters.js');
 
 var providerUrl = "https://testnet.infura.io";
 var engine = new ProviderEngine();
 var address;
 
-fs.readFile('/Users/mikefluff/Downloads/Unknown1.css', 'utf8', function (err,data) {
+data = '';
 var wallet = Wallet.fromV3(data, 'QWEpoi123', true);
 address = "0x" + wallet.getAddress().toString("hex");
-console.log(address);
+engine.addProvider(new FilterSubprovider())
 engine.addProvider(new WalletSubprovider(wallet, {}));
 engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(providerUrl)));
 engine.start(); // Required by the provider engine.
-});
 
 module.exports = {
 networks: {
