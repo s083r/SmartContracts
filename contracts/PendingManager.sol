@@ -61,7 +61,7 @@ contract PendingManager {
 // we record owner and operation (hash) alongside it.
     event Confirmation(address owner, bytes32 operation);
     event Revoke(address owner, bytes32 operation);
-    event Done(bytes);
+    event Done(bytes data);
 
 /// MODIFIERS
 
