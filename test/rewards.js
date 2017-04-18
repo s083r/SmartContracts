@@ -23,7 +23,7 @@ contract('Rewards', (accounts) => {
   const ZERO_INTERVAL = 0;
   const SHARES_BALANCE = 1000;
 
-  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL).then(() => userStorage.addOwner(userManager.address)).then(() => userManager.init(userStorage.address, 0x1)).then(() => timeHolder.init(userStorage.address, shares.address)).then(() => timeHolder.addListener(reward.address)); };
+  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL).then(() => userStorage.addOwner(userManager.address)).then(() => userManager.init(userStorage.address, 0x1)).then(() => timeHolder.init(userStorage.address, shares.address)); };
 
   let assertSharesBalance = (address, expectedBalance) => {
     return shares.balanceOf(address)
@@ -63,6 +63,11 @@ contract('Rewards', (accounts) => {
   let assertRewardsFor = (address, assetAddress, expectedBalance) => {
     return reward.rewardsFor(assetAddress, address)
       .then((balance) => assert.equal(balance.toString(), '' + expectedBalance));
+  };
+
+  let assertUniqueHoldersForPeriod = (period, expectedCount) => {
+    return reward.periodUnique(period)
+      .then((count) => assert.equal(count.toString(), '' + expectedCount));
   };
 
   before('Setup', (done) => {
@@ -313,8 +318,8 @@ contract('Rewards', (accounts) => {
 
       // 2nd period - should accept all shares
       .then(() => asset1.mint(reward.address, 200))
-      .then(() => timeHolder.depositFor(accounts[0], 0))
-      .then(() => timeHolder.depositFor(accounts[1], 0))
+      //.then(() => timeHolder.depositFor(accounts[0], 0))
+      //.then(() => timeHolder.depositFor(accounts[1], 0))
       .then(reward.closePeriod)
       .then(() => assertTotalDepositInPeriod(1, 100))
       .then(() => reward.registerAsset(asset1.address))
@@ -353,16 +358,11 @@ contract('Rewards', (accounts) => {
       .then(() => assertDepositBalanceInPeriod(accounts[0], 0, 100))
       .then(() => assertTotalDepositInPeriod(0, 100))
       .then(reward.closePeriod)
-
+      .then(() => assertUniqueHoldersForPeriod(0,1))
       .then(() => timeHolder.withdrawShares(50))
       .then(() => assertDepositBalance(accounts[0], 50))
       .then(() => assertDepositBalanceInPeriod(accounts[0], 1, 50))
       .then(() => assertTotalDepositInPeriod(1, 50))
-
-      .then(() => timeHolder.deposit(0))
-      .then(() => assertDepositBalance(accounts[0], 50))
-      .then(() => assertDepositBalanceInPeriod(accounts[0], 1, 50))
-      .then(() => assertTotalDepositInPeriod(1, 50));
   });
 
   it('should withdraw shares', () => {
