@@ -7,7 +7,8 @@ import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 contract TimeHolder is Managed {
 
     mapping(address => uint) public shares;
-    mapping(uint => address)  public shareholdersId;
+    mapping(uint => address)  public shareholders;
+    mapping(address => uint)  public shareholdersId;
     uint public shareholdersCount = 1;
 
     mapping(address => uint) listenerIndex;
@@ -89,9 +90,11 @@ contract TimeHolder is Managed {
             Error("Shares transfer failed");
             return false;
         }
-
+        if(shareholdersId[_address] == 0) {
+            shareholders[shareholdersCount] = _address;
+            shareholdersId[_address] = shareholdersCount++;
+        }
         shares[_address] += _amount;
-        shareholdersId[shareholdersCount++] = _address;
         totalShares += _amount;
 
         for(uint i = 1; i < listenersCount; i++) {
@@ -131,6 +134,7 @@ contract TimeHolder is Managed {
         WithdrawShares(msg.sender, _amount);
         return true;
     }
+
 
 /**
  * Returns shares amount deposited by a particular shareholder.
