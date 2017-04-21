@@ -6,6 +6,7 @@ import "./Managed.sol";
 contract ChronoMint is Managed {
 
     uint offeringCompaniesCounter;
+    uint[] deletedIds;
     address contractManager;
     mapping(uint => address) offeringCompanies;
     mapping(address => uint) offeringCompaniesIDs;
@@ -31,6 +32,10 @@ contract ChronoMint is Managed {
         }
     }
 
+    function deletedIdsLength() returns (uint) {
+        return deletedIds.length;
+    }
+
     function setLOCIssued(address _LOCaddr, uint _issued) isContractManager returns (bool) {
         updLOCValue(this, _LOCaddr, _issued, Configurable.Setting.issued);
         return LOC(_LOCaddr).setIssued(_issued);
@@ -44,26 +49,26 @@ contract ChronoMint is Managed {
     }
 
     function removeLOC(address _locAddr) execute(Shareable.Operations.editMint) returns (bool) {
-        remove(offeringCompaniesIDs[_locAddr]);
+        delete offeringCompanies[offeringCompaniesIDs[_locAddr]];
+        deletedIds.push(offeringCompaniesIDs[_locAddr]);
         delete offeringCompaniesIDs[_locAddr];
         remLOC(msg.sender, _locAddr);
         return true;
     }
 
-    function remove(uint i) internal {
-        if (i >= offeringCompaniesCounter) return;
-
-        for (; i<offeringCompaniesCounter-1; i++){
-            offeringCompanies[i] = offeringCompanies[i+1];
-        }
-        offeringCompaniesCounter--;
-    }
-
     function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
         address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash, _expDate);
-        offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
-        offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
-        offeringCompaniesCounter++;
+        if(deletedIds.length != 0) {
+            offeringCompaniesIDs[locAddr] = deletedIds[deletedIds.length-1];
+            offeringCompanies[deletedIds[deletedIds.length-1]] = locAddr;
+            deletedIds.length--;
+        }
+        else {
+            offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
+            offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
+            offeringCompaniesCounter++;
+
+        }
         newLOC(msg.sender, locAddr);
         return locAddr;
     }

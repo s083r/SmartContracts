@@ -380,14 +380,11 @@ contract('ChronoMint', function(accounts) {
         it("allows CBE member to remove LOC", function() {
             return chronoMint.removeLOC(loc_contracts[0].address).then(function() {
                 return chronoMint.getLOCCount.call().then(function(r){
-                    assert.equal(r, 0);
+                return chronoMint.deletedIdsLength.call().then(function(r2){
+                    assert.equal(r, 1);
+		    assert.equal(r2, 1);
                 });
-            });
-        });
-
-        it("Removed LOC should decrement LOCs counter", function() {
-            return chronoMint.getLOCCount.call().then(function(r){
-                assert.equal(r, 0);
+                });
             });
         });
 
