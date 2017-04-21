@@ -135,7 +135,6 @@ contract TimeHolder is Managed {
         return true;
     }
 
-
 /**
  * Returns shares amount deposited by a particular shareholder.
  *

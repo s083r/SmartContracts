@@ -1,6 +1,7 @@
 pragma solidity ^0.4.8;
 
 import "./TimeHolder.sol";
+import "./Owned.sol";
 
 /**
  * @title Universal decentralized ERC20 tokens rewards contract.
@@ -32,7 +33,7 @@ import "./TimeHolder.sol";
  * Note: all the non constant functions return false instead of throwing in case if state change
  * didn't happen yet.
  */
-contract Rewards {
+contract Rewards is Owned {
 // Structure of a particular period.
     struct Period {
     uint startDate;                                           // Period starting date, also
@@ -40,6 +41,8 @@ contract Rewards {
     uint shareholdersCount;
     bool isClosed;
     mapping(address => uint) shares;                          // Shareholder shares in period.
+    mapping(uint => address) shareholders;
+    mapping(address => uint) shareholdersId;
     mapping(address => uint) assetBalances;                   // Rewards for distribution.
     mapping(address => mapping(address => bool)) calculated;  // Flag that indicates that rewards
     // already distributed for holder.
@@ -49,6 +52,9 @@ contract Rewards {
 
 // Minimum period length, in days.
     uint public closeInterval;
+
+// Maximum shares which can be transfered in on TX
+    uint public maxSharesTransfer = 150;
 
 // Asset rewards accumulated for shareholder.
     mapping(address => mapping(address => uint)) rewards;
@@ -74,6 +80,8 @@ contract Rewards {
 // Something went wrong.
     event Error(bytes32 message);
 
+    event Test(uint test);
+
 /**
  * Sets TimeHolder contract and period minimum length.
  * Starts the first period.
@@ -96,6 +104,16 @@ contract Rewards {
         periods[0].shareholdersCount = 1;
         periods[0].startDate = now;
 
+        return true;
+    }
+
+    function setCloseInterval(uint _closeInterval) onlyContractOwner returns(bool) {
+        closeInterval = _closeInterval;
+        return true;
+    }
+
+    function setMaxSharesTransfer(uint _maxSharesTransfer) onlyContractOwner returns(bool) {
+        maxSharesTransfer = _maxSharesTransfer;
         return true;
     }
 
@@ -132,25 +150,34 @@ contract Rewards {
     // Add new period.
         periods.length++;
         periods[lastPeriod()].startDate = now;
-
         periods[lastClosedPeriod()].shareholdersCount = TimeHolder(timeHolder).shareholdersCount();
         //periods[lastClosedPeriod()].totalShares = TimeHolder(timeHolder).totalShares();
 
         storeDeposits(0);
-
         PeriodClosed();
         return true;
 
     }
 
+    function getPartsCount() constant returns(uint) {
+        Period period = periods[lastClosedPeriod()];
+        if(!period.isClosed && period.shareholdersCount > maxSharesTransfer) {
+            if(period.shareholdersCount % maxSharesTransfer == 0)
+                return period.shareholdersCount / maxSharesTransfer;
+            else
+                return period.shareholdersCount / maxSharesTransfer + 1;
+        }
+        return 0;
+    }
+
     function storeDeposits(uint _part) returns(bool) {
-        uint first = _part * 200 + 1;
+        uint first = _part * maxSharesTransfer + 1;
         if(first > periods[lastClosedPeriod()].shareholdersCount)
             throw;
-        uint last = first + 200;
+        uint last = first + maxSharesTransfer;
         if(last >= periods[lastClosedPeriod()].shareholdersCount)
             last = periods[lastClosedPeriod()].shareholdersCount;
-        for(; first < last; first++) {
+        for(;first < last;first++) {
             address holder = TimeHolder(timeHolder).shareholders(first);
             if(periods[lastClosedPeriod()].shares[holder] == 0) {
                 periods[lastClosedPeriod()].shares[holder] = TimeHolder(timeHolder).shares(holder);
@@ -163,25 +190,6 @@ contract Rewards {
         }
         return false;
     }
-
-   /* function TransferDeposits(uint first, uint last) returns (bool) {
-        if(!periods[lastPeriod()].open && last > first && (last-first) < 500 && last <= periods[lastClosedPeriod()].shareholdersCount) {
-            for(uint i = first + 1; i < last + 1;i++) {
-                periods[lastPeriod()].sharesId[i] = periods[lastClosedPeriod()].sharesId[i];
-                periods[lastPeriod()].shares[periods[lastClosedPeriod()].sharesId[i]] = periods[lastClosedPeriod()].shares[periods[lastClosedPeriod()].sharesId[i]];
-                periods[lastPeriod()].shareholdersCount = i;
-                periods[lastPeriod()].totalShares += periods[lastClosedPeriod()].shares[periods[lastClosedPeriod()].sharesId[i]];
-            }
-            if(periods[lastClosedPeriod()].totalShares == periods[lastPeriod()].totalShares) {
-                periods[lastPeriod()].open = true;
-                PeriodClosed();
-                return true;
-            } else {
-                return false;
-            }
-        }
-        throw;
-    }*/
 
     function registerAsset(Asset _asset) returns(bool) {
         if (TimeHolder(timeHolder).sharesContract() == _asset) {
@@ -202,11 +210,15 @@ contract Rewards {
     }
 
     function deposit(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
-    // Add deposit to last unclosed period.
+        if (periods.length == 1) {
+            return false;
+        }
         Period period = periods[lastClosedPeriod()];
         if(!period.isClosed) {
-            period.shares[_address] += _amount;
             period.totalShares += _amount;
+            if(period.shareholdersId[_address] > 0) {
+                period.shares[_address] = _total;
+            }
             return true;
         }
         return false;
@@ -382,15 +394,21 @@ contract Rewards {
     }
 
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
+        if (periods.length == 1) {
+            return false;
+        }
         Period period = periods[lastClosedPeriod()];
         if(!period.isClosed) {
+
             period.totalShares -= _amount;
-            period.shares[_address] = _total;
+            Test(period.totalShares);
+            if(period.shareholdersId[_address] > 0) {
+                period.shares[_address] = _total;
+            }
             return true;
         }
         return false;
     }
-
 
 
 /**
