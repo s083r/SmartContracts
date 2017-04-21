@@ -1,4 +1,4 @@
-const truffleConfig = require('../truffle-config.js');
+const truffleConfig = require('../truffle.js');
 
 var ChronoMint = artifacts.require("./ChronoMint.sol");
 var ChronoBankAssetProxy = artifacts.require("./ChronoBankAssetProxy.sol");
@@ -36,10 +36,10 @@ module.exports = function(deployer, network) {
                                                     return instance.init(UserStorage.address).then(function () {
                                                     return UserManager.deployed().then(function (instance) {
                                                         return instance.init(UserStorage.address, Shareable.address).then(function () {
-                                                        return TimeHolder.deployed().then(function (instance) {
-                                                            return instance.init(UserStorage.address, ChronoBankAssetProxy.address).then(function () {
-                                                        });
-                                                    });
+//                                                        return TimeHolder.deployed().then(function (instance) {
+//                                                            return instance.init(UserStorage.address, ChronoBankAssetProxy.address).then(function () {
+//                                                        });
+//                                                    });
                                                 });
                                             });
                                         });

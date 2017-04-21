@@ -93,6 +93,8 @@ contract('Vote', function(accounts) {
             return TimeHolder.deployed()
         }).then(function (instance) {
             timeHolder = instance;
+            return instance.init(UserStorage.address, ChronoBankAssetProxy.address)
+        }).then(function () {
             return timeHolder.addListener(vote.address)
         }).then(function () {
             return ChronoBankPlatformEmitter.deployed()

@@ -24,8 +24,8 @@ contract('Rewards', (accounts) => {
   const SHARES_BALANCE = 1161;
 
   let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL)
-    .then(() => userStorage.addOwner(userManager.address))
-    .then(() => userManager.init(userStorage.address, 0x1))
+//    .then(() => userStorage.addOwner(userManager.address))
+//    .then(() => userManager.init(userStorage.address, 0x1))
     .then(() => timeHolder.init(userStorage.address, shares.address))
     .then(() => timeHolder.addListener(reward.address));
   };

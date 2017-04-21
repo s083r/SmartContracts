@@ -218,6 +218,8 @@ contract('ChronoMint', function(accounts) {
             return TimeHolder.deployed()
         }).then(function (instance) {
             timeHolder = instance;
+            return instance.init(UserStorage.address, ChronoBankAssetProxy.address)
+        }).then(function () {
             return timeHolder.addListener(rewards.address)
         }).then(function () {
             return contractsManager.setOtherAddress(exchange.address, {from: accounts[0]})
@@ -231,10 +233,8 @@ contract('ChronoMint', function(accounts) {
             web3.eth.sendTransaction({to: Exchange.address, value: BALANCE_ETH, from: accounts[0]});
             done();
         }).catch(function (e) { console.log(e); });
+	//reverter.snapshot(done);
     });
-
-
-
 
     context("with one CBE key", function(){
 
