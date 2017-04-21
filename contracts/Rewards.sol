@@ -1,6 +1,7 @@
 pragma solidity ^0.4.8;
 
 import "./TimeHolder.sol";
+import "./Owned.sol";
 
 /**
  * @title Universal decentralized ERC20 tokens rewards contract.
@@ -32,14 +33,17 @@ import "./TimeHolder.sol";
  * Note: all the non constant functions return false instead of throwing in case if state change
  * didn't happen yet.
  */
-contract Rewards {
+contract Rewards is Owned {
 // Structure of a particular period.
     struct Period {
     uint startDate;                                           // Period starting date, also
     uint totalShares;
-    mapping(address => uint) assetBalances;                   // Rewards for distribution.
     uint shareholdersCount;
+    bool isClosed;
     mapping(address => uint) shares;                          // Shareholder shares in period.
+    mapping(uint => address) shareholders;
+    mapping(address => uint) shareholdersId;
+    mapping(address => uint) assetBalances;                   // Rewards for distribution.
     mapping(address => mapping(address => bool)) calculated;  // Flag that indicates that rewards
     // already distributed for holder.
     }
@@ -48,6 +52,9 @@ contract Rewards {
 
 // Minimum period length, in days.
     uint public closeInterval;
+
+// Maximum shares which can be transfered in on TX
+    uint public maxSharesTransfer = 150;
 
 // Asset rewards accumulated for shareholder.
     mapping(address => mapping(address => uint)) rewards;
@@ -73,6 +80,8 @@ contract Rewards {
 // Something went wrong.
     event Error(bytes32 message);
 
+    event Test(uint test);
+
 /**
  * Sets TimeHolder contract and period minimum length.
  * Starts the first period.
@@ -92,8 +101,19 @@ contract Rewards {
         timeHolder = _timeHolder;
         closeInterval = _closeIntervalDays;
         periods.length++;
+        periods[0].shareholdersCount = 1;
         periods[0].startDate = now;
 
+        return true;
+    }
+
+    function setCloseInterval(uint _closeInterval) onlyContractOwner returns(bool) {
+        closeInterval = _closeInterval;
+        return true;
+    }
+
+    function setMaxSharesTransfer(uint _maxSharesTransfer) onlyContractOwner returns(bool) {
+        maxSharesTransfer = _maxSharesTransfer;
         return true;
     }
 
@@ -102,7 +122,10 @@ contract Rewards {
     }
 
     function periodUnique(uint _period) constant returns(uint) {
-        return periods[_period].shareholdersCount;
+        if(_period == lastPeriod())
+            return TimeHolder(timeHolder).shareholdersCount() - 1;
+        else
+            return periods[_period].shareholdersCount - 1;
     }
 
     modifier onlyTimeHolder() {
@@ -127,9 +150,45 @@ contract Rewards {
     // Add new period.
         periods.length++;
         periods[lastPeriod()].startDate = now;
+        periods[lastClosedPeriod()].shareholdersCount = TimeHolder(timeHolder).shareholdersCount();
+        //periods[lastClosedPeriod()].totalShares = TimeHolder(timeHolder).totalShares();
 
+        storeDeposits(0);
         PeriodClosed();
         return true;
+
+    }
+
+    function getPartsCount() constant returns(uint) {
+        Period period = periods[lastClosedPeriod()];
+        if(!period.isClosed && period.shareholdersCount > maxSharesTransfer) {
+            if(period.shareholdersCount % maxSharesTransfer == 0)
+                return period.shareholdersCount / maxSharesTransfer;
+            else
+                return period.shareholdersCount / maxSharesTransfer + 1;
+        }
+        return 0;
+    }
+
+    function storeDeposits(uint _part) returns(bool) {
+        uint first = _part * maxSharesTransfer + 1;
+        if(first > periods[lastClosedPeriod()].shareholdersCount)
+            throw;
+        uint last = first + maxSharesTransfer;
+        if(last >= periods[lastClosedPeriod()].shareholdersCount)
+            last = periods[lastClosedPeriod()].shareholdersCount;
+        for(;first < last;first++) {
+            address holder = TimeHolder(timeHolder).shareholders(first);
+            if(periods[lastClosedPeriod()].shares[holder] == 0) {
+                periods[lastClosedPeriod()].shares[holder] = TimeHolder(timeHolder).shares(holder);
+                periods[lastClosedPeriod()].totalShares += TimeHolder(timeHolder).shares(holder);
+            }
+        }
+        if(periods[lastClosedPeriod()].totalShares == TimeHolder(timeHolder).totalShares()) {
+            periods[lastClosedPeriod()].isClosed = true;
+            return true;
+        }
+        return false;
     }
 
     function registerAsset(Asset _asset) returns(bool) {
@@ -151,19 +210,18 @@ contract Rewards {
     }
 
     function deposit(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
-    // Add deposit to last unclosed period.
-        Period period = periods[lastPeriod()];
-        if (period.shares[_address] == 0) {
-            period.totalShares += _total;
-            period.shareholdersCount++;
-        } else {
-            period.totalShares += _amount;
+        if (periods.length == 1) {
+            return false;
         }
-
-    // Prove shares possesion.
-        period.shares[_address] = _total;
-
-        return true;
+        Period period = periods[lastClosedPeriod()];
+        if(!period.isClosed) {
+            period.totalShares += _amount;
+            if(period.shareholdersId[_address] > 0) {
+                period.shares[_address] = _total;
+            }
+            return true;
+        }
+        return false;
     }
 
 /**
@@ -231,22 +289,25 @@ contract Rewards {
  */
     function calculateRewardForAddressAndPeriod(address _assetAddress, address _address, uint _period) returns(bool) {
         Period period = periods[_period];
-        if (!isClosed(_period) || period.assetBalances[_assetAddress] == 0) {
-            Error("Reward calculation failed");
-            return false;
+        if(period.isClosed) {
+            if (!isClosed(_period) || period.assetBalances[_assetAddress] == 0) {
+                Error("Reward calculation failed");
+                return false;
+            }
+
+            if (period.calculated[_assetAddress][_address]) {
+                Error("Reward is already calculated");
+                return false;
+            }
+
+            uint reward = period.assetBalances[_assetAddress] * period.shares[_address] / period.totalShares;
+            rewards[_assetAddress][_address] += reward;
+            period.calculated[_assetAddress][_address] = true;
+
+            CalculateReward(_assetAddress, _address, reward);
+            return true;
         }
-
-        if (period.calculated[_assetAddress][_address]) {
-            Error("Reward is already calculated");
-            return false;
-        }
-
-        uint reward = period.assetBalances[_assetAddress] * period.shares[_address] / period.totalShares;
-        rewards[_assetAddress][_address] += reward;
-        period.calculated[_assetAddress][_address] = true;
-
-        CalculateReward(_assetAddress, _address, reward);
-        return true;
+        return false;
     }
 
 /**
@@ -333,14 +394,22 @@ contract Rewards {
     }
 
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
-        deposit(_address,0,_total+_amount);
-        Period period = periods[lastPeriod()];
-        period.totalShares -= _amount;
-        period.shares[_address] = _total;
-        if(period.shares[_address] == 0)
-		period.shareholdersCount--;
-        return true;
+        if (periods.length == 1) {
+            return false;
+        }
+        Period period = periods[lastClosedPeriod()];
+        if(!period.isClosed) {
+
+            period.totalShares -= _amount;
+            Test(period.totalShares);
+            if(period.shareholdersId[_address] > 0) {
+                period.shares[_address] = _total;
+            }
+            return true;
+        }
+        return false;
     }
+
 
 /**
  * Returns proven amount of shares possessed by a shareholder in a period.
@@ -351,7 +420,10 @@ contract Rewards {
  * @return shares amount.
  */
     function depositBalanceInPeriod(address _address, uint _period) constant returns(uint) {
-        return periods[_period].shares[_address];
+        if(_period == lastPeriod())
+            return TimeHolder(timeHolder).shares(_address);
+        else
+            return periods[_period].shares[_address];
     }
 
 /**
@@ -362,7 +434,10 @@ contract Rewards {
  * @return shares amount.
  */
     function totalDepositInPeriod(uint _period) constant returns(uint) {
-        return periods[_period].totalShares;
+        if(_period == lastPeriod())
+            return TimeHolder(timeHolder).totalShares();
+        else
+            return periods[_period].totalShares;
     }
 
 /**

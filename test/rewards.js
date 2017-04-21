@@ -21,9 +21,14 @@ contract('Rewards', (accounts) => {
   let asset2;
 
   const ZERO_INTERVAL = 0;
-  const SHARES_BALANCE = 1000;
+  const SHARES_BALANCE = 1161;
 
-  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL).then(() => userStorage.addOwner(userManager.address)).then(() => userManager.init(userStorage.address, 0x1)).then(() => timeHolder.init(userStorage.address, shares.address)).then(() => timeHolder.addListener(reward.address)); };
+  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL)
+    .then(() => userStorage.addOwner(userManager.address))
+    .then(() => userManager.init(userStorage.address, 0x1))
+    .then(() => timeHolder.init(userStorage.address, shares.address))
+    .then(() => timeHolder.addListener(reward.address));
+  };
 
   let assertSharesBalance = (address, expectedBalance) => {
     return shares.balanceOf(address)
@@ -63,6 +68,19 @@ contract('Rewards', (accounts) => {
   let assertRewardsFor = (address, assetAddress, expectedBalance) => {
     return reward.rewardsFor(assetAddress, address)
       .then((balance) => assert.equal(balance.toString(), '' + expectedBalance));
+  };
+
+  let assertUniqueHoldersForPeriod = (period, expectedCount) => {
+    return reward.periodUnique(period)
+      .then((count) => assert.equal(count.toString(), '' + expectedCount));
+  };
+
+  let depositShareholders = (count, amount) => {
+    let data = [];
+    for(let i = 0; i < count; i++) {
+       data.push(timeHolder.depositFor(i, amount));
+    }
+    return Promise.all(data);
   };
 
   before('Setup', (done) => {
@@ -116,7 +134,7 @@ contract('Rewards', (accounts) => {
   it('should not deposit if sharesContract.transferFrom() failed', () => {
     return defaultInit()
       .then(() => timeHolder.depositFor(accounts[0], SHARES_BALANCE + 1))
-      .then(() => assertSharesBalance(accounts[0], 1000))
+      .then(() => assertSharesBalance(accounts[0], 1161))
       .then(() => assertDepositBalance(accounts[0], 0))
       .then(() => assertDepositBalanceInPeriod(accounts[0], 0, 0))
       .then(() => assertTotalDepositInPeriod(0, 0));
@@ -313,8 +331,8 @@ contract('Rewards', (accounts) => {
 
       // 2nd period - should accept all shares
       .then(() => asset1.mint(reward.address, 200))
-      .then(() => timeHolder.depositFor(accounts[0], 0))
-      .then(() => timeHolder.depositFor(accounts[1], 0))
+      //.then(() => timeHolder.depositFor(accounts[0], 0))
+      //.then(() => timeHolder.depositFor(accounts[1], 0))
       .then(reward.closePeriod)
       .then(() => assertTotalDepositInPeriod(1, 100))
       .then(() => reward.registerAsset(asset1.address))
@@ -353,16 +371,11 @@ contract('Rewards', (accounts) => {
       .then(() => assertDepositBalanceInPeriod(accounts[0], 0, 100))
       .then(() => assertTotalDepositInPeriod(0, 100))
       .then(reward.closePeriod)
-
+      .then(() => assertUniqueHoldersForPeriod(0,1))
       .then(() => timeHolder.withdrawShares(50))
       .then(() => assertDepositBalance(accounts[0], 50))
       .then(() => assertDepositBalanceInPeriod(accounts[0], 1, 50))
       .then(() => assertTotalDepositInPeriod(1, 50))
-
-      .then(() => timeHolder.deposit(0))
-      .then(() => assertDepositBalance(accounts[0], 50))
-      .then(() => assertDepositBalanceInPeriod(accounts[0], 1, 50))
-      .then(() => assertTotalDepositInPeriod(1, 50));
   });
 
   it('should withdraw shares', () => {
@@ -433,4 +446,26 @@ contract('Rewards', (accounts) => {
       .then(() => assertRewardsLeft(asset1.address, 70))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 70));
   });
+
+    it('should allow 1111 shareholders to deposit, calculate and withdrawn', () => {
+        return defaultInit()
+          .then(() => asset1.mint(reward.address, 1000000))
+          .then(() => timeHolder.depositFor(accounts[0], 50))
+          .then(() => depositShareholders(1111,1))
+          .then(reward.closePeriod)
+          .then(() => timeHolder.withdrawShares(50))
+          .then(() => { return reward.getPartsCount.call() })
+          .then((res) => {
+            data = [];
+            for(i=1;i<res;i++) {
+                data.push(reward.storeDeposits(i));
+            }
+            return Promise.all(data);
+          })
+          .then(() => reward.registerAsset(asset1.address))
+          .then(() => assertTotalDepositInPeriod(0, 1111))
+          .then(() => timeHolder.withdrawShares(50))
+          .then(() => assertTotalDepositInPeriod(0, 1111))
+    });
+
 });
