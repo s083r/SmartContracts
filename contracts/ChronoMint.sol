@@ -42,9 +42,17 @@ contract ChronoMint is Managed {
     }
 
     function addLOC (address _locAddr) execute(Shareable.Operations.editMint) {
-        offeringCompanies[offeringCompaniesCounter] = _locAddr;
-        offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
-        offeringCompaniesCounter++;
+        if(deletedIds.length != 0) {
+            offeringCompaniesIDs[_locAddr] = deletedIds[deletedIds.length-1];
+            offeringCompanies[deletedIds[deletedIds.length-1]] = _locAddr;
+            deletedIds.length--;
+        }
+        else {
+            offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
+            offeringCompanies[offeringCompaniesIDs[_locAddr]] = _locAddr;
+            offeringCompaniesCounter++;
+
+        }
         newLOC(msg.sender, _locAddr);
     }
 
