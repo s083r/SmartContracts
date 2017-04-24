@@ -1,6 +1,6 @@
 {
   "name": "chronobank-smart-contracts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "bip39": "2.3.0",
     "ethereumjs-wallet": "0.6.0",
     "web3-provider-engine": "12.0.0",
-    "sync-exec": "0.6.2",
+    "sync-exec": "0.6.2"
+  },
+  "devDependencies": {
     "web3": "0.18.4"
   }
 }
