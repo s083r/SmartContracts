@@ -14,6 +14,15 @@ const UserStorage = artifacts.require('./UserStorage.sol');
 const Vote = artifacts.require('./Vote.sol')
 const bytes32fromBase58 = require('../test/helpers/bytes32fromBase58')
 
+function bytes32(stringOrNumber) {
+  var zeros = '000000000000000000000000000000000000000000000000000000000000000';
+  if (typeof stringOrNumber === "string") {
+    return (web3.toHex(stringOrNumber) + zeros).substr(0, 66);
+  }
+  var hexNumber = stringOrNumber.toString(16);
+  return '0x' + (zeros + hexNumber).substring(hexNumber.length - 1);
+}
+
 const SYMBOL = 'TIME'
 const SYMBOL2 = 'LHT'
 const NAME = 'Time Token'
@@ -28,10 +37,6 @@ const BALANCE_ETH = 1000
 
 // const truffleConfig = require('../truffle-config.js')
 
-const bytes32Source = require('../test/helpers/bytes32')
-const bytes32 = (v) => {
-  return bytes32Source(web3.toHex(v), false, true)
-}
 
 let chronoBankPlatform
 let chronoMint
