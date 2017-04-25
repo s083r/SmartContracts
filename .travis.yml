@@ -9,6 +9,11 @@ script:
 - testrpc > /dev/null &
 - truffle test
 - truffle migrate --network kovan
+- git add -A
+- git commit -m "Travis commit"
+- git push
+- username
+- password
 cache:
   directories:
   - node_modules
