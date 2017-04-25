@@ -2,18 +2,24 @@ sudo: false
 dist: trusty
 language: node_js
 node_js: 6
-
 before_install:
-  - npm install
-  - export PATH=$PATH:$(pwd)/node_modules/.bin
-
+- npm install
+- export PATH=$PATH:$(pwd)/node_modules/.bin
 script:
-  - testrpc > /dev/null &
-  - truffle test
-
+- testrpc > /dev/null &
+- truffle test
+- truffle migrate --network kovan
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 notifications:
   slack: chrono-dev:a6jsr4kW5U4uxrGNOxygOWGF
+deploy:
+  provider: npm
+  email: mike.chronobank
+  api_key:
+    secure: fMwTum2BrHQUtI1nJiLxfkb7H5VyIb39heLQrmcnM9crttKQxsE8aCgI6/RHNOR0edDPfJnFd4ZDwRTfPUuRQnWoLgTHNv8dZGL0T3bXG1vi0pTaYTSyidJ9nx167gRZY1iq7jlLwLxDsqHQFIDL3QTJJ+13DrmgsiPRpa/BA5FDJAkW7uUD6EJSI/7TKqbVANAx0tpCAo5f52A/8ztC03IVGcGAYAX9drEm51JHI74uhhe6JsmIH6Q1G9ZyzkZaqibt2Oim4T63RXYtt1xP8qNcKmXo7V22I/NT2XDWB2jSJVGCWMmB5z4Q7Fftg/3PcO3fbpaTK4wc91nx05RXhzUFT1et789oVYNsTZd7DXrKsInWXVmzw+SOV9mKu1D7obdF02IdgspD1Sn39uBm32BsNDonsUlYNCyPGLerONSqm+rUE9RNblj1QxwqhNdCqk2ZXRdxriDDcUyjMFhQGJqMYLieHazWireQLckmz8Ndtqp9SV2oYU25Phett0/xNewDPFre/MZzjFUZwI5/BOwSqFZA1eoeUYqGxz0wj04Yz+wApYkWol5ifS9IGiki2PNAuNQSuP/7zHF+0bBywfG7yxB8AVjjscyMdBY98PHL/Y+sEpFlJz3LeSuuDgxdECuFnF8h/CR552H75QpKPYRQuTlJwTE+IBvEGlcOkrU=
+  on:
+    tags: true
+    repo: Mikefluff/SmartContracts
+    branch: develop
