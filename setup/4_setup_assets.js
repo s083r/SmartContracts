@@ -24,9 +24,6 @@ const BASE_UNIT = 8
 const IS_REISSUABLE = true
 const IS_NOT_REISSUABLE = false
 const fakeArgs = [0, 0, 0, 0, 0, 0, 0, 0]
-const accounts = web3.eth.accounts
-const params = {from: accounts[0]}
-const paramsGas = {from: accounts[0], gas: 3000000}
 const BALANCE_ETH = 1000
 
 // const truffleConfig = require('../truffle-config.js')
@@ -46,6 +43,19 @@ let rewards
 let exchange
 let chronoBankAssetWithFee
 let chronoBankAssetWithFeeProxy
+
+let accounts
+let params
+let paramsGas
+
+var getAcc = function() {
+    return new Promise(function(resolve, reject) {
+    web3.eth.getAccounts((err, acc) => {
+    console.log(acc);
+    resolve(acc);
+})
+})
+}
 
 // let network = 'ropsten'
 
