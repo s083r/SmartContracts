@@ -14,9 +14,6 @@ const UserStorage = artifacts.require('./UserStorage.sol');
 const Vote = artifacts.require('./Vote.sol')
 const bytes32fromBase58 = require('../test/helpers/bytes32fromBase58')
 
-const Web3 = require('../node_modules/web3')
-const web3Location = `http://localhost:8545`
-const web3 = new Web3(new Web3.providers.HttpProvider(web3Location))
 const SYMBOL = 'TIME'
 const SYMBOL2 = 'LHT'
 const NAME = 'Time Token'
