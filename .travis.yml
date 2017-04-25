@@ -15,7 +15,6 @@ script:
     git config credential.helper "store --file=.git/credentials";
     echo "https://${GH_TOKEN}:@github.com" > .git/credentials;
     npm run release;
-    git push --follow-tags origin master;
     npm publish;
   fi
 notifications:
