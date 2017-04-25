@@ -62,7 +62,9 @@ var getAcc = function() {
 })
 }
 
-// let network = 'ropsten'
+var exit = function() {
+    process.exit()
+}
 
 module.exports = (callback) => {
     return getAcc()
@@ -156,33 +158,26 @@ module.exports = (callback) => {
       return chronoBankPlatform
         .issueAsset(SYMBOL, 1000000000000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, paramsGas)
     }).then(r => {
-      console.log(r)
       return chronoBankPlatform.setProxy(ChronoBankAssetProxy.address, SYMBOL, params)
     }).then(r => {
-      console.log(r)
       return ChronoBankAssetProxy.deployed()
     }).then(i => {
       return i.init(ChronoBankPlatform.address, SYMBOL, NAME, params)
     }).then(r => {
-      console.log(r)
       return ChronoBankAssetProxy.deployed()
     }).then(i => {
       return i.proposeUpgrade(ChronoBankAsset.address, params)
     }).then(r => {
-      console.log(r)
       return ChronoBankAsset.deployed()
     }).then(i => {
       return i.init(ChronoBankAssetProxy.address, params)
     }).then(r => {
-      console.log(r)
       return ChronoBankAssetProxy.deployed()
     }).then(i => {
       return i.transfer(ContractsManager.address, 500000000000, params)
     }).then(r => {
-      console.log(r)
       return chronoBankPlatform.changeOwnership(SYMBOL, ContractsManager.address, params)
     }).then(r => {
-      console.log(r)
       return chronoBankPlatform.issueAsset(SYMBOL2, 0, NAME2, DESCRIPTION2, BASE_UNIT, IS_REISSUABLE, {
         from: accounts[0],
         gas: 3000000
@@ -246,6 +241,10 @@ module.exports = (callback) => {
     })
     .then(() => {
       return web3.eth.sendTransaction({to: Exchange.address, value: BALANCE_ETH, from: accounts[0]})
+      callback('hui')
+    })
+    .then(() => {
+      exit()
     })
     // .then(r => {
     //   return contractsManager.reissueAsset(SYMBOL2, 2500, r.logs[0].args._LOC, paramsGas)
