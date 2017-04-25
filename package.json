@@ -1,15 +1,16 @@
 {
   "name": "chronobank-smart-contracts",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
   "scripts": {
+    "release": "standard-version",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mike Fluff <mf@mikefluff.com> (http://mikefluff.com)",
   "license": "GPLv3",
   "dependencies": {
-    "bs58": "4.0.0",        
+    "bs58": "4.0.0",
     "ethereumjs-testrpc": "3.0.3",
     "truffle": "Mikefluff/truffle",
     "bip39": "2.3.0",
@@ -18,6 +19,7 @@
     "sync-exec": "0.6.2"
   },
   "devDependencies": {
+    "standard-version": "^4.0.0",
     "web3": "0.18.4"
   }
 }
