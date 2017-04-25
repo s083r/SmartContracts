@@ -1,5 +1,3 @@
-const truffleConfig = require('../truffle.js');
-
 var ChronoMint = artifacts.require("./ChronoMint.sol");
 var ChronoBankAssetProxy = artifacts.require("./ChronoBankAssetProxy.sol");
 var ContractsManager = artifacts.require("./ContractsManager.sol");
@@ -9,14 +7,6 @@ var UserManager = artifacts.require("./UserManager.sol");
 var TimeHolder = artifacts.require("./TimeHolder.sol");
 var Vote = artifacts.require("./Vote.sol");
 module.exports = function(deployer, network) {
- console.log(network);
-  if(network != 'development')
-  {
-    if(network == 'kovan')
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x3000')
-    else 
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, 3000)
-  }
     return deployer.deploy(UserStorage).then(function () {
         return deployer.deploy(UserManager).then(function () {
             return deployer.deploy(TimeHolder).then(function () {

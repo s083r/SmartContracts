@@ -1,4 +1,3 @@
-const truffleConfig = require('../truffle.js');
 var FakeCoin = artifacts.require("./FakeCoin.sol");
 var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
 var FakeCoin3 = artifacts.require("./FakeCoin3.sol");
@@ -14,13 +13,6 @@ var ChronoBankAssetWithFee = artifacts.require("./ChronoBankAssetWithFee.sol");
 var Exchange = artifacts.require("./Exchange.sol");
 var Rewards = artifacts.require("./Rewards.sol");
 module.exports = function(deployer,network) {
- console.log(network);
-  if(network != 'development')
-  { if(network == 'kovan')
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, '0x3000')
-    else 
-    web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password, 3000)
-  }  
     return deployer.deploy(EventsHistory).then(function () {
         return deployer.deploy(ChronoBankPlatform).then(function () {
             return deployer.deploy(ChronoBankAsset).then(function () {
