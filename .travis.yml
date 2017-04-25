@@ -11,12 +11,12 @@ script:
 - testrpc > /dev/null &
 - truffle test
 - if [ "$TRAVIS_BRANCH" == "master" ]; then
- truffle migrate --network kovan
- git config credential.helper "store --file=.git/credentials"
- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
- npm run release
- git push --follow-tags origin master
- npm publish
+ truffle migrate --network kovan;
+ git config credential.helper "store --file=.git/credentials";
+ echo "https://${GH_TOKEN}:@github.com" > .git/credentials;
+ npm run release;
+ git push --follow-tags origin master;
+ npm publish;
 fi
 notifications:
   slack: chrono-dev:a6jsr4kW5U4uxrGNOxygOWGF
