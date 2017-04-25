@@ -60,8 +60,13 @@ var getAcc = function() {
 // let network = 'ropsten'
 
 module.exports = (callback) => {
-// web3.personal.unlockAccount(truffleConfig.networks[network].from, truffleConfig.networks[network].password,'0x3000')
-  return ChronoBankPlatform.deployed()
+    return getAcc()
+    .then(r => {
+      accounts = r
+      params = {from: accounts[0]}
+      paramsGas = {from: accounts[0], gas: 3000000}
+      return ChronoBankPlatform.deployed()
+    })
     .then(i => {
       chronoBankPlatform = i
       return ChronoBankAssetWithFee.deployed()
