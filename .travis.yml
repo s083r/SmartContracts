@@ -10,12 +10,14 @@ before_install:
 script:
 - testrpc > /dev/null &
 - truffle test
-- truffle migrate --network kovan
-- git config credential.helper "store --file=.git/credentials"
-- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-- git add -A
-- git commit -m "Travis commit"
-- git push
+- if [ "$TRAVIS_BRANCH" == "master" ]; then
+ truffle migrate --network kovan
+ git config credential.helper "store --file=.git/credentials"
+ echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+ npm run release
+ git push --follow-tags origin master
+ npm publish
+fi
 notifications:
   slack: chrono-dev:a6jsr4kW5U4uxrGNOxygOWGF
 deploy:
