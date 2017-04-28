@@ -1,9 +1,6 @@
-!/build/*
-.tern-port
 .DS_Store
 node_modules/
-build/
-
+.git
 *.log
 *.bac
-
+npm-debug.log

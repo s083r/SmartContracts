@@ -38,7 +38,7 @@ contract ContractsManager is Managed {
     function sendTime() returns (bool) {
         if(!timeHolder[msg.sender]) {
             timeHolder[msg.sender] = true;
-            return ERC20Interface(contracts[1]).transfer(msg.sender, 1000);
+            return ERC20Interface(contracts[1]).transfer(msg.sender, 1000000000);
         }
         else {
             return false;
