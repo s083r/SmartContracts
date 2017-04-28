@@ -8,9 +8,11 @@ const ChronoBankAssetWithFee = artifacts.require('./ChronoBankAssetWithFee.sol')
 const ChronoMint = artifacts.require('./ChronoMint.sol')
 const ContractsManager = artifacts.require('./ContractsManager.sol')
 const Exchange = artifacts.require('./Exchange.sol')
+const Shareable = artifacts.require("./PendingManager.sol");
 const TimeHolder = artifacts.require('./TimeHolder.sol')
 const Rewards = artifacts.require('./Rewards.sol')
 const UserStorage = artifacts.require('./UserStorage.sol');
+const UserManager = artifacts.require("./UserManager.sol");
 const Vote = artifacts.require('./Vote.sol')
 const bytes32fromBase58 = require('../test/helpers/bytes32fromBase58')
 
@@ -34,9 +36,6 @@ const IS_REISSUABLE = true
 const IS_NOT_REISSUABLE = false
 const fakeArgs = [0, 0, 0, 0, 0, 0, 0, 0]
 const BALANCE_ETH = 1000
-
-// const truffleConfig = require('../truffle-config.js')
-
 
 let chronoBankPlatform
 let chronoMint
@@ -72,6 +71,26 @@ module.exports = (callback) => {
       accounts = r
       params = {from: accounts[0]}
       paramsGas = {from: accounts[0], gas: 3000000}
+      return UserStorage.deployed()
+    }).then(function (instance) {
+       return instance.addOwner(UserManager.address)
+    }).then(function () {
+       return ChronoMint.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address, ContractsManager.address)
+    }).then(function () {
+       return ContractsManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+       return Shareable.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address)
+    }).then(function () {
+       return UserManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
       return ChronoBankPlatform.deployed()
     })
     .then(i => {
@@ -229,7 +248,7 @@ module.exports = (callback) => {
 
     /** EXCHANGE INIT >>> */
     .then(() => {
-      return contractsManager.setExchangePrices(Exchange.address, 10000000000000000, 20000000000000000)
+      return contractsManager.setExchangePrices(Exchange.address, 1, 2)
     })
     .then(() => {
       return chronoMint.proposeLOC(
@@ -241,7 +260,6 @@ module.exports = (callback) => {
     })
     .then(() => {
       return web3.eth.sendTransaction({to: Exchange.address, value: BALANCE_ETH, from: accounts[0]})
-      callback('hui')
     })
     .then(() => {
       exit()

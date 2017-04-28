@@ -19,7 +19,6 @@ var bytes32 = require('./helpers/bytes32');
 var bytes32fromBase58 = require('./helpers/bytes32fromBase58');
 var Require = require("truffle-require");
 var Config = require("truffle-config");
-var exec = require('sync-exec');
 
 contract('ChronoMint', function(accounts) {
     var owner = accounts[0];
@@ -64,8 +63,27 @@ contract('ChronoMint', function(accounts) {
     const fakeArgs = [0,0,0,0,0,0,0,0];
 
     before('setup', function(done) {
-
-        ChronoBankPlatform.deployed().then(function (instance) {
+    UserStorage.deployed().then(function (instance) {
+       return instance.addOwner(UserManager.address)
+    }).then(function () {
+       return ChronoMint.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address, ContractsManager.address)
+    }).then(function () {
+       return ContractsManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+       return Shareable.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address)
+    }).then(function () {
+       return UserManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+       return ChronoBankPlatform.deployed()
+    }).then(function (instance) {
             platform = instance;
             return ChronoBankAsset.deployed()
         }).then(function (instance) {
@@ -145,7 +163,7 @@ contract('ChronoMint', function(accounts) {
         }).then(function () {
             return eventsHistory.addVersion(chronoBankPlatform.address, "Origin", "Initial version.");
         }).then(function () {
-            return chronoBankPlatform.issueAsset(SYMBOL, 2000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
+            return chronoBankPlatform.issueAsset(SYMBOL, 200000000000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
                 from: accounts[0],
                 gas: 3000000
             })
@@ -166,7 +184,7 @@ contract('ChronoMint', function(accounts) {
         }).then(function (r) {
             return ChronoBankAssetProxy.deployed()
         }).then(function (instance) {
-            return instance.transfer(ContractsManager.address, 2000, {from: accounts[0]})
+            return instance.transfer(ContractsManager.address, 200000000000, {from: accounts[0]})
         }).then(function (r) {
             return chronoBankPlatform.changeOwnership(SYMBOL, contractsManager.address, {from: accounts[0]})
         }).then(function (r) {
@@ -823,7 +841,7 @@ contract('ChronoMint', function(accounts) {
 
         it("should show 200 TIME balance", function () {
             return contractsManager.getBalance.call(1).then(function (r) {
-                assert.equal(r, 2000);
+                assert.equal(r, 200000000000);
             });
         });
 
@@ -836,7 +854,7 @@ contract('ChronoMint', function(accounts) {
 
         it("should show 200 TIME balance", function () {
             return contractsManager.getBalance.call(1).then(function (r) {
-                assert.equal(r, 2000);
+                assert.equal(r, 200000000000);
             });
         });
 
@@ -860,7 +878,8 @@ contract('ChronoMint', function(accounts) {
         it("ChronoMint should be able to send 1000 TIME to msg.sender", function () {
             return contractsManager.sendTime({from: owner2, gas: 3000000}).then(function () {
                 return timeProxyContract.balanceOf.call(owner2).then(function (r) {
-                    assert.equal(r, 1000);
+                    console.log(r);
+                    assert.equal(r, 1000000000);
                 });
             });
         });
@@ -868,7 +887,7 @@ contract('ChronoMint', function(accounts) {
         it("ChronoMint shouldn't be able to send 1000 TIME to msg.sender twice", function () {
             return contractsManager.sendTime({from: owner2, gas: 3000000}).then(function () {
                 return timeProxyContract.balanceOf.call(owner2).then(function (r) {
-                    assert.equal(r, 1000);
+                    assert.equal(r, 1000000000);
                 });
             });
         });

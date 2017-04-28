@@ -10,12 +10,13 @@ var Rewards = artifacts.require("./Rewards.sol");
 var ChronoMint = artifacts.require("./ChronoMint.sol");
 var ContractsManager = artifacts.require("./ContractsManager.sol");
 var LOC = artifacts.require("./LOC.sol");
+var Shareable = artifacts.require("./PendingManager.sol");
 var TimeHolder = artifacts.require("./TimeHolder.sol");
 var UserStorage = artifacts.require("./UserStorage.sol");
+var UserManager = artifacts.require("./UserManager.sol");
 var Vote = artifacts.require("./Vote.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
-var exec = require('sync-exec');
 
 contract('Vote', function(accounts) {
     var owner = accounts[0];
@@ -60,8 +61,31 @@ contract('Vote', function(accounts) {
     const fakeArgs = [0,0,0,0,0,0,0,0];
 
     before('setup', function(done) {
-
-        ChronoBankPlatform.deployed().then(function (instance) {
+UserStorage.deployed().then(function (instance) {
+       return instance.addOwner(UserManager.address)
+    }).then(function () {
+       return ChronoMint.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address, ContractsManager.address)
+    }).then(function () {
+       return ContractsManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+       return Vote.deployed()
+    }).then(function (instance) {
+       return instance.init(TimeHolder.address, UserStorage.address, Shareable.address)
+    }).then(function () {
+       return Shareable.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address)
+    }).then(function () {
+       return UserManager.deployed()
+    }).then(function (instance) {
+       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+       return ChronoBankPlatform.deployed()
+    }).then(function (instance) {
             platform = instance;
             return ChronoBankAsset.deployed()
         }).then(function (instance) {
