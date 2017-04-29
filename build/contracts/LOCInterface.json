@@ -1,0 +1,47 @@
+{
+  "contract_name": "LOCInterface",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "getIssueLimit",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "getContractOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "getIssued",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1493354665190
+}
