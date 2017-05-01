@@ -132,8 +132,9 @@ contract Vote is Managed {
                 uint choice = p.memberOption[_address];
                 p.options[choice] -= _amount;
                 if(_total == 0) {
-		            delete p.memberOption[_address];
+		    delete p.memberOption[_address];
                     remove(i, _address);
+                    i--;
                 }
             }
         }

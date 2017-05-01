@@ -16,19 +16,21 @@ contract UserManager is Managed {
         return true;
     }
 
-    function addKey(address key) execute(Shareable.Operations.createLOC) {
-        if (!UserStorage(userStorage).getCBE(key)) { // Make sure that the key being submitted isn't already CBE
-            if (!UserStorage(userStorage).addMember(key, true)) { // member already exist
-                if (UserStorage(userStorage).setCBE(key, true)) {
-                    cbeUpdate(key);
+    function addCBE(address _key, bytes32 _hash) execute(Shareable.Operations.createLOC) {
+        if (!UserStorage(userStorage).getCBE(_key)) { // Make sure that the key being submitted isn't already CBE
+            if (!UserStorage(userStorage).addMember(_key, true)) { // member already exist
+                if (UserStorage(userStorage).setCBE(_key, true)) {
+                    setMemberHash(_key, _hash);
+                    cbeUpdate(_key);
                 }
             } else {
-                cbeUpdate(key);
+                setMemberHash(_key, _hash);
+                cbeUpdate(_key);
             }
         }
     }
 
-    function revokeKey(address key) execute(Shareable.Operations.createLOC) {
+    function revokeCBE(address key) execute(Shareable.Operations.createLOC) {
         if (UserStorage(userStorage).getCBE(key)) { // Make sure that the key being revoked is exist and is CBE
             UserStorage(userStorage).setCBE(key, false);
             cbeUpdate(key);
