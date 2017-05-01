@@ -1,0 +1,30 @@
+{
+  "contract_name": "ChronoMintInterface",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_LOCaddr",
+          "type": "address"
+        },
+        {
+          "name": "_issued",
+          "type": "uint256"
+        }
+      ],
+      "name": "setLOCIssued",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1493477212174
+}

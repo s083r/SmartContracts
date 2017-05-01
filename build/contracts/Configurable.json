@@ -1,0 +1,136 @@
+{
+  "contract_name": "Configurable",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "uint256"
+        }
+      ],
+      "name": "getValue",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "claimContractOwnership",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "changeContractOwnership",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingContractOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setString",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setValue",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "uint256"
+        }
+      ],
+      "name": "getString",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "contractOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x60606040525b60008054600160a060020a03191633600160a060020a03161790555b5b6102f8806100316000396000f300606060405236156100725763ffffffff60e060020a6000350416630ff4c91681146100775780634592cd1d14610099578063557f4bc9146100ba5780635aa77d3c146100e75780636ae57c24146101105780637b8d56e314610125578063b7c763b51461013a578063ce606ee01461015c575b610000565b3461000057610087600435610185565b60408051918252519081900360200190f35b34610000576100a661019a565b604080519115158252519081900360200190f35b34610000576100a6600160a060020a03600435166101f2565b604080519115158252519081900360200190f35b34610000576100f461023b565b60408051600160a060020a039092168252519081900360200190f35b346100005761012360043560243561024a565b005b3461000057610123600435602435610279565b005b34610000576100876004356102a8565b60408051918252519081900360200190f35b34610000576100f46102bd565b60408051600160a060020a039092168252519081900360200190f35b6000818152600360205260409020545b919050565b60015460009033600160a060020a039081169116146101bb575060006101ef565b50600180546000805473ffffffffffffffffffffffffffffffffffffffff19908116600160a060020a038416179091551681555b90565b6000805433600160a060020a039081169116141561019557506001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161781555b5b5b919050565b600154600160a060020a031681565b60005433600160a060020a03908116911614156102735760008281526002602052604090208190555b5b5b5050565b60005433600160a060020a03908116911614156102735760008281526003602052604090208190555b5b5b5050565b6000818152600260205260409020545b919050565b600054600160a060020a0316815600a165627a7a72305820648c83f1ff2834438f12d232bf1dd82b35c18e55967719b12f4ed65a968406720029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1493354665188
+}

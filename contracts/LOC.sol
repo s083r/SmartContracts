@@ -6,14 +6,14 @@ import "./ERC20Interface.sol";
 contract LOC is Configurable {
     Status public status;
 
-    function LOC(bytes32 _name, bytes32 _website, address _controller, uint _issueLimit, bytes32 _publishedHash, uint _expDate){
+    function setLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyContractOwner {
         status = Status.maintenance;
-        contractOwner = _controller;
         settings[uint(Setting.name)] = _name;
         settings[uint(Setting.website)] = _website;
         settings[uint(Setting.publishedHash)] = _publishedHash;
-        values[uint(Setting.issueLimit)] = _issueLimit;
-        values[uint(Setting.expDate)] = _expDate;
+        settings[uint(Setting.issueLimit)] = bytes32(_issueLimit);
+        settings[uint(Setting.expDate)] = bytes32(_expDate);
+        settings[uint(Setting.securityPercentage)] = bytes32(2);
     }
 
     function getContractOwner() constant returns(address) {
@@ -21,15 +21,15 @@ contract LOC is Configurable {
     }
 
     function getIssueLimit() constant returns(uint) {
-        return values[uint(Setting.issueLimit)];
+        return uint(settings[uint(Setting.issueLimit)]);
     }
 
     function getIssued() constant returns(uint) {
-        return values[uint(Setting.issued)];
+        return uint(settings[uint(Setting.issued)]);
     }
 
     function setIssued(uint _issued) onlyContractOwner returns(bool) {
-        values[uint(Setting.issued)] = _issued;
+        settings[uint(Setting.issued)] = bytes32(_issued);
         return true;
     }
 

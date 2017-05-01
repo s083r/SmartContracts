@@ -10,7 +10,7 @@ var Web3Subprovider = require("web3-provider-engine/subproviders/web3.js");
 var Web3 = require("web3");
 var FilterSubprovider = require('web3-provider-engine/subproviders/filters.js');
 
-var providerUrl = "https://kovan.infura.io/PVe9zSjxTKIP3eAuAHFA";
+var providerUrl = "https://testnet.infura.io/PVe9zSjxTKIP3eAuAHFA";
 var engine = new ProviderEngine();
 var address;
 

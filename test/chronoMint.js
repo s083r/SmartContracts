@@ -418,7 +418,7 @@ contract('ChronoMint', function(accounts) {
         });
 
         it("allows one CBE key to add another CBE key.", function() {
-            return userManager.addKey(owner1).then(function() {
+            return userManager.addCBE(owner1,0x0).then(function() {
                 return userManager.isAuthorized.call(owner1).then(function(r){
                     assert.isOk(r);
                 });
@@ -456,7 +456,7 @@ contract('ChronoMint', function(accounts) {
         });
 
         it("allows one CBE key to add another CBE key.", function() {
-            return userManager.addKey(owner2, {from:owner}).then(function(r) {
+            return userManager.addCBE(owner2, 0x0, {from:owner}).then(function(r) {
                 return shareable.confirm(r.logs[0].args.hash,{from:owner1}).then(function() {
                     return chronoMint.isAuthorized.call(owner2).then(function(r){
                         assert.isOk(r);
@@ -486,7 +486,7 @@ contract('ChronoMint', function(accounts) {
     context("with three CBE keys", function(){
 
         it("allows 2 votes for the new key to grant authorization.", function() {
-            return userManager.addKey(owner3, {from: owner2}).then(function(r) {
+            return userManager.addCBE(owner3, 0x0, {from: owner2}).then(function(r) {
                 conf_sign = r.logs[0].args.hash;
                 return shareable.confirm(conf_sign,{from:owner}).then(function() {
                     return shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -521,7 +521,7 @@ contract('ChronoMint', function(accounts) {
     context("with four CBE keys", function(){
 
         it("allows 3 votes for the new key to grant authorization.", function() {
-            return userManager.addKey(owner4, {from: owner3}).then(function(r) {
+            return userManager.addCBE(owner4, 0x0, {from: owner3}).then(function(r) {
                 conf_sign = r.logs[0].args.hash;
                 return shareable.confirm(conf_sign,{from:owner}).then(function() {
                     return shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -560,8 +560,8 @@ contract('ChronoMint', function(accounts) {
     });
 
     context("with five CBE keys", function() {
-        it("collects 4 vote to addKey and granting auth.", function () {
-            return userManager.addKey(owner5, {from: owner4}).then(function (r) {
+        it("collects 4 vote to addCBE and granting auth.", function () {
+            return userManager.addCBE(owner5, 0x0, {from: owner4}).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
                 return shareable.confirm(conf_sign, {from: owner}).then(function () {
                     return shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -729,13 +729,13 @@ contract('ChronoMint', function(accounts) {
         });
 
         it("collects call to setValue and first vote for a new value ", function () {
-            return chronoMint.setLOCValue(loc_contracts[0].address, 12, 22).then(function (r) {
+            return chronoMint.setLOCString(loc_contracts[0].address, 12, bytes32(22)).then(function (r) {
                 conf_sign = r.logs[0].args.hash;
-                return loc_contracts[0].getValue.call(12).then(function (r) {
-                    assert.notEqual(r, 22);
+                return loc_contracts[0].getString.call(12).then(function (r) {
+                    assert.notEqual(r, bytes32(22));
                     return shareable.confirm(conf_sign, {from: owner1}).then(function () {
-                        return loc_contracts[0].getValue.call(12).then(function (r) {
-                            assert.notEqual(r, 22);
+                        return loc_contracts[0].getString.call(12).then(function (r) {
+                            assert.notEqual(r, bytes32(22));
                         });
                     });
                 });
@@ -755,7 +755,7 @@ contract('ChronoMint', function(accounts) {
         });
 
         it("allows a CBE to propose revocation of an authorized key.", function () {
-            return userManager.revokeKey(owner5, {from: owner}).then(function (r) {
+            return userManager.revokeCBE(owner5, {from: owner}).then(function (r) {
                 conf_sign2 = r.logs[0].args.hash;
                 return userManager.isAuthorized.call(owner5).then(function (r) {
                     assert.isOk(r);
@@ -774,8 +774,8 @@ contract('ChronoMint', function(accounts) {
                 return shareable.confirm(conf_sign, {from: owner3}).then(function () {
                     return shareable.confirm(conf_sign, {from: owner4}).then(function () {
                         return shareable.confirm(conf_sign, {from: owner5}).then(function () {
-                            return loc_contracts[0].getValue.call(12).then(function (r) {
-                                assert.equal(r, 22);
+                            return loc_contracts[0].getString.call(12).then(function (r) {
+                                assert.equal(r, bytes32(22));
                             });
                         });
                     });
@@ -784,20 +784,32 @@ contract('ChronoMint', function(accounts) {
         });
 
         it("doesn't allow non CBE to change settings for the contract.", function () {
-            return loc_contracts[0].setValue(3, 2000).then(function () {
-                return loc_contracts[0].getValue.call(3).then(function (r) {
-                    assert.equal(r, '1000000');
+            return loc_contracts[0].setString(3, 2000).then(function () {
+                return loc_contracts[0].getString.call(3).then(function (r) {
+                    assert.equal(r, bytes32(1000000));
                 });
             });
         });
 
         it("allows CBE controller to change the name of the LOC", function () {
-            return chronoMint.setLOCString(loc_contracts[0].address, 0, bytes32("Tom's Hard Workers")).then(function () {
+            return chronoMint.setLOCString(loc_contracts[0].address, 0, bytes32("David's Hard Workers")).then(function (r) {
+const conf_sign3 = r.logs[0].args.hash;
+                return shareable.confirm(conf_sign3, {from: owner1}).then(function (r) {
+                    return shareable.confirm(conf_sign3, {from: owner2}).then(function (r) {
+                        return shareable.confirm(conf_sign3, {from: owner3}).then(function (r) {
+                            return shareable.confirm(conf_sign3, {from: owner4}).then(function (r) {
+                                return shareable.confirm(conf_sign3, {from: owner5}).then(function (r) {                                   
+
                 return loc_contracts[0].getName.call().then(function (r) {
-                    assert.equal(r, bytes32("Tom's Hard Workers"));
+                    assert.equal(r, bytes32("David's Hard Workers"));
                 });
             });
         });
+});
+});
+});
+});
+});
 
         it("should decrement pending operation counter ", function () {
             return shareable.pendingsCount.call({from: owner}).then(function (r) {
@@ -878,7 +890,6 @@ contract('ChronoMint', function(accounts) {
         it("ChronoMint should be able to send 1000 TIME to msg.sender", function () {
             return contractsManager.sendTime({from: owner2, gas: 3000000}).then(function () {
                 return timeProxyContract.balanceOf.call(owner2).then(function (r) {
-                    console.log(r);
                     assert.equal(r, 1000000000);
                 });
             });

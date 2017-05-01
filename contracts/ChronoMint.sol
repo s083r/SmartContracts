@@ -65,7 +65,8 @@ contract ChronoMint is Managed {
     }
 
     function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
-        address locAddr = new LOC(_name,_website,this,_issueLimit,_publishedHash, _expDate);
+        address locAddr = new LOC();
+        LOC(locAddr).setLOC(_name,_website,_issueLimit,_publishedHash, _expDate);
         if(deletedIds.length != 0) {
             offeringCompaniesIDs[locAddr] = deletedIds[deletedIds.length-1];
             offeringCompanies[deletedIds[deletedIds.length-1]] = locAddr;
@@ -86,12 +87,7 @@ contract ChronoMint is Managed {
         updLOCStatus(msg.sender, _LOCaddr, status);
     }
 
-    function setLOCValue(address _LOCaddr, LOC.Setting name, uint value) execute(Shareable.Operations.editLOC) {
-        LOC(_LOCaddr).setValue(uint(name),value);
-        updLOCValue(msg.sender, _LOCaddr, value, name);
-    }
-
-    function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) onlyAuthorized() {
+    function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) execute(Shareable.Operations.editLOC) {
         LOC(_LOCaddr).setString(uint(name),value);
         updLOCString(msg.sender, _LOCaddr, value, name);
     }

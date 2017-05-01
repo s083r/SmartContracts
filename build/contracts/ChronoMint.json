@@ -1,0 +1,1028 @@
+{
+  "contract_name": "ChronoMint",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_userStorage",
+          "type": "address"
+        },
+        {
+          "name": "_shareable",
+          "type": "address"
+        },
+        {
+          "name": "_contractManager",
+          "type": "address"
+        }
+      ],
+      "name": "init",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getLOCCount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_LOCaddr",
+          "type": "address"
+        },
+        {
+          "name": "name",
+          "type": "uint8"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setLOCValue",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getLOCs",
+      "outputs": [
+        {
+          "name": "result",
+          "type": "address[]"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_locAddr",
+          "type": "address"
+        }
+      ],
+      "name": "removeLOC",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "_website",
+          "type": "bytes32"
+        },
+        {
+          "name": "_issueLimit",
+          "type": "uint256"
+        },
+        {
+          "name": "_publishedHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_expDate",
+          "type": "uint256"
+        }
+      ],
+      "name": "proposeLOC",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_locAddr",
+          "type": "address"
+        }
+      ],
+      "name": "addLOC",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLOCbyID",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "deletedIdsLength",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_LOCaddr",
+          "type": "address"
+        },
+        {
+          "name": "name",
+          "type": "uint8"
+        },
+        {
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setLOCString",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_LOCaddr",
+          "type": "address"
+        },
+        {
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "name": "setLOCStatus",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_LOCaddr",
+          "type": "address"
+        },
+        {
+          "name": "_issued",
+          "type": "uint256"
+        }
+      ],
+      "name": "setLOCIssued",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "key",
+          "type": "address"
+        }
+      ],
+      "name": "isAuthorized",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "payable": false,
+      "type": "fallback"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_LOC",
+          "type": "address"
+        }
+      ],
+      "name": "newLOC",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_LOC",
+          "type": "address"
+        }
+      ],
+      "name": "remLOC",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_LOC",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_status",
+          "type": "uint8"
+        }
+      ],
+      "name": "updLOCStatus",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_LOC",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_value",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "_name",
+          "type": "uint8"
+        }
+      ],
+      "name": "updLOCValue",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_LOC",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "_value",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_name",
+          "type": "uint8"
+        }
+      ],
+      "name": "updLOCString",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "exec",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x606060405234610000575b611901806100196000396000f300606060405236156100a95763ffffffff60e060020a600035041663184b955981146100bb57806323400cf6146100f45780634b21cc2214610113578063731a1372146101375780638297b11a1461019f578063be29e1e7146101cc578063cbb70c9214610204578063cdefe7041461021f578063dbfa06e71461024b578063e32bf4dd1461026a578063f08bf8231461028e578063f686a4a1146102af578063fe9fbb80146102df575b34610000576100b95b610000565b565b005b34610000576100e0600160a060020a036004358116906024358116906044351661030c565b604080519115158252519081900360200190f35b346100005761010161036c565b60408051918252519081900360200190f35b34610000576100b9600160a060020a036004351660ff60243516604435610373565b005b346100005761014461056c565b604080516020808252835181830152835191928392908301918581019102808383821561018c575b80518252602083111561018c57601f19909201916020918201910161016c565b5050509050019250505060405180910390f35b34610000576100e0600160a060020a03600435166105ff565b604080519115158252519081900360200190f35b34610000576101e860043560243560443560643560843561080a565b60408051600160a060020a039092168252519081900360200190f35b34610000576100b9600160a060020a0360043516610a1b565b005b34610000576101e8600435610cae565b60408051600160a060020a039092168252519081900360200190f35b3461000057610101610ccc565b60408051918252519081900360200190f35b34610000576100b9600160a060020a036004351660ff60243516604435610cd3565b005b34610000576100b9600160a060020a036004351660ff60243516610dcd565b005b34610000576100e0600160a060020a0360043516602435610fcf565b604080519115158252519081900360200190f35b34610000576100e0600160a060020a03600435166110a2565b604080519115158252519081900360200190f35b60008054600160a060020a03161561032657506000610365565b5060008054600160a060020a03808616600160a060020a0319928316179092556001805485841690831617815560048054938516939092169290921790555b9392505050565b6002545b90565b6001805460009033600160a060020a03908116911614610485576000366040518083838082843760b860020a687369676e61747572650292019182525060405190819003600901812060015460e260020a631441692f02835260048301828152919650600160a060020a03169450635105a4bc935085925060009136918891309190602481019060440184600781116100005760ff168152600160a060020a0384166020820152604083820381018352810186905260600186868082843782019150509650505050505050600060405180830381600087803b156100005760325a03f1156100005750506040805183815290516000805160206118b683398151915292509081900360200190a1610563565b84600160a060020a0316637b8d56e3856010811161000057856040518363ffffffff1660e060020a0281526004018083815260200182815260200192505050600060405180830381600087803b156100005760325a03f115610000575050507f277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d338685876040518085600160a060020a0316600160a060020a0316815260200184600160a060020a0316600160a060020a0316815260200183815260200182601081116100005760ff16815260200194505050505060405180910390a15b5b5b5050505050565b6020604051908101604052806000815250600060025460405180591061058f5750595b908082528060200260200182016040525b509150600090505b6002548110156105fa576000818152600560205260409020548251600160a060020a03909116908390839081101561000057600160a060020a039092166020928302909101909101525b6001016105a8565b5b5090565b600154600090600490829033600160a060020a03908116911614610715576000366040518083838082843760b860020a687369676e61747572650292019182525060405190819003600901812060015460e260020a631441692f02835260048301828152919650600160a060020a03169450635105a4bc935085925060009136918891309190602481019060440184600781116100005760ff168152600160a060020a0384166020820152604083820381018352810186905260600186868082843782019150509650505050505050600060405180830381600087803b156100005760325a03f1156100005750506040805183815290516000805160206118b683398151915292509081900360200190a1610801565b600160a060020a0384166000908152600660209081526040808320548352600590915290208054600160a060020a03191690556003805460018101808355828183801582901161078a5760008381526020902061078a9181019083015b808211156105fa5760008155600101610772565b5090565b5b505050916000526020600020900160005b50600160a060020a03808716600081815260066020908152604080832080549096559190945580513390931683529282015281517f881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e0093509081900390910190a1600192505b5b5b5050919050565b60006000610817336110a2565b80610830575060015433600160a060020a039081169116145b15610a0f57868630878787604051610793806111238339019586526020860194909452600160a060020a039092166040808601919091526060850191909152608084019190915260a0830191909152519081900360c001906000f080156100005760035490915015610980576003805460001981019081101561000057906000526020600020900160005b5054600160a060020a038216600090815260066020526040812091909155600380548392600592909160001981019081101561000057906000526020600020900160005b5054815260200190815260200160002060006101000a815481600160a060020a030219169083600160a060020a031602179055506003805480919060019003815481835581811511610976576000838152602090206109769181019083015b808211156105fa5760008155600101610772565b5090565b5b505050506109c6565b60028054600160a060020a038316600081815260066020908152604080832085905593825260059052919091208054600160a060020a0319169091179055805460010190555b60408051600160a060020a0333811682528316602082015281517f3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039929181900390910190a18091505b5b5b5095945050505050565b60015460049060009033600160a060020a03908116911614610b2f576000366040518083838082843760b860020a687369676e61747572650292019182525060405190819003600901812060015460e260020a631441692f02835260048301828152919650600160a060020a03169450635105a4bc935085925060009136918891309190602481019060440184600781116100005760ff168152600160a060020a0384166020820152604083820381018352810186905260600186868082843782019150509650505050505050600060405180830381600087803b156100005760325a03f1156100005750506040805183815290516000805160206118b683398151915292509081900360200190a1610ca7565b60035415610c1b576003805460001981019081101561000057906000526020600020900160005b5054600160a060020a038416600090815260066020526040812091909155600380548592600592909160001981019081101561000057906000526020600020900160005b5054815260200190815260200160002060006101000a815481600160a060020a030219169083600160a060020a031602179055506003805480919060019003815481835581811511610c1157600083815260209020610c119181019083015b808211156105fa5760008155600101610772565b5090565b5b50505050610c61565b60028054600160a060020a038516600081815260066020908152604080832085905593825260059052919091208054600160a060020a0319169091179055805460010190555b60408051600160a060020a0333811682528516602082015281517f3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039929181900390910190a15b5b5b505050565b600081815260056020526040902054600160a060020a03165b919050565b6003545b90565b610cdc336110a2565b80610cf5575060015433600160a060020a039081169116145b15610ca75782600160a060020a0316636ae57c248360108111610000576040805160e060020a63ffffffff851602815260048101929092526024820185905251604480830192600092919082900301818387803b156100005760325a03f1156100005750506040805133600160a060020a038181168352871660208301529181018490527f08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e92508590849086906060810182601081116100005760ff16815260200194505050505060405180910390a15b5b5b505050565b6001805460009033600160a060020a03908116911614610edf576000366040518083838082843760b860020a687369676e61747572650292019182525060405190819003600901812060015460e260020a631441692f02835260048301828152919650600160a060020a03169450635105a4bc935085925060009136918891309190602481019060440184600781116100005760ff168152600160a060020a0384166020820152604083820381018352810186905260600186868082843782019150509650505050505050600060405180830381600087803b156100005760325a03f1156100005750506040805183815290516000805160206118b683398151915292509081900360200190a1610fc7565b6040517f2e49d78b000000000000000000000000000000000000000000000000000000008152600160a060020a03851690632e49d78b9085906004018082600381116100005760ff168152602001915050600060405180830381600087803b156100005760325a03f115610000575050507fee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a3385856040518084600160a060020a0316600160a060020a0316815260200183600160a060020a0316600160a060020a0316815260200182600381116100005760ff168152602001935050505060405180910390a15b5b5b50505050565b60045460009033600160a060020a039081169116141561109a576040805130600160a060020a039081168252851660208201528082018490526004606082015290517f277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d9181900360800190a182600160a060020a0316633c0a6cc7836000604051602001526040518263ffffffff1660e060020a02815260040180828152602001915050602060405180830381600087803b156100005760325a03f115610000575050604051519150505b5b5b92915050565b6000805460408051602090810184905281517f2aa09e5a000000000000000000000000000000000000000000000000000000008152600160a060020a03868116600483015292519290931692632aa09e5a926024808301939282900301818787803b156100005760325a03f115610000575050604051519150505b91905056006060604052346100005760405160c08061079383398101604090815281516020830151918301516060840151608085015160a090950151929491929091905b5b60008054600160a060020a03191633600160a060020a03161790555b6004805460ff1916905560008054600160a060020a031916600160a060020a0386161781557fac33ff75c19e70fe83507db0d683fd3465c996598dc972688b7ace676c89077b8790557fe90b7bceb6e7df5418fb78d8ee546e97c83a08bbccc01a0644d599ccd2a7c2e08690557f59dd4b18488d12f51eda69757a0ed42a2010c14b564330cc74a06895e60c077b83905560036020527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af849055600790527ff2c49132ed1cee2a7e75bde50d332a2f81f1d01e5456d8a19d1df09bd561dbd28190555b5050505050505b61063f806101546000396000f300606060405236156100d55763ffffffff60e060020a60003504166309f5cba481146100e75780630ff4c9161461010657806317d7de7c14610128578063200d2ed2146101475780632e49d78b146101755780633c0a6cc71461018a578063442890d5146101ae5780634592cd1d146101d75780634d6aed53146101f8578063557f4bc9146102175780635aa77d3c146102445780635ac801fe1461026d5780636ae57c241461027f5780637b8d56e314610294578063b7c763b5146102a9578063ce606ee0146102cb578063ee4bf01c146102f4575b34610000576100e55b610000565b565b005b34610000576100f4610306565b60408051918252519081900360200190f35b34610000576100f4600435610336565b60408051918252519081900360200190f35b34610000576100f461034b565b60408051918252519081900360200190f35b346100005761015461037a565b6040518082600381116100005760ff16815260200191505060405180910390f35b34610000576100e560ff60043516610383565b005b346100005761019a6004356103bb565b604080519115158252519081900360200190f35b34610000576101bb61040c565b60408051600160a060020a039092168252519081900360200190f35b346100005761019a61041c565b604080519115158252519081900360200190f35b34610000576100f4610474565b60408051918252519081900360200190f35b346100005761019a600160a060020a03600435166104a4565b604080519115158252519081900360200190f35b34610000576101bb6104ed565b60408051600160a060020a039092168252519081900360200190f35b34610000576100e56004356104fc565b005b34610000576100e5600435602435610546565b005b34610000576100e5600435602435610575565b005b34610000576100f46004356105a4565b60408051918252519081900360200190f35b34610000576101bb6105b9565b60408051600160a060020a039092168252519081900360200190f35b34610000576100e56004356105c8565b005b600360008190526020527fcbc4e5fb02c3d1de23a9f1e014b4d2ee5aeaea9505df5e855c9210bf472495af545b90565b6000818152600360205260409020545b919050565b6000805260026020527fac33ff75c19e70fe83507db0d683fd3465c996598dc972688b7ace676c89077b545b90565b60045460ff1681565b60005433600160a060020a03908116911614156103b6576004805482919060ff1916600183600381116100005702179055505b5b5b50565b6000805433600160a060020a03908116911614156103465750600460005260036020527f83ec6a1f0257b830b5e016457c9cf1435391bf56cc98f369a58a54fe9377246581905560015b5b5b919050565b600054600160a060020a03165b90565b60015460009033600160a060020a0390811691161461043d57506000610333565b50600180546000805473ffffffffffffffffffffffffffffffffffffffff19908116600160a060020a038416179091551681555b90565b600460005260036020527f83ec6a1f0257b830b5e016457c9cf1435391bf56cc98f369a58a54fe93772465545b90565b6000805433600160a060020a039081169116141561034657506001805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161781555b5b5b919050565b600154600160a060020a031681565b60005433600160a060020a03908116911614156103b6576000805260026020527fac33ff75c19e70fe83507db0d683fd3465c996598dc972688b7ace676c89077b8190555b5b5b50565b60005433600160a060020a039081169116141561056f5760008281526002602052604090208190555b5b5b5050565b60005433600160a060020a039081169116141561056f5760008281526003602052604090208190555b5b5b5050565b6000818152600260205260409020545b919050565b600054600160a060020a031681565b60005433600160a060020a03908116911614156103b657600160005260026020527fe90b7bceb6e7df5418fb78d8ee546e97c83a08bbccc01a0644d599ccd2a7c2e08190555b5b5b505600a165627a7a72305820f8ae5c898aa32cab855aeddf9ef5667922761214edce5cb797b1a5542e01209f0029b5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0a165627a7a72305820a52919d7680024f1768f35f9527b27dad8fd5164ab2d98d1d36f548185dd629e0029",
+  "networks": {
+    "3": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x2d8f5df6d7dcd3fa9beb152f6cc8c38cc284f11c",
+      "updated_at": 1493479000843
+    },
+    "42": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x6d51806f912bab82a25fc935ee21287b653c2866",
+      "updated_at": 1493367026270
+    },
+    "1493365801722": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x480c91b8212dc1d4e50f79468a95781adc2b9d9b",
+      "updated_at": 1493365809539
+    },
+    "1493365935399": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xbcb2084c48ae15d80a1de5e46fd3f2c3e3c8e028",
+      "updated_at": 1493365949882
+    },
+    "1493375424896": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x235760d35b8400a075011d6626db38ca71f8b4af",
+      "updated_at": 1493375452784
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1493479000843
+}
