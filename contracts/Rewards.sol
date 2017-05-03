@@ -180,10 +180,13 @@ contract Rewards is Owned {
         for(;first < last;first++) {
             address holder = TimeHolder(timeHolder).shareholders(first);
             if(periods[lastClosedPeriod()].shares[holder] == 0) {
-                periods[lastClosedPeriod()].shares[holder] = TimeHolder(timeHolder).shares(holder);
-                periods[lastClosedPeriod()].totalShares += TimeHolder(timeHolder).shares(holder);
+              //  if(periods[lastClosedPeriod()].shares[holder] > 9) {
+                    periods[lastClosedPeriod()].shares[holder] = TimeHolder(timeHolder).shares(holder);
+                    periods[lastClosedPeriod()].totalShares += periods[lastClosedPeriod()].shares[holder];
+               // }
             }
         }
+        Test(periods[lastClosedPeriod()].totalShares);
         if(periods[lastClosedPeriod()].totalShares == TimeHolder(timeHolder).totalShares()) {
             periods[lastClosedPeriod()].isClosed = true;
             return true;
@@ -401,7 +404,6 @@ contract Rewards is Owned {
         if(!period.isClosed) {
 
             period.totalShares -= _amount;
-            Test(period.totalShares);
             if(period.shareholdersId[_address] > 0) {
                 period.shares[_address] = _total;
             }

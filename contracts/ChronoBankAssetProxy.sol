@@ -32,7 +32,7 @@ contract ChronoBankAssetProxy is ERC20 {
     ChronoBankPlatform public chronoBankPlatform;
 
     // Assigned symbol, immutable.
-    bytes32 smbl;
+    bytes32 public smbl;
 
     // Assigned name, immutable.
     string public name;

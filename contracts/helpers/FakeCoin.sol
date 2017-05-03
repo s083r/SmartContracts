@@ -8,6 +8,10 @@ contract FakeCoin {
         balanceOf[_to] += _value;
     }
 
+    function totalSupply() constant returns(uint) {
+        return 0;
+    }
+
     function transfer(address _to, uint _value) returns(bool) {
         return transferFrom(msg.sender, _to, _value);
     }
