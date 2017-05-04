@@ -133,7 +133,7 @@ contract ContractsManager is Managed {
         return true;
     }
 
-    function reissueAsset(uint _id, bytes32 symbol, uint _value, address _locAddr) execute returns (bool) {
+    function reissueAsset(uint _id, bytes32 symbol, uint _value, address _locAddr) multisig returns (bool) {
         if(contracts[_id] != 0x0) {
             address platform = ChronoBankAssetProxyInterface(contracts[_id]).chronoBankPlatform();
             if (platform != 0x0 && ChronoBankPlatformInterface(platform).isReissuable(symbol)) {
@@ -150,7 +150,7 @@ contract ContractsManager is Managed {
         return false;
     }
 
-    function revokeAsset(uint _id, bytes32 symbol, uint _value, address _locAddr) execute returns (bool) {
+    function revokeAsset(uint _id, bytes32 symbol, uint _value, address _locAddr) multisig returns (bool) {
         if(contracts[_id] != 0x0) {
             address platform = ChronoBankAssetProxyInterface(contracts[_id]).chronoBankPlatform();
             if (platform != 0x0 && ChronoBankPlatformInterface(platform).isReissuable(symbol)) {
@@ -188,7 +188,7 @@ contract ContractsManager is Managed {
         return contracts[_id];
     }
 
-    function setAddress(address value) execute returns (uint) {
+    function setAddress(address value) multisig returns (uint) {
         if (contractsId[value] == uint(0x0)) {
             ERC20Interface(value).totalSupply();
             contracts[contractsCounter] = value;
@@ -199,7 +199,7 @@ contract ContractsManager is Managed {
         return contractsId[value];
     }
 
-    function changeAddress(address _from, address _to) execute returns (bool) {
+    function changeAddress(address _from, address _to) multisig returns (bool) {
         if (contractsId[_from] != 0) {
             contracts[contractsId[_from]] = _to;
             contractsId[_to] = contractsId[_from];
@@ -210,7 +210,7 @@ contract ContractsManager is Managed {
         return false;
     }
 
-    function removeAddress(address value) execute {
+    function removeAddress(address value) multisig {
         removeAddr(contractsId[value]);
         delete contractsId[value];
         updateContract(value);
@@ -229,7 +229,7 @@ contract ContractsManager is Managed {
         return otherContracts[_id];
     }
 
-    function setOtherAddress(address value) execute returns (uint) {
+    function setOtherAddress(address value) multisig returns (uint) {
         if (otherContractsId[value] == uint(0x0)) {
             otherContracts[otherContractsCounter] = value;
             otherContractsId[value] = otherContractsCounter;
@@ -240,7 +240,7 @@ contract ContractsManager is Managed {
         return otherContractsId[value];
     }
 
-    function changeOtherAddress(address _from, address _to) execute returns (bool) {
+    function changeOtherAddress(address _from, address _to) multisig returns (bool) {
         if (otherContractsId[_from] != 0) {
             otherContracts[otherContractsId[_from]] = _to;
             otherContractsId[_to] = otherContractsId[_from];
@@ -251,7 +251,7 @@ contract ContractsManager is Managed {
         return false;
     }
 
-    function removeOtherAddress(address value) execute {
+    function removeOtherAddress(address value) multisig {
         removeOtherAddr(otherContractsId[value]);
         delete otherContractsId[value];
         updateOtherContract(value);

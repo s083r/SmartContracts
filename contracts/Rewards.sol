@@ -54,7 +54,7 @@ contract Rewards is Owned {
     uint public closeInterval;
 
 // Maximum shares which can be transfered in on TX
-    uint public maxSharesTransfer = 150;
+    uint public maxSharesTransfer = 100;
 
 // Asset rewards accumulated for shareholder.
     mapping(address => mapping(address => uint)) rewards;
@@ -79,8 +79,6 @@ contract Rewards is Owned {
 
 // Something went wrong.
     event Error(bytes32 message);
-
-    event Test(uint test);
 
 /**
  * Sets TimeHolder contract and period minimum length.
@@ -153,10 +151,7 @@ contract Rewards is Owned {
         periods[lastClosedPeriod()].shareholdersCount = TimeHolder(timeHolder).shareholdersCount();
         //periods[lastClosedPeriod()].totalShares = TimeHolder(timeHolder).totalShares();
 
-        storeDeposits(0);
-        PeriodClosed();
-        return true;
-
+        return storeDeposits(0);
     }
 
     function getPartsCount() constant returns(uint) {
@@ -186,9 +181,10 @@ contract Rewards is Owned {
                // }
             }
         }
-        Test(periods[lastClosedPeriod()].totalShares);
+
         if(periods[lastClosedPeriod()].totalShares == TimeHolder(timeHolder).totalShares()) {
             periods[lastClosedPeriod()].isClosed = true;
+            PeriodClosed();
             return true;
         }
         return false;
@@ -397,6 +393,7 @@ contract Rewards is Owned {
     }
 
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
+
         if (periods.length == 1) {
             return false;
         }

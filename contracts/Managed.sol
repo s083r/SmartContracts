@@ -16,7 +16,7 @@ contract Managed {
         }
     }
 
-    modifier execute() {
+    modifier multisig() {
            if(msg.sender != shareable) {
                 bytes32 _r = sha3(msg.data, "signature");
                 Shareable(shareable).addTx(_r, msg.data,this, msg.sender);

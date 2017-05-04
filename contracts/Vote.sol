@@ -207,7 +207,7 @@ contract Vote is Managed {
         return true;
     }
 
-    function activatePoll(uint _pollId) execute returns (bool) {
+    function activatePoll(uint _pollId) multisig returns (bool) {
         if(activePollsCount < 20) {
             Poll p = polls[_pollId];
             p.active = true;
@@ -217,7 +217,7 @@ contract Vote is Managed {
         return false;
     }
 
-    function adminEndPoll(uint _pollId) execute returns (bool) {
+    function adminEndPoll(uint _pollId) multisig returns (bool) {
         return endPoll(_pollId);
     }
 
