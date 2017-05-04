@@ -16,10 +16,10 @@ contract Managed {
         }
     }
 
-    modifier execute(Shareable.Operations _type) {
+    modifier multisig() {
            if(msg.sender != shareable) {
                 bytes32 _r = sha3(msg.data, "signature");
-                Shareable(shareable).addTx(_r, msg.data,_type,this);
+                Shareable(shareable).addTx(_r, msg.data,this, msg.sender);
                 exec(_r);
            }
            else {

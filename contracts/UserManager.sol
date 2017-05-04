@@ -16,7 +16,7 @@ contract UserManager is Managed {
         return true;
     }
 
-    function addCBE(address _key, bytes32 _hash) execute(Shareable.Operations.createLOC) {
+    function addCBE(address _key, bytes32 _hash) multisig {
         if (!UserStorage(userStorage).getCBE(_key)) { // Make sure that the key being submitted isn't already CBE
             if (!UserStorage(userStorage).addMember(_key, true)) { // member already exist
                 if (UserStorage(userStorage).setCBE(_key, true)) {
@@ -30,7 +30,7 @@ contract UserManager is Managed {
         }
     }
 
-    function revokeCBE(address key) execute(Shareable.Operations.createLOC) {
+    function revokeCBE(address key) multisig {
         if (UserStorage(userStorage).getCBE(key)) { // Make sure that the key being revoked is exist and is CBE
             UserStorage(userStorage).setCBE(key, false);
             cbeUpdate(key);
@@ -61,7 +61,7 @@ contract UserManager is Managed {
         return UserStorage(userStorage).required();
     }
 
-    function setRequired(uint _required) execute(Shareable.Operations.changeReq) returns (bool) {
+    function setRequired(uint _required) multisig returns (bool) {
         setReq(_required);
         return UserStorage(userStorage).setRequired(_required);
     }

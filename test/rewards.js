@@ -24,8 +24,8 @@ contract('Rewards', (accounts) => {
   const SHARES_BALANCE = 1161;
 
   let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL)
-//    .then(() => userStorage.addOwner(userManager.address))
-//    .then(() => userManager.init(userStorage.address, 0x1))
+    .then(() => userStorage.addOwner(userManager.address))
+    .then(() => userManager.init(userStorage.address, 0x1))
     .then(() => timeHolder.init(userStorage.address, shares.address))
     .then(() => timeHolder.addListener(reward.address));
   };
@@ -451,9 +451,9 @@ contract('Rewards', (accounts) => {
         return defaultInit()
           .then(() => asset1.mint(reward.address, 1000000))
           .then(() => timeHolder.depositFor(accounts[0], 50))
-          .then(() => depositShareholders(1111,1))
+          .then(() => depositShareholders(711,1))
           .then(reward.closePeriod)
-          .then(() => timeHolder.withdrawShares(50))
+          .then(() => timeHolder.withdrawShares(25))
           .then(() => { return reward.getPartsCount.call() })
           .then((res) => {
             data = [];
@@ -463,9 +463,9 @@ contract('Rewards', (accounts) => {
             return Promise.all(data);
           })
           .then(() => reward.registerAsset(asset1.address))
-          .then(() => assertTotalDepositInPeriod(0, 1111))
-          .then(() => timeHolder.withdrawShares(50))
-          .then(() => assertTotalDepositInPeriod(0, 1111))
+          .then(() => assertTotalDepositInPeriod(0, 736))
+          .then(() => timeHolder.withdrawShares(25))
+          .then(() => assertTotalDepositInPeriod(0, 736))
     });
 
 });

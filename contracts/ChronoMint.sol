@@ -32,7 +32,7 @@ contract ChronoMint is Managed {
         }
     }
 
-    function deletedIdsLength() returns (uint) {
+    function deletedIdsLength() constant returns (uint) {
         return deletedIds.length;
     }
 
@@ -41,7 +41,7 @@ contract ChronoMint is Managed {
         return LOC(_LOCaddr).setIssued(_issued);
     }
 
-    function addLOC (address _locAddr) execute(Shareable.Operations.editMint) {
+    function addLOC (address _locAddr) multisig {
         if(deletedIds.length != 0) {
             offeringCompaniesIDs[_locAddr] = deletedIds[deletedIds.length-1];
             offeringCompanies[deletedIds[deletedIds.length-1]] = _locAddr;
@@ -56,7 +56,7 @@ contract ChronoMint is Managed {
         newLOC(msg.sender, _locAddr);
     }
 
-    function removeLOC(address _locAddr) execute(Shareable.Operations.editMint) returns (bool) {
+    function removeLOC(address _locAddr) multisig returns (bool) {
         delete offeringCompanies[offeringCompaniesIDs[_locAddr]];
         deletedIds.push(offeringCompaniesIDs[_locAddr]);
         delete offeringCompaniesIDs[_locAddr];
@@ -82,12 +82,12 @@ contract ChronoMint is Managed {
         return locAddr;
     }
 
-    function setLOCStatus(address _LOCaddr, LOC.Status status) execute(Shareable.Operations.editLOC) {
+    function setLOCStatus(address _LOCaddr, LOC.Status status) multisig {
         LOC(_LOCaddr).setStatus(status);
         updLOCStatus(msg.sender, _LOCaddr, status);
     }
 
-    function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) execute(Shareable.Operations.editLOC) {
+    function setLOCString(address _LOCaddr, LOC.Setting name, bytes32 value) multisig {
         LOC(_LOCaddr).setString(uint(name),value);
         updLOCString(msg.sender, _LOCaddr, value, name);
     }

@@ -219,7 +219,7 @@ UserStorage.deployed().then(function (instance) {
         }).then(function () {
             return chronoBankPlatform.changeContractOwnership(ContractsManager.address, {from: accounts[0]})
         }).then(function () {
-            return contractsManager.claimPlatformOwnership(ChronoBankPlatform.address, {from: accounts[0]})
+            return contractsManager.claimContractOwnership(ChronoBankPlatform.address, false, {from: accounts[0]})
         }).then(function () {
             return Exchange.deployed()
         }).then(function (instance) {
@@ -228,7 +228,7 @@ UserStorage.deployed().then(function (instance) {
         }).then(function () {
             return exchange.changeContractOwnership(contractsManager.address, {from: accounts[0]})
         }).then(function () {
-            return contractsManager.claimExchangeOwnership(exchange.address, {from: accounts[0]})
+            return contractsManager.claimContractOwnership(exchange.address, false, {from: accounts[0]})
         }).then(function () {
             return Rewards.deployed()
         }).then(function (instance) {
@@ -282,8 +282,8 @@ UserStorage.deployed().then(function (instance) {
     context("owner shares deposit", function(){
 
         it("ChronoMint should be able to send 100 TIME to owner", function() {
-            return contractsManager.sendAsset.call('TIME',owner,100).then(function(r) {
-                return contractsManager.sendAsset('TIME',owner,100,{from: accounts[0], gas: 3000000}).then(function() {
+            return contractsManager.sendAsset.call(1,owner,100).then(function(r) {
+                return contractsManager.sendAsset(1,owner,100,{from: accounts[0], gas: 3000000}).then(function() {
                     assert.isOk(r);
                 });
             });
@@ -475,8 +475,8 @@ UserStorage.deployed().then(function (instance) {
     context("owner1 shares deposit and voting", function(){
 
         it("ChronoMint should be able to send 50 TIME to owner1", function() {
-            return contractsManager.sendAsset.call('TIME',owner1,50).then(function(r) {
-                return contractsManager.sendAsset('TIME',owner1,50,{from: accounts[0], gas: 3000000}).then(function() {
+            return contractsManager.sendAsset.call(1,owner1,50).then(function(r) {
+                return contractsManager.sendAsset(1,owner1,50,{from: accounts[0], gas: 3000000}).then(function() {
                     assert.isOk(r);
                 });
             });

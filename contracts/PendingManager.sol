@@ -7,21 +7,18 @@ contract PendingManager {
 
     address userStorage;
 
-    enum Operations {createLOC, editLOC, addLOC, removeLOC, editMint, changeReq, newPoll, endPoll}
-
     mapping (bytes32 => Transaction) public txs;
 
     struct Transaction {
-    address to;
-    bytes data;
-    Operations op;
+        address to;
+        bytes data;
     }
 
 // struct for the status of a pending operation.
     struct PendingState {
-    uint yetNeeded;
-    uint ownersDone;
-    uint index;
+        uint yetNeeded;
+        uint ownersDone;
+        uint index;
     }
 
     function init(address _userStorage) {
@@ -47,10 +44,6 @@ contract PendingManager {
         return pendings[_hash].yetNeeded;
     }
 
-    function getTxsType(bytes32 _hash) returns (uint) {
-        return uint(txs[_hash].op);
-    }
-
     function getTxsData(bytes32 _hash) constant returns (bytes) {
         return txs[_hash].data;
     }
@@ -62,6 +55,8 @@ contract PendingManager {
     event Confirmation(address owner, bytes32 operation);
     event Revoke(address owner, bytes32 operation);
     event Done(bytes data);
+    event Test(address sender);
+    event Test2(uint value);
 
 /// MODIFIERS
 
@@ -74,24 +69,27 @@ contract PendingManager {
 // multi-sig function modifier: the operation must have an intrinsic hash in order
 // that later attempts can be realised as the same underlying operation and
 // thus count as confirmations.
-    modifier onlymanyowners(bytes32 _operation) {
-        if (confirmAndCheck(_operation))
+    modifier onlymanyowners(bytes32 _operation, address _sender) {
+        if (confirmAndCheck(_operation, _sender))
         _;
     }
 
 
 // METHODS
 
-    function addTx(bytes32 _r, bytes data, Operations op, address to) {
+    function addTx(bytes32 _r, bytes data, address to, address sender) {
         if(pendingCount > 20)
         throw;
         txs[_r].data = data;
-        txs[_r].op = op;
         txs[_r].to = to;
-        confirm(_r);
+        conf(_r, sender);
     }
 
-    function confirm(bytes32 _h) onlymanyowners(_h) returns (bool) {
+    function confirm(bytes32 _h) returns (bool) {
+        return conf(_h, msg.sender);
+    }
+
+    function conf(bytes32 _h, address sender) onlymanyowners(_h, sender) returns (bool) {
         if (txs[_h].to != 0) {
             if (!txs[_h].to.call(txs[_h].data)) {
                 throw;
@@ -141,13 +139,14 @@ contract PendingManager {
 
 // INTERNAL METHODS
 
-    function confirmAndCheck(bytes32 _operation) internal returns (bool) {
-        if(isOwner(tx.origin)) {
+    function confirmAndCheck(bytes32 _operation, address sender) internal returns (bool) {
+        //Test(sender);
+        if(isOwner(sender)) {
         // determine what index the present sender is:
-            uint index = UserStorage(userStorage).getMemberId(tx.origin);
+            uint index = UserStorage(userStorage).getMemberId(sender);
+            //Test2(index);
         // make sure they're an owner
             if (index == 0) return;
-
             var pending = pendings[_operation];
         // if we're not yet working on this operation, switch over and reset the confirmation status.
             if (pending.yetNeeded == 0) {
