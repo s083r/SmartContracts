@@ -5,7 +5,7 @@ import "./Managed.sol";
 
 contract ChronoMint is Managed {
 
-    uint offeringCompaniesCounter;
+    uint offeringCompaniesCounter = 1;
     uint[] deletedIds;
     address contractManager;
     mapping(uint => address) offeringCompanies;
@@ -41,24 +41,32 @@ contract ChronoMint is Managed {
         return LOC(_LOCaddr).setIssued(_issued);
     }
 
-    function addLOC (address _locAddr) multisig {
+    function addLOC (address _locAddr) multisig returns(bool) {
+        add(_locAddr);
+        return true;
+    }
+
+    function add (address _locAddr) internal {
+        uint id;
         if(deletedIds.length != 0) {
-            offeringCompaniesIDs[_locAddr] = deletedIds[deletedIds.length-1];
-            offeringCompanies[deletedIds[deletedIds.length-1]] = _locAddr;
+            id = deletedIds[deletedIds.length-1];
             deletedIds.length--;
         }
         else {
-            offeringCompaniesIDs[_locAddr] = offeringCompaniesCounter;
-            offeringCompanies[offeringCompaniesIDs[_locAddr]] = _locAddr;
+            id = offeringCompaniesCounter;
             offeringCompaniesCounter++;
-
         }
+        offeringCompaniesIDs[_locAddr] = id;
+        offeringCompanies[id] = _locAddr;
         newLOC(msg.sender, _locAddr);
     }
 
     function removeLOC(address _locAddr) multisig returns (bool) {
+        if(offeringCompaniesIDs[_locAddr] == offeringCompaniesCounter - 1)
+            offeringCompaniesCounter--;
+        else
+            deletedIds.push(offeringCompaniesIDs[_locAddr]);
         delete offeringCompanies[offeringCompaniesIDs[_locAddr]];
-        deletedIds.push(offeringCompaniesIDs[_locAddr]);
         delete offeringCompaniesIDs[_locAddr];
         remLOC(msg.sender, _locAddr);
         return true;
@@ -67,17 +75,7 @@ contract ChronoMint is Managed {
     function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
         address locAddr = new LOC();
         LOC(locAddr).setLOC(_name,_website,_issueLimit,_publishedHash, _expDate);
-        if(deletedIds.length != 0) {
-            offeringCompaniesIDs[locAddr] = deletedIds[deletedIds.length-1];
-            offeringCompanies[deletedIds[deletedIds.length-1]] = locAddr;
-            deletedIds.length--;
-        }
-        else {
-            offeringCompaniesIDs[locAddr] = offeringCompaniesCounter;
-            offeringCompanies[offeringCompaniesIDs[locAddr]] = locAddr;
-            offeringCompaniesCounter++;
-
-        }
+        add(locAddr);
         newLOC(msg.sender, locAddr);
         return locAddr;
     }
@@ -98,14 +96,14 @@ contract ChronoMint is Managed {
 
     function getLOCs() constant returns(address[] result) {
         result = new address[](offeringCompaniesCounter);
-        for(uint i=0; i<offeringCompaniesCounter; i++) {
+        for(uint i=1; i<offeringCompaniesCounter; i++) {
             result[i]=offeringCompanies[i];
         }
         return result;
     }
 
     function getLOCCount () constant returns(uint) {
-        return offeringCompaniesCounter;
+        return offeringCompaniesCounter - deletedIds.length - 1;
     }
 
     function()
