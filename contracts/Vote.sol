@@ -77,6 +77,16 @@ contract Vote is Managed {
         return (result);
     }
 
+    function getActivePolls() constant returns (uint result) {
+        Poll memory p;
+        for(uint i = 0; i < pollsCount; i++) {
+            p = polls[i];
+            if(p.active)
+                result++;
+        }
+        return result;
+    }
+
     function getMemberPolls() constant returns (uint[]) {
         return memberPolls[msg.sender];
     }
@@ -208,7 +218,7 @@ contract Vote is Managed {
     }
 
     function activatePoll(uint _pollId) multisig returns (bool) {
-        if(activePollsCount < 20) {
+        if(activePollsCount <= 20) {
             Poll p = polls[_pollId];
             p.active = true;
             activePollsCount++;
