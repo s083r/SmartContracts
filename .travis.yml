@@ -1,7 +1,7 @@
 sudo: false
 dist: trusty
 language: node_js
-node_js: 6
+node_js: 7
 before_install:
 - npm install
 - export PATH=$PATH:$(pwd)/node_modules/.bin
@@ -10,8 +10,14 @@ before_install:
 script:
 - testrpc > /dev/null &
 - truffle test
-- if [ "$TRAVIS_BRANCH" == "master" ]; then
+- if [ "$TRAVIS_BRANCH" == "deploy" ]; then
     truffle migrate --network kovan;
+    git config credential.helper "store --file=.git/credentials";
+    echo "https://${GH_TOKEN}:@github.com" > .git/credentials;
+    npm run release;
+    npm publish;
+  fi
+- if [ "$TRAVIS_BRANCH" == "master" ]; then
     git config credential.helper "store --file=.git/credentials";
     echo "https://${GH_TOKEN}:@github.com" > .git/credentials;
     npm run release;
