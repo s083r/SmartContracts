@@ -363,35 +363,12 @@ contract('ChronoMint', function(accounts) {
       });
     });
 
-    it("allow a non CBE key to propose set the contract address", function() {
+    it("dont't allow a non CBE key to set the contract address", function() {
       return contractsManager.setAddress(coin.address, {from: nonOwner}).then(function(r) {
-        conf_sign = r.logs[0].args.hash;
         return contractsManager.getAddress.call(4).then(function(){
           return contractsManager.contractsCounter.call().then(function(r2) {
             assert.notEqual(r, coin.address);
             assert.notEqual(r2,5);
-          });
-        });
-      });
-    });
-
-    it("allows a CBE key to remove the contract address", function() {
-      return contractsManager.removeAddress(coin.address).then(function(r) {
-        return contractsManager.getAddress.call(3).then(function(r){
-          return contractsManager.contractsCounter.call().then(function(r2) {
-            assert.notEqual(r, coin.address);
-            assert.equal(r2,3);
-          });
-        });
-      });
-    });
-
-    it("allow a CBE key to confirm proposed set of contract address", function() {
-      return shareable.confirm(conf_sign, {from: owner}).then(function() {
-        return contractsManager.getAddress.call(3).then(function(r){
-          return contractsManager.contractsCounter.call().then(function(r2) {
-            assert.equal(r, coin.address);
-            assert.equal(r2,4);
           });
         });
       });
@@ -777,7 +754,6 @@ contract('ChronoMint', function(accounts) {
 
     it("ChronoMint should be able to return LOCs array with proposed LOC address", function () {
       return chronoMint.getLOCs.call().then(function (r) {
-        console.log(r);
         assert.equal(r[1], loc_contracts[0].address);
       });
     });
