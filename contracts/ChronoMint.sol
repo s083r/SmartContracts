@@ -41,12 +41,11 @@ contract ChronoMint is Managed {
         return LOC(_LOCaddr).setIssued(_issued);
     }
 
-    function addLOC (address _locAddr) multisig returns(bool) {
-        add(_locAddr);
-        return true;
+    function addLOC (address _locAddr) multisig returns(uint) {
+        return add(_locAddr);
     }
 
-    function add (address _locAddr) internal {
+    function add (address _locAddr) internal returns(uint) {
         uint id;
         if(deletedIds.length != 0) {
             id = deletedIds[deletedIds.length-1];
@@ -59,6 +58,7 @@ contract ChronoMint is Managed {
         offeringCompaniesIDs[_locAddr] = id;
         offeringCompanies[id] = _locAddr;
         newLOC(msg.sender, _locAddr);
+        return id;
     }
 
     function removeLOC(address _locAddr) multisig returns (bool) {
@@ -72,12 +72,11 @@ contract ChronoMint is Managed {
         return true;
     }
 
-    function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(address) {
+    function proposeLOC(bytes32 _name, bytes32 _website, uint _issueLimit, bytes32 _publishedHash, uint _expDate) onlyAuthorized() returns(uint) {
         address locAddr = new LOC();
         LOC(locAddr).setLOC(_name,_website,_issueLimit,_publishedHash, _expDate);
-        add(locAddr);
         newLOC(msg.sender, locAddr);
-        return locAddr;
+        return add(locAddr);
     }
 
     function setLOCStatus(address _LOCaddr, LOC.Status status) multisig {

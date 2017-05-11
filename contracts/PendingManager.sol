@@ -53,10 +53,10 @@ contract PendingManager {
 /// MODIFIERS
 
 // simple single-sig function modifier.
-    modifier onlyOwner {
-        if (isOwner(msg.sender))
-        _;
-    }
+  //  modifier onlyOwner {
+  //      if (isOwner(msg.sender))
+  //      _;
+  //  }
 
 // multi-sig function modifier: the operation must have an intrinsic hash in order
 // that later attempts can be realised as the same underlying operation and
@@ -70,21 +70,23 @@ contract PendingManager {
 // METHODS
 
     function addTx(bytes32 _r, bytes data, address to, address sender) {
-        uint id;
-        if(deletedIds.length != 0) {
-            id = deletedIds[deletedIds.length-1];
-            deletedIds.length--;
+        if(isOwner(sender)) {
+            uint id;
+            if(deletedIds.length != 0) {
+                id = deletedIds[deletedIds.length-1];
+                deletedIds.length--;
+            }
+            else {
+                id = txsCount;
+                txsCount++;
+            }
+            txsIndex[_r] = id;
+            txs[id].data = data;
+            txs[id].to = to;
+            txs[id].yetNeeded = UserStorage(userStorage).required();
+            txs[id].ownersDone = 0;
+            conf(_r, sender);
         }
-        else {
-            id = txsCount;
-            txsCount++;
-        }
-        txsIndex[_r] = id;
-        txs[id].data = data;
-        txs[id].to = to;
-        txs[id].yetNeeded = UserStorage(userStorage).required();
-        txs[id].ownersDone = 0;
-        conf(_r, sender);
     }
 
     function confirm(bytes32 _h) returns (bool) {

@@ -202,7 +202,7 @@ contract('Vote', function(accounts) {
     }).then(function () {
       return eventsHistory.addVersion(chronoBankPlatform.address, "Origin", "Initial version.");
     }).then(function () {
-      return chronoBankPlatform.issueAsset(SYMBOL, 10000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
+      return chronoBankPlatform.issueAsset(SYMBOL, 10000000, NAME, DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, {
         from: accounts[0],
         gas: 3000000
       })
@@ -223,7 +223,7 @@ contract('Vote', function(accounts) {
     }).then(function (r) {
       return ChronoBankAssetProxy.deployed()
     }).then(function (instance) {
-      return instance.transfer(ContractsManager.address, 10000, {from: accounts[0]})
+      return instance.transfer(ContractsManager.address, 10000000, {from: accounts[0]})
     }).then(function (r) {
       return chronoBankPlatform.changeOwnership(SYMBOL, contractsManager.address, {from: accounts[0]})
     }).then(function (r) {
@@ -315,8 +315,8 @@ contract('Vote', function(accounts) {
   context("owner shares deposit", function(){
 
     it("ChronoMint should be able to send 100 TIME to owner", function() {
-      return contractsManager.sendAsset.call(1,owner,100).then(function(r) {
-        return contractsManager.sendAsset(1,owner,100,{from: accounts[0], gas: 3000000}).then(function() {
+      return contractsManager.sendAsset.call(1,owner,50000).then(function(r) {
+        return contractsManager.sendAsset(1,owner,50000,{from: accounts[0], gas: 3000000}).then(function() {
           assert.isOk(r);
         });
       });
@@ -324,7 +324,7 @@ contract('Vote', function(accounts) {
 
     it("check Owner has 100 TIME", function() {
       return timeProxyContract.balanceOf.call(owner).then(function(r) {
-        assert.equal(r,100);
+        assert.equal(r,50000);
       });
     });
 
@@ -369,24 +369,35 @@ contract('Vote', function(accounts) {
   context("voting", function(){
 
     it("should be able to create Poll", function() {
-      return vote.NewPoll([bytes32('1'),bytes32('2')],bytes32('New Poll'),bytes32('New Description'),150, 2, unix + 10000, {from: owner, gas:3000000}).then(() => {
-        return vote.pollsCount.call().then((r) => {
-          assert.equal(r,1);
+      return vote.getVoteLimit.call().then((r) => {
+        console.log(r)
+        return vote.NewPoll([bytes32('1'), bytes32('2')], bytes32('New Poll'), bytes32('New Description'), r - 1, 2, unix + 10000, {
+          from: owner,
+          gas: 3000000
+        }).then(() => {
+          return vote.pollsCount.call().then((r) => {
+            assert.equal(r, 1);
+          });
         });
       });
     });
 
     it("shouldn't be able to create Poll with votelimit exceeded", function() {
-      return vote.NewPoll([bytes32('1'),bytes32('2')],bytes32('New Poll'),bytes32('New Description'),35001, 2, unix + 10000, {from: owner, gas:3000000}).then(assert.fail, () => true)
-    });
+      return vote.getVoteLimit.call().then((r) => {
+        return vote.NewPoll([bytes32('1'), bytes32('2')], bytes32('New Poll'), bytes32('New Description'), r + 1, 2, unix + 10000, {
+          from: owner,
+          gas: 3000000
+        }).then(assert.fail, () => true)
+      })
+    })
 
     it("should be able to activate Poll", function() {
       return vote.activatePoll(0, {from: owner}).then(() => {
         return vote.polls.call(0).then((r) => {
-          assert.equal(r[8],true);
-        });
-      });
-    });
+          assert.equal(r[8],true)
+        })
+      })
+    })
 
     it("should show owner as Poll 0 owner", function() {
       return vote.polls.call(0).then((r) => {
@@ -441,7 +452,7 @@ contract('Vote', function(accounts) {
 
     it("should be able to get Polls list owner took part", function() {
       return vote.getMemberPolls.call({from: owner}).then((r) => {
-        assert.equal(r.length,1);
+        assert.equal(r[0].length,1);
       });
     });
 
@@ -469,119 +480,169 @@ contract('Vote', function(accounts) {
 
     it("should be able to show all options for Poll 0", function() {
       return vote.getOptionsForPoll.call(0).then((r) => {
-        assert.equal(r.length,2);
-      });
-    });
+        assert.equal(r.length,2)
+      })
+    })
 
     it("owner should be able to vote Poll 1, Option 1", function() {
       return vote.vote.call(1,1, {from: owner}).then((r) => {
         return vote.vote(1,1, {from: owner}).then((r2) => {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("should be able to get Polls list voter took part", function() {
       return vote.getMemberPolls.call({from: owner}).then((r) => {
-        assert.equal(r.length,2);
-      });
-    });
+        assert.equal(r.length,2)
+      })
+    })
 
     it("should be able to show Poll by id", function() {
       return vote.polls.call(0, {from: owner}).then((r) => {
         return vote.polls.call(1, {from: owner}).then((r2) => {
           assert.equal(r[1],bytes32('New Poll'));
           assert.equal(r2[1],bytes32('New Poll2'));
-        });
-      });
-    });
+        })
+      })
+    })
 
     it("owner1 shouldn't be able to vote Poll 0, Option 1", function() {
       return vote.vote.call(0,1, {from: owner1}).then((r) => {
-        assert.isNotOk(r);
-      });
-    });
+        assert.isNotOk(r)
+      })
+    })
 
+  })
 
-  });
-
-  context("owner1 shares deposit and voting", function(){
+  context("owner1 shares deposit and voting", function() {
 
     it("ChronoMint should be able to send 50 TIME to owner1", function() {
       return contractsManager.sendAsset.call(1,owner1,50).then(function(r) {
         return contractsManager.sendAsset(1,owner1,50,{from: accounts[0], gas: 3000000}).then(function() {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("check Owner1 has 50 TIME", function() {
       return timeProxyContract.balanceOf.call(owner1).then(function(r) {
-        assert.equal(r,50);
-      });
-    });
+        assert.equal(r,50)
+      })
+    })
 
     it("owner1 should be able to approve 50 TIME to TimeHolder", function() {
       return timeProxyContract.approve.call(timeHolder.address, 50, {from: owner1}).then((r) => {
         return timeProxyContract.approve(timeHolder.address, 50, {from: owner1}).then(() => {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("should be able to deposit 50 TIME from owner", function() {
       return timeHolder.deposit.call(50, {from: owner1}).then((r) => {
         return timeHolder.deposit(50, {from: owner1}).then(() => {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("should show 50 TIME owner1 balance", function() {
       return timeHolder.depositBalance.call(owner1, {from: owner1}).then((r) => {
-        assert.equal(r,50);
-      });
-    });
+        assert.equal(r,50)
+      })
+    })
 
     it("owner1 should be able to vote Poll 0, Option 2", function() {
       return vote.vote.call(0,2, {from: owner1}).then((r) => {
         return vote.vote(0,2, {from: owner1}).then((r2) => {
-          assert.isOk(r);
-        });
+          assert.isOk(r)
+        })
+      })
+    })
+
+    it("shouldn't show Poll 1 as finished", function() {
+      return vote.polls.call(1).then((r) => {
+        assert.equal(r[6],true)
       });
     });
 
     it("owner1 should be able to vote Poll 1, Option 1", function() {
       return vote.vote.call(1,1, {from: owner1}).then((r) => {
         return vote.vote(1,1, {from: owner1}).then((r2) => {
-          assert.isOk(r);
-        });
+          assert.isOk(r)
+        })
+      })
+    })
+
+    it("should show Poll 1 as finished", function() {
+      return vote.polls.call(1).then((r) => {
+        assert.equal(r[6],false)
       });
     });
 
     it("should be able to show number of Votes for each Option for Poll 0", function() {
       return vote.getOptionsVotesForPoll.call(0).then((r) => {
-        assert.equal(r[0],25);
-        assert.equal(r[1],50);
-      });
-    });
+        assert.equal(r[0],25)
+        assert.equal(r[1],50)
+      })
+    })
 
     it("should be able to show number of Votes for each Option for Poll 1", function() {
       return vote.getOptionsVotesForPoll.call(1).then((r) => {
-        assert.equal(r[0],75);
-      });
-    });
+        assert.equal(r[0],75)
+      })
+    })
 
     it("should be able to get Polls list owner1 took part", function() {
       return vote.getMemberPolls.call({from: owner1}).then((r) => {
         assert.equal(r.length,2);
-      });
-    });
+      })
+    })
 
     it("shouldn't be able to create more then 20 active Polls", function() {
-      return createPolls(1000).then(() => {
+      return createPolls(300).then(() => {
         return vote.getActivePolls.call().then((r) => {
-          assert.equal(r,20)
+          return vote.getInactivePolls.call().then((r2) => {
+            assert.equal(r, 20)
+            assert.equal(r2, 281)
+          })
+        })
+      })
+    })
+
+    it("should allow to delete inacvite Polls for CBE admins", function() {
+      return vote.removePoll(100).then(() => {
+        return vote.getActivePolls.call().then((r) => {
+          return vote.getInactivePolls.call().then((r2) => {
+            assert.equal(r, 20)
+            assert.equal(r2, 280)
+          })
+        })
+      })
+    })
+
+    it("shouldn't allow to delete inacvite Polls for non CBE admins", function() {
+      return vote.removePoll(101,{from: owner1}).then(() => {
+        return vote.getActivePolls.call().then((r) => {
+          return vote.getInactivePolls.call().then((r2) => {
+            assert.equal(r, 20)
+            assert.equal(r2, 280)
+          })
+        })
+      })
+    })
+
+    it("shouldn't allow to delete acvite Polls for non CBE admins", function() {
+      return vote.checkPollIsActive.call(0).then((r) => {
+        return vote.removePoll(0).then(() => {
+          return vote.getActivePolls.call().then((r2) => {
+            return vote.getInactivePolls.call().then((r3) => {
+              assert.isOk(r)
+              assert.equal(r2, 20)
+              assert.equal(r3, 280)
+            })
+          })
         })
       })
     })
@@ -589,60 +650,114 @@ contract('Vote', function(accounts) {
     it("should be able to withdraw 5 TIME from owner1", function() {
       return timeHolder.withdrawShares.call(5, {from: owner1}).then((r) => {
         return timeHolder.withdrawShares(5, {from: owner1}).then(() => {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("should be able to show number of Votes for each Option for Poll 0", function() {
       return vote.getOptionsVotesForPoll.call(0).then((r) => {
-        assert.equal(r[0],25);
-        assert.equal(r[1],45);
-      });
-    });
+        assert.equal(r[0],25)
+        assert.equal(r[1],45)
+      })
+    })
+
+    it("shouldn't show Poll 0 as finished", function() {
+      return vote.polls.call(0).then((r) => {
+        assert.equal(r[6],true)
+      })
+    })
+
+    it("shouldn't show empty list owner1 took part", function() {
+      return vote.getMemberPolls.call({from: owner1}).then((r) => {
+        assert.equal(r[0].length - r[1].length,2);
+      })
+    })
 
     it("should be able to withdraw 45 TIME from owner1", function() {
       return timeHolder.withdrawShares.call(45, {from: owner1}).then((r) => {
         return timeHolder.withdrawShares(45, {from: owner1}).then(() => {
-          assert.isOk(r);
-        });
-      });
-    });
+          assert.isOk(r)
+        })
+      })
+    })
 
     it("should show empty list owner1 took part", function() {
       return vote.getMemberPolls.call({from: owner1}).then((r) => {
-        assert.equal(r.length,1);
-      });
-    });
+        assert.equal(r[0].length - r[1],0)
+      })
+    })
 
-    it("should show Poll 1 as finished", function() {
-      return vote.polls.call(1).then((r) => {
-        assert.equal(r[6],false);
-      });
-    });
+    it("should decrese acvite Polls count", function() {
+      return vote.getActivePolls.call().then((r) => {
+        assert.equal(r, 20)
+      })
+    })
 
-    it("shouldn't show Poll 0 as finished", function() {
-      return vote.polls.call(0).then((r) => {
-        assert.equal(r[6],true);
-      });
-    });
-
-    it("should allow admin to end poll", function() {
-      return vote.adminEndPoll(0).then(() => {
-        return vote.polls.call(0).then((r) => {
-          assert.equal(r[6], false);
+    it("owner should be able to approve 50 TIME to Vote", function() {
+      return timeProxyContract.approve.call(timeHolder.address, 34975, {from: accounts[0]}).then((r) => {
+        return timeProxyContract.approve(timeHolder.address, 34975, {from: accounts[0]}).then(() => {
+          assert.isOk(r)
         })
       })
-    });
+    })
+
+    it("should be able to deposit 34975 TIME from owner", function() {
+      return timeHolder.deposit.call(34975, {from: accounts[0]}).then((r) => {
+        return timeHolder.deposit(34975, {from: accounts[0]}).then(() => {
+          assert.isOk(r)
+        })
+      })
+    })
+
+    it("should show 50 TIME owner balance", function() {
+      return timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
+
+        assert.equal(r,35000)
+      })
+    })
+
+    it("should show Poll 0 as finished", function() {
+      return vote.polls.call(0).then((r) => {
+        assert.equal(r[6],false)
+      })
+    })
+
+    it("should decrese acvite Polls count", function() {
+      return vote.getActivePolls.call().then((r) => {
+        assert.equal(r, 19)
+      })
+    })
+
+    it("should be able to show number of Votes for each Option for Poll 0", function() {
+      return vote.getOptionsVotesForPoll.call(0).then((r) => {
+        assert.equal(r[0],35000)
+        assert.equal(r[1],0)
+      })
+    })
 
     it("should be able to show number of Votes for each Option for Poll 1", function() {
       return vote.getOptionsVotesForPoll.call(1).then((r) => {
-        assert.equal(r[0],75);
-        assert.equal(r[1],0);
-      });
-    });
+        assert.equal(r[0],75)
+        assert.equal(r[1],0)
+      })
+    })
 
-  });
+    it("should allow admin to end poll", function() {
+      return vote.adminEndPoll(3).then(() => {
+        return vote.polls.call(3).then((r) => {
+          assert.equal(r[6], false)
+        })
+      })
+    })
 
-});
+    it("should decrese acvite Polls count", function() {
+      return vote.getActivePolls.call().then((r) => {
+        assert.equal(r, 18)
+      })
+    })
+
+  })
+
+})
 

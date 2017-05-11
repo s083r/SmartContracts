@@ -146,6 +146,10 @@ contract TimeHolder is Managed {
         return shares[_address];
     }
 
+    function totalSupply() constant returns(uint) {
+        return sharesContract.totalSupply();
+    }
+
     function()
     {
         throw;
