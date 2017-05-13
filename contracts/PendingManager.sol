@@ -12,6 +12,7 @@ contract PendingManager {
 
     struct Transaction {
         address to;
+        bytes32 hash;
         bytes data;
         uint yetNeeded;
         uint ownersDone;
@@ -25,7 +26,7 @@ contract PendingManager {
 
     event Confirmation(address owner, uint id);
     event Revoke(address owner, uint id);
-    event Done(bytes32 hash, bytes data);
+    event Done(bytes32 hash, bytes data, uint timestamp);
     event Error(bytes32 message);
 
 
@@ -59,7 +60,7 @@ contract PendingManager {
     }
 
     function getPending(uint _id) constant returns (bytes32 hash, bytes data, uint yetNeeded, uint ownersDone, uint timestamp) {
-        return (sha3(txs[_id].data), txs[_id].data, txs[_id].yetNeeded, txs[_id].ownersDone, txs[_id].timestamp);
+        return (txs[_id].hash, txs[_id].data, txs[_id].yetNeeded, txs[_id].ownersDone, txs[_id].timestamp);
     }
 
     function addTx(bytes32 _r, bytes data, address to, address sender) {
@@ -78,6 +79,7 @@ contract PendingManager {
                 txsCount++;
             }
             txsIndex[_r] = id;
+            txs[id].hash = _r;
             txs[id].data = data;
             txs[id].to = to;
             txs[id].yetNeeded = UserStorage(userStorage).required();
@@ -149,7 +151,7 @@ contract PendingManager {
                 // ok - check if count is enough to go ahead
                 if (pending.yetNeeded <= 1) {
                     // enough confirmations: reset and run interior
-                    Done(_operation, pending.data);
+                    Done(_operation, pending.data, now);
                     return true;
                 } else {
                     // not enough: record that this owner in particular confirmed

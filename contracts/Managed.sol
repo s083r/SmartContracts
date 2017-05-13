@@ -6,7 +6,8 @@ import "./UserStorage.sol";
 contract Managed {
     address userStorage;
     address shareable;
-    event exec(bytes32 hash);
+
+    event Exec(bytes32 hash);
 
     modifier onlyAuthorized() {
         if (isAuthorized(msg.sender) || msg.sender == shareable) {
@@ -18,7 +19,7 @@ contract Managed {
         if (msg.sender != shareable) {
             bytes32 _r = sha3(msg.data);
             Shareable(shareable).addTx(_r, msg.data, this, msg.sender);
-            exec(_r);
+            Exec(_r);
         }
         else {
             _;

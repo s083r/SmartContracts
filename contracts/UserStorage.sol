@@ -1,25 +1,25 @@
 pragma solidity ^0.4.8;
 
 contract UserStorage {
-// FIELDS
-// the number of owners that must confirm the same operation before it is run.
-    uint public required = 1;
 
-    mapping (uint => Member) public members;
-    struct Member {
-    address memberAddr;
-    bytes32 hash;
-    bool isCBE;
-    }
+    // the number of owners that must confirm the same operation before it is run
+    uint public required = 1;
 
     uint public userCount = 1;
     uint public adminCount = 0;
     uint ownersCount = 1;
 
+    struct Member {
+        address memberAddr;
+        bytes32 hash;
+        bool isCBE;
+    }
+
+    mapping (uint => Member) public members;
     mapping (address => uint) userIndex;
     mapping (address => uint) public ownersIndex;
 
-// simple single-sig function modifier.
+    // simple single-sig function modifier
     modifier onlyOwner {
         if (isOwner(msg.sender)) {
             _;
@@ -38,7 +38,7 @@ contract UserStorage {
         ownersCount++;
     }
 
-    function setRequired(uint _required) onlyOwner() returns(bool) {
+    function setRequired(uint _required) onlyOwner returns (bool) {
         if (_required > 0 && adminCount >= _required) {
             required = _required;
             return true;
@@ -46,7 +46,7 @@ contract UserStorage {
         return false;
     }
 
-    function addOwner(address _owner) onlyOwner() returns (bool) {
+    function addOwner(address _owner) onlyOwner returns (bool) {
         ownersIndex[_owner] = ownersCount;
         ownersCount++;
         return true;
@@ -59,7 +59,7 @@ contract UserStorage {
         return false;
     }
 
-    function deleteOwner(address _owner) onlyOwner() returns (bool) {
+    function deleteOwner(address _owner) onlyOwner returns (bool) {
         delete ownersIndex[_owner];
         return true;
     }
@@ -78,7 +78,7 @@ contract UserStorage {
         return (addresses, hashes);
     }
 
-    function addMember(address _member, bool _isCBE) onlyOwner() returns (bool) {
+    function addMember(address _member, bool _isCBE) onlyOwner returns (bool) {
         if (userIndex[_member] == uint(0x0)) {
             members[userCount] = Member(_member, 1, _isCBE);
             userIndex[_member] = userCount;
@@ -91,20 +91,21 @@ contract UserStorage {
         return false;
     }
 
-    function setCBE(address _member, bool _isCBE) onlyOwner() returns (bool) {
+    function setCBE(address _member, bool _isCBE) onlyOwner returns (bool) {
         members[userIndex[_member]].isCBE = _isCBE;
         if (!_isCBE) {
             adminCount--;
             if (adminCount < required) {
                 required--;
             }
-        } else {
+        }
+        else {
             adminCount++;
         }
         return true;
     }
 
-    function setHashes(address _member, bytes32 _hash) onlyOwner() returns (bool) {
+    function setHashes(address _member, bytes32 _hash) onlyOwner returns (bool) {
         members[userIndex[_member]].hash = _hash;
         return true;
     }
@@ -113,7 +114,7 @@ contract UserStorage {
         return (members[userIndex[_member]].hash);
     }
 
-    function deleteMember(uint _id) onlyOwner() returns (bool) {
+    function deleteMember(uint _id) onlyOwner returns (bool) {
         delete members[_id];
         return true;
     }

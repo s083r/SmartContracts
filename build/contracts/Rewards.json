@@ -1967,8 +1967,1814 @@
       "links": {},
       "address": "0x167c26f2256fe8bfd0134e0427a43e80016025cd",
       "updated_at": 1494588970273
+    },
+    "1494596908850": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf5cf5e4854fc6b4cdc08548ae8829d4ca2268103",
+      "updated_at": 1494596926039
+    },
+    "1494663994394": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x53c3b6a6019bb8a83791b445ab1485f26a48bdeb",
+      "updated_at": 1494664045077
+    },
+    "1494668304168": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xb8724c4a1c6bfe36742710769aa841bcef6ab724",
+      "updated_at": 1494668324543
+    },
+    "1494668410396": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x3420d0af0e38e686d38d7542bd41e98eb232ba09",
+      "updated_at": 1494668417362
+    },
+    "1494668573011": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x00f0e385bf1b3d0b387b73a519a819115b2f79bf",
+      "updated_at": 1494668580668
+    },
+    "1494668616325": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xd178467708c5d6f323456503cf3c90c1ad40693e",
+      "updated_at": 1494668626244
+    },
+    "1494669007697": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x6da3ed0a9a200114f7b3a1b5720e46c8ffcecf67",
+      "updated_at": 1494669015908
+    },
+    "1494669676932": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x989ad509ccb3afc23a18faa8e1582445dacd3a71",
+      "updated_at": 1494669695591
+    },
+    "1494670115427": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x96ec7d4f541c7934e21c8523cbeec802000d65c2",
+      "updated_at": 1494670122767
+    },
+    "1494670733341": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x35b5abdf1034357d839a6fdf48b0c0b1be6acff6",
+      "updated_at": 1494670740401
+    },
+    "1494670796670": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x9cc6bacc3e4dc966cb989e9f8cb491f5ee34389c",
+      "updated_at": 1494670806488
+    },
+    "1494671204374": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x3a9284432cfaa3fe2d2b3e28e89316f0b63184fd",
+      "updated_at": 1494671217422
+    },
+    "1494671277938": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x28c9131461d1e46fe3e8debac30458db8177a49d",
+      "updated_at": 1494671286096
+    },
+    "1494671435949": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x96c94e89a7d6130850e3ea761066843f87d06a9c",
+      "updated_at": 1494671443566
+    },
+    "1494672066308": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa902aa4f9beda36a811c1958850baa7704e5dcf1",
+      "updated_at": 1494672116620
+    },
+    "1494673049597": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x57fd18dead2ba74e3ae87f91547d0e3fe65af854",
+      "updated_at": 1494673057647
+    },
+    "1494678911307": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x524b277ed76c8ee221d4ba98fddae729a69c6a1b",
+      "updated_at": 1494678949586
+    },
+    "1494678993809": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1c6655fdbcdde88cfc0c7a18a2d781139aa68a17",
+      "updated_at": 1494679001617
+    },
+    "1494679157250": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4b247d284b04f0bac473e8dae2d074f23a3f2be9",
+      "updated_at": 1494679165539
+    },
+    "1494679341446": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x114bcc5881e66e333679aca9fdbb9cdfbed18a4b",
+      "updated_at": 1494679348783
+    },
+    "1494680167507": {
+      "events": {
+        "0x3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa63": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "PeriodClosed",
+          "type": "event"
+        },
+        "0xcaef0d9e67b6bc7571f5233791743861e8909d89aedcb4e2efffad2d52297a48": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "balance",
+              "type": "uint256"
+            }
+          ],
+          "name": "AssetRegistration",
+          "type": "event"
+        },
+        "0x5516c76261b5d394ec34e826fd3949c55ecf4e0310b26cb21ae7e427c6b84756": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "reward",
+              "type": "uint256"
+            }
+          ],
+          "name": "CalculateReward",
+          "type": "event"
+        },
+        "0xad71f93891cecc86a28a627d5495c28fabbd31cdd2e93851b16ce3421fdab2e5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "assetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawReward",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1e8616ef037d51d4c609607ab03309e4f34b6bce",
+      "updated_at": 1494680175541
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1494588970273
+  "updated_at": 1494680175541
 }

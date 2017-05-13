@@ -2166,8 +2166,2717 @@
       "links": {},
       "address": "0x5c9fdefabf8ce7267df5b377c2593409223a10bf",
       "updated_at": 1494588970755
+    },
+    "1494596908850": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x53c96add2abbdb370d93f8eb20d8d34120aa9c37",
+      "updated_at": 1494596926631
+    },
+    "1494663994394": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x0bba8f6a302b04e3284768385f99ee6ea29581ee",
+      "updated_at": 1494664045763
+    },
+    "1494668304168": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x89c500096c175b5226b8969367de72d02b2667f8",
+      "updated_at": 1494668325296
+    },
+    "1494668410396": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x61fedbff073b19c6569af25014ffca73d3f41116",
+      "updated_at": 1494668417993
+    },
+    "1494668573011": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1b09339c216eb7d7e7baa72e7cfae33bb16d8fe7",
+      "updated_at": 1494668581292
+    },
+    "1494668616325": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x19a998b7fabc6484b9f76685d3b1ee7e695a3361",
+      "updated_at": 1494668626842
+    },
+    "1494669007697": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xe8b703d5639c74fd8b2eae95c33d5619ee2dc6d1",
+      "updated_at": 1494669016517
+    },
+    "1494669676932": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xe5240005c3f90965c08e4082a86c2ee7448db1b4",
+      "updated_at": 1494669696237
+    },
+    "1494670115427": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x2453eb52059e7a3b736fea02bd319ca0941f3e00",
+      "updated_at": 1494670123360
+    },
+    "1494670733341": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xc085faca27748b4618eb5d99bf31b8afec0c1f09",
+      "updated_at": 1494670740920
+    },
+    "1494670796670": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x71a64585111fe40cc4867dafb99eb96a23b4acbd",
+      "updated_at": 1494670807147
+    },
+    "1494671204374": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x47963665c5b4ad14b0361241d3d8f6d9bc60af84",
+      "updated_at": 1494671218005
+    },
+    "1494671277938": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf2dca0c20fbe9905f9d988579d4c291a4e510d9a",
+      "updated_at": 1494671286831
+    },
+    "1494671435949": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x64d18532a986be5794179198dbb8ed542f2a3c7c",
+      "updated_at": 1494671444191
+    },
+    "1494672066308": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xbb4c03e4621721f3c3f2221a5a2194ae51e7e69b",
+      "updated_at": 1494672117198
+    },
+    "1494673049597": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xadcc32dcd86a7b00d07f4ccb8dd1aaf65a1b3332",
+      "updated_at": 1494673058209
+    },
+    "1494678911307": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1e726f5f372ddaeb05eb9d9a9ec10f98f40fd2ef",
+      "updated_at": 1494678950098
+    },
+    "1494678993809": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x5ad0e1767a9e063702d7eab279e3e049798c5306",
+      "updated_at": 1494679002246
+    },
+    "1494679157250": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xb049e6dcf600af4034bcf9e3a5280db38fc13919",
+      "updated_at": 1494679166410
+    },
+    "1494679341446": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x843ff90d6a124c36ba0f6bdb1a37468344a09712",
+      "updated_at": 1494679349579
+    },
+    "1494680167507": {
+      "events": {
+        "0x3897225aa236d9e579d2003fc1be43318eacc21c87425d1d057f95a96e7c6039": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "newLOC",
+          "type": "event"
+        },
+        "0x881b1a18b61615cd857d2e32356d64da238ba75eaaac547bcdab7360a8da1e00": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            }
+          ],
+          "name": "remLOC",
+          "type": "event"
+        },
+        "0xee503e6702b20a1c9ca7771da06ccb747f6e7604341fee0a1caf8c224344d88a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_status",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCStatus",
+          "type": "event"
+        },
+        "0x277a47e2de948343b22e41524bcebee96322d62433f253b89a3e90ec2333442d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCValue",
+          "type": "event"
+        },
+        "0x08ed75d2894b4181f1c9fb415ab3e501f0a5fed387870686fbffcb999b5d846e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_LOC",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_name",
+              "type": "uint8"
+            }
+          ],
+          "name": "updLOCString",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x01e09ffc57106c42d91a820230d1cc835b24d64f",
+      "updated_at": 1494680176276
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1494588970755
+  "updated_at": 1494680176276
 }
