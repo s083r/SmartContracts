@@ -52,44 +52,44 @@ let accounts
 let params
 let paramsGas
 
-var getAcc = function() {
-    return new Promise(function(resolve, reject) {
+var getAcc = function () {
+  return new Promise(function (resolve, reject) {
     web3.eth.getAccounts((err, acc) => {
-    console.log(acc);
-    resolve(acc);
-})
-})
+      console.log(acc);
+      resolve(acc);
+    })
+  })
 }
 
-var exit = function() {
-    process.exit()
+var exit = function () {
+  process.exit()
 }
 
 module.exports = (callback) => {
-    return getAcc()
+  return getAcc()
     .then(r => {
       accounts = r
       params = {from: accounts[0]}
       paramsGas = {from: accounts[0], gas: 3000000}
       return UserStorage.deployed()
     }).then(function (instance) {
-       return instance.addOwner(UserManager.address)
+      return instance.addOwner(UserManager.address)
     }).then(function () {
-       return ChronoMint.deployed()
+      return ChronoMint.deployed()
     }).then(function (instance) {
-       return instance.init(UserStorage.address, Shareable.address, ContractsManager.address)
+      return instance.init(UserStorage.address, Shareable.address, ContractsManager.address)
     }).then(function () {
-       return ContractsManager.deployed()
+      return ContractsManager.deployed()
     }).then(function (instance) {
-       return instance.init(UserStorage.address, Shareable.address)
+      return instance.init(UserStorage.address, Shareable.address)
     }).then(function () {
-       return Shareable.deployed()
+      return Shareable.deployed()
     }).then(function (instance) {
-       return instance.init(UserStorage.address)
+      return instance.init(UserStorage.address)
     }).then(function () {
-       return UserManager.deployed()
+      return UserManager.deployed()
     }).then(function (instance) {
-       return instance.init(UserStorage.address, Shareable.address)
+      return instance.init(UserStorage.address, Shareable.address)
     }).then(function () {
       return ChronoBankPlatform.deployed()
     })
@@ -116,7 +116,7 @@ module.exports = (callback) => {
     .then(i => {
       timeHolder = i
       return timeHolder.init(UserStorage.address, ChronoBankAssetProxy.address)
-        }).then(function () {
+    }).then(function () {
       return timeHolder.addListener(Vote.address)
     })
     .then(() => {
@@ -219,7 +219,7 @@ module.exports = (callback) => {
     }).then(() => {
       return chronoBankPlatform.changeContractOwnership(ContractsManager.address, params)
     }).then(() => {
-      return contractsManager.claimPlatformOwnership(ChronoBankPlatform.address, params)
+      return contractsManager.claimContractOwnership(ChronoBankPlatform.address, false, params)
     })
 
     .then(() => {
@@ -230,8 +230,10 @@ module.exports = (callback) => {
     }).then(() => {
       return exchange.changeContractOwnership(contractsManager.address, params)
     }).then(() => {
-      return contractsManager.claimExchangeOwnership(Exchange.address, params)
-    }).then(() => {
+      return contractsManager.claimContractOwnership(exchange.address, false, params)
+    })
+
+    .then(() => {
       return Rewards.deployed()
     }).then(i => {
       rewards = i
@@ -248,7 +250,7 @@ module.exports = (callback) => {
 
     /** EXCHANGE INIT >>> */
     .then(() => {
-      return contractsManager.setExchangePrices(Exchange.address, 1, 2)
+      exchange.setPrices(1, 2)
     })
     .then(() => {
       return chronoMint.proposeLOC(
@@ -264,15 +266,6 @@ module.exports = (callback) => {
     .then(() => {
       exit()
     })
-    // .then(r => {
-    //   return contractsManager.reissueAsset(SYMBOL2, 2500, r.logs[0].args._LOC, paramsGas)
-    // })
-    // .then(() => {
-    //   return contractsManager.sendAsset(2, Exchange.address, 500, paramsGas)
-    // })
-    // .then(() => {
-    //   return contractsManager.sendAsset(2, accounts[0], 500, paramsGas)
-    // })
     /** <<< EXCHANGE INIT */
 
     .catch(function (e) {

@@ -21,9 +21,9 @@ contract ContractsManager is Managed {
     mapping (uint => bytes32) internal contractsHash;
     mapping (uint => bytes32) internal otherContractsHash;
 
-    event updateContract(address contractAddress);
-    event updateOtherContract(address contractAddress);
-    event reissue(uint value, address locAddr);
+    event UpdateContract(address contractAddress, uint id);
+    event UpdateOtherContract(address contractAddress, uint id);
+    event Reissue(uint value, address locAddr);
 
     function init(address _userStorage, address _shareable) returns (bool) {
         if (userStorage != 0x0) {
@@ -33,7 +33,8 @@ contract ContractsManager is Managed {
         shareable = _shareable;
         return true;
     }
-//this method is implemented only for test purporses
+
+    // this method is implemented only for test purposes
     function sendTime() returns (bool) {
         if(!timeHolder[msg.sender]) {
             timeHolder[msg.sender] = true;
@@ -62,8 +63,7 @@ contract ContractsManager is Managed {
         return (otherContractsHash[_id]);
     }
 
-    function getAssetBalances(uint _id, uint _startId, uint _num) constant
-    returns (address[] result, uint[] result2) {
+    function getAssetBalances(uint _id, uint _startId, uint _num) constant returns (address[] result, uint[] result2) {
         if(contracts[_id] != 0x0) {
             address platform = ChronoBankAssetProxyInterface(contracts[_id]).chronoBankPlatform();
             if (platform != 0x0) {
@@ -141,7 +141,7 @@ contract ContractsManager is Managed {
                 if(_value <= LOCInterface(_locAddr).getIssueLimit() - issued) {
                     if(ChronoBankPlatformInterface(platform).reissueAsset(symbol, _value)) {
                         address Mint = LOCInterface(_locAddr).getContractOwner();
-                        reissue(_value, _locAddr);
+                        Reissue(_value, _locAddr);
                         return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, issued + _value);
                     }
                 }
@@ -158,7 +158,7 @@ contract ContractsManager is Managed {
                 if(_value <= issued) {
                     if(ChronoBankPlatformInterface(platform).revokeAsset(symbol, _value)) {
                         address Mint = LOCInterface(_locAddr).getContractOwner();
-                        reissue(_value, _locAddr);
+                        Reissue(_value, _locAddr);
                         return ChronoMintInterface(Mint).call(bytes4(sha3("setLOCIssued(address,uint256)")), _locAddr, issued - _value);
                     }
                 }
@@ -193,7 +193,7 @@ contract ContractsManager is Managed {
             ERC20Interface(value).totalSupply();
             contracts[contractsCounter] = value;
             contractsId[value] = contractsCounter;
-            updateContract(value);
+            UpdateContract(value, contractsId[value]);
             return contractsCounter++;
         }
         return contractsId[value];
@@ -204,7 +204,7 @@ contract ContractsManager is Managed {
             contracts[contractsId[_from]] = _to;
             contractsId[_to] = contractsId[_from];
             delete contractsId[_from];
-            updateContract(_to);
+            UpdateContract(_to, contractsId[_to]);
             return true;
         }
         return false;
@@ -212,8 +212,8 @@ contract ContractsManager is Managed {
 
     function removeAddress(address value) multisig {
         removeAddr(contractsId[value]);
+        UpdateContract(value, contractsId[value]);
         delete contractsId[value];
-        updateContract(value);
     }
 
     function removeAddr(uint i) internal {
@@ -233,7 +233,7 @@ contract ContractsManager is Managed {
         if (otherContractsId[value] == uint(0x0)) {
             otherContracts[otherContractsCounter] = value;
             otherContractsId[value] = otherContractsCounter;
-            updateOtherContract(value);
+            UpdateOtherContract(value, otherContractsId[value]);
             otherContractsCounter++;
             return otherContractsCounter;
         }
@@ -245,7 +245,7 @@ contract ContractsManager is Managed {
             otherContracts[otherContractsId[_from]] = _to;
             otherContractsId[_to] = otherContractsId[_from];
             delete otherContractsId[_from];
-            updateOtherContract(_to);
+            UpdateOtherContract(_to, otherContractsId[_to]);
             return true;
         }
         return false;
@@ -253,8 +253,8 @@ contract ContractsManager is Managed {
 
     function removeOtherAddress(address value) multisig {
         removeOtherAddr(otherContractsId[value]);
+        UpdateOtherContract(value, otherContractsId[value]);
         delete otherContractsId[value];
-        updateOtherContract(value);
     }
 
     function removeOtherAddr(uint i) internal {

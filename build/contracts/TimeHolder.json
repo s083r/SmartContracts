@@ -15,6 +15,19 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -322,8 +335,2284 @@
       "type": "event"
     }
   ],
-  "unlinked_binary": "0x60606040526001600555600160085534610000575b610b00806100236000396000f300606060405236156100bf5763ffffffff60e060020a6000350416631638a3fb81146100d157806319810f3c146100f05780632f4f21e2146101145780633a98ef39146101445780637bc1ed63146101635780637d2939471461018c578063956501bb146101ab578063ab377daa146101d6578063b1f3b35c14610202578063b6b55f251461022e578063ce7c2ac214610252578063d5b502521461027d578063e2ddf361146102aa578063f09a4016146102d5578063fe9fbb8014610308575b34610000576100cf5b610000565b565b005b34610000576100de610335565b60408051918252519081900360200190f35b346100005761010060043561033b565b604080519115158252519081900360200190f35b3461000057610100600160a060020a0360043516602435610554565b604080519115158252519081900360200190f35b34610000576100de6107cc565b60408051918252519081900360200190f35b34610000576101706107d2565b60408051600160a060020a039092168252519081900360200190f35b34610000576100de6107e1565b60408051918252519081900360200190f35b34610000576100de600160a060020a03600435166107e7565b60408051918252519081900360200190f35b3461000057610170600435610806565b60408051600160a060020a039092168252519081900360200190f35b3461000057610170600435610821565b60408051600160a060020a039092168252519081900360200190f35b346100005761010060043561083c565b604080519115158252519081900360200190f35b34610000576100de600160a060020a0360043516610850565b60408051918252519081900360200190f35b3461000057610100600160a060020a0360043516610862565b604080519115158252519081900360200190f35b34610000576100de600160a060020a03600435166109ee565b60408051918252519081900360200190f35b3461000057610100600160a060020a0360043581169060243516610a00565b604080519115158252519081900360200190f35b3461000057610100600160a060020a0360043516610a54565b604080519115158252519081900360200190f35b60055481565b600160a060020a03331660009081526002602052604081205481908311156103b957604080517f496e73756666696369656e742062616c616e6365000000000000000000000000815290517fc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c9181900360200190a16000915061054e565b50600160a060020a03331660009081526002602052604090208054839003905560098054839003905560015b60085481101561047b57600081815260076020908152604080832054600160a060020a03338116808652600285528386205484518601879052845160e060020a63fb26441f0281526004810192909252602482018a90526044820152925191169363fb26441f93606480850194919392918390030190829087803b156100005760325a03f115610000575050505b6001016103e5565b600a54604080516000602091820181905282517fa9059cbb000000000000000000000000000000000000000000000000000000008152600160a060020a033381166004830152602482018990529351939094169363a9059cbb936044808301949391928390030190829087803b156100005760325a03f115610000575050604051511515905061050a57610000565b604080518481529051600160a060020a033316917f65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f919081900360200190a2600191505b50919050565b60008082158015906105ef5750600a54604080516000602091820181905282517f23b872dd000000000000000000000000000000000000000000000000000000008152600160a060020a033381166004830152308116602483015260448201899052935193909416936323b872dd936064808301949391928390030190829087803b156100005760325a03f115610000575050604051511590505b1561065057604080517f536861726573207472616e73666572206661696c656400000000000000000000815290517fc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c9181900360200190a1600091506107c5565b600160a060020a03841660009081526004602052604090205415156106b4576005805460009081526003602090815260408083208054600160a060020a031916600160a060020a038a16908117909155845460018101909555835260049091529020555b50600160a060020a0383166000908152600260205260409020805483019055600980548301905560015b60085481101561078a57600081815260076020908152604080832054600160a060020a0388811680865260028552838620548451860187905284517f0efe6a8b0000000000000000000000000000000000000000000000000000000081526004810192909252602482018a905260448201529251911693630efe6a8b93606480850194919392918390030190829087803b156100005760325a03f115610000575050505b6001016106de565b6040518390600160a060020a038616907fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c90600090a3600191505b5092915050565b60095481565b600a54600160a060020a031681565b60085481565b600160a060020a0381166000908152600260205260409020545b919050565b600360205260009081526040902054600160a060020a031681565b600760205260009081526040902054600160a060020a031681565b60006108483383610554565b90505b919050565b60026020526000908152604090205481565b600061086d33610a54565b80610886575060015433600160a060020a039081169116145b1561080157600160a060020a03821660009081526006602052604090205415156109e35781600160a060020a0316630efe6a8b30600060006000604051602001526040518463ffffffff1660e060020a0281526004018084600160a060020a0316600160a060020a031681526020018381526020018281526020019350505050602060405180830381600087803b156100005760325a03f1156100005750506040805160006020918201819052825160e060020a63fb26441f028152600160a060020a03308116600483015260248201839052604482018390529351938716945063fb26441f936064808301949391928390030190829087803b156100005760325a03f1156100005750506008805460009081526007602090815260408083208054600160a060020a031916600160a060020a03891690811790915584549084526006909252909120819055600190810190915591506108019050565b5060005b5b5b919050565b60046020526000908152604090205481565b60008054600160a060020a031615610a1a57506000610a4e565b5060008054600160a060020a03808516600160a060020a031992831617909255600a80549284169290911691909117905560015b92915050565b6000805460408051602090810184905281517f2aa09e5a000000000000000000000000000000000000000000000000000000008152600160a060020a03868116600483015292519290931692632aa09e5a926024808301939282900301818787803b156100005760325a03f115610000575050604051519150505b9190505600a165627a7a72305820ac64928e2bb3bb20f4b87a9361f69198c4c7d897b8968f87557ac50317ecd7c90029",
-  "networks": {},
+  "unlinked_binary": "0x60606040526001600555600160085534610000575b610ba1806100236000396000f300606060405236156100ca5763ffffffff60e060020a6000350416631638a3fb81146100dc57806318160ddd146100fb57806319810f3c1461011a5780632f4f21e21461013e5780633a98ef391461016e5780637bc1ed631461018d5780637d293947146101b6578063956501bb146101d5578063ab377daa14610200578063b1f3b35c1461022c578063b6b55f2514610258578063ce7c2ac21461027c578063d5b50252146102a7578063e2ddf361146102d4578063f09a4016146102ff578063fe9fbb8014610332575b34610000576100da5b610000565b565b005b34610000576100e961035f565b60408051918252519081900360200190f35b34610000576100e9610365565b60408051918252519081900360200190f35b346100005761012a6004356103dc565b604080519115158252519081900360200190f35b346100005761012a600160a060020a03600435166024356105f5565b604080519115158252519081900360200190f35b34610000576100e961086d565b60408051918252519081900360200190f35b346100005761019a610873565b60408051600160a060020a039092168252519081900360200190f35b34610000576100e9610882565b60408051918252519081900360200190f35b34610000576100e9600160a060020a0360043516610888565b60408051918252519081900360200190f35b346100005761019a6004356108a7565b60408051600160a060020a039092168252519081900360200190f35b346100005761019a6004356108c2565b60408051600160a060020a039092168252519081900360200190f35b346100005761012a6004356108dd565b604080519115158252519081900360200190f35b34610000576100e9600160a060020a03600435166108f1565b60408051918252519081900360200190f35b346100005761012a600160a060020a0360043516610903565b604080519115158252519081900360200190f35b34610000576100e9600160a060020a0360043516610a8f565b60408051918252519081900360200190f35b346100005761012a600160a060020a0360043581169060243516610aa1565b604080519115158252519081900360200190f35b346100005761012a600160a060020a0360043516610af5565b604080519115158252519081900360200190f35b60055481565b600a54604080516000602091820181905282517f18160ddd00000000000000000000000000000000000000000000000000000000815292519093600160a060020a0316926318160ddd92600480830193919282900301818787803b156100005760325a03f115610000575050604051519150505b90565b600160a060020a033316600090815260026020526040812054819083111561045a57604080517f496e73756666696369656e742062616c616e6365000000000000000000000000815290517fc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c9181900360200190a1600091506105ef565b50600160a060020a03331660009081526002602052604090208054839003905560098054839003905560015b60085481101561051c57600081815260076020908152604080832054600160a060020a03338116808652600285528386205484518601879052845160e060020a63fb26441f0281526004810192909252602482018a90526044820152925191169363fb26441f93606480850194919392918390030190829087803b156100005760325a03f115610000575050505b600101610486565b600a54604080516000602091820181905282517fa9059cbb000000000000000000000000000000000000000000000000000000008152600160a060020a033381166004830152602482018990529351939094169363a9059cbb936044808301949391928390030190829087803b156100005760325a03f11561000057505060405151151590506105ab57610000565b604080518481529051600160a060020a033316917f65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f919081900360200190a2600191505b50919050565b60008082158015906106905750600a54604080516000602091820181905282517f23b872dd000000000000000000000000000000000000000000000000000000008152600160a060020a033381166004830152308116602483015260448201899052935193909416936323b872dd936064808301949391928390030190829087803b156100005760325a03f115610000575050604051511590505b156106f157604080517f536861726573207472616e73666572206661696c656400000000000000000000815290517fc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c9181900360200190a160009150610866565b600160a060020a0384166000908152600460205260409020541515610755576005805460009081526003602090815260408083208054600160a060020a031916600160a060020a038a16908117909155845460018101909555835260049091529020555b50600160a060020a0383166000908152600260205260409020805483019055600980548301905560015b60085481101561082b57600081815260076020908152604080832054600160a060020a0388811680865260028552838620548451860187905284517f0efe6a8b0000000000000000000000000000000000000000000000000000000081526004810192909252602482018a905260448201529251911693630efe6a8b93606480850194919392918390030190829087803b156100005760325a03f115610000575050505b60010161077f565b6040518390600160a060020a038616907fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c90600090a3600191505b5092915050565b60095481565b600a54600160a060020a031681565b60085481565b600160a060020a0381166000908152600260205260409020545b919050565b600360205260009081526040902054600160a060020a031681565b600760205260009081526040902054600160a060020a031681565b60006108e933836105f5565b90505b919050565b60026020526000908152604090205481565b600061090e33610af5565b80610927575060015433600160a060020a039081169116145b156108a257600160a060020a0382166000908152600660205260409020541515610a845781600160a060020a0316630efe6a8b30600060006000604051602001526040518463ffffffff1660e060020a0281526004018084600160a060020a0316600160a060020a031681526020018381526020018281526020019350505050602060405180830381600087803b156100005760325a03f1156100005750506040805160006020918201819052825160e060020a63fb26441f028152600160a060020a03308116600483015260248201839052604482018390529351938716945063fb26441f936064808301949391928390030190829087803b156100005760325a03f1156100005750506008805460009081526007602090815260408083208054600160a060020a031916600160a060020a03891690811790915584549084526006909252909120819055600190810190915591506108a29050565b5060005b5b5b919050565b60046020526000908152604090205481565b60008054600160a060020a031615610abb57506000610aef565b5060008054600160a060020a03808516600160a060020a031992831617909255600a80549284169290911691909117905560015b92915050565b6000805460408051602090810184905281517f2aa09e5a000000000000000000000000000000000000000000000000000000008152600160a060020a03868116600483015292519290931692632aa09e5a926024808301939282900301818787803b156100005760325a03f115610000575050604051519150505b9190505600a165627a7a7230582099c06ac1871c18095366b4438793d6be4f5466fbb5eb4a4cae10841c407c42ce0029",
+  "networks": {
+    "1494495117998": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4c951e8ba47c0770a5b3836698d550af395fd59f",
+      "updated_at": 1494495142378
+    },
+    "1494495205823": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4f80ee5ce26cba54ae9b81ad5215651e047b4748",
+      "updated_at": 1494495215122
+    },
+    "1494495268647": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xfa16a97b49c0980d7b75766c22d793fc37815931",
+      "updated_at": 1494495274405
+    },
+    "1494561128261": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xd6bb55a6ec0dfd19c6d2019a17c2221731092ad4",
+      "updated_at": 1494561152733
+    },
+    "1494563060094": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x6de9ba8dedce8fd04c84973d13e6a80077ffc2cc",
+      "updated_at": 1494563066904
+    },
+    "1494564457437": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x8e98a83428f5d191b9e716e67623a9526b64c016",
+      "updated_at": 1494564474678
+    },
+    "1494567464914": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xc1d6cc4172ce48643dd80977f61986e724c7d956",
+      "updated_at": 1494567481040
+    },
+    "1494569233796": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x09b8bcb77310024a56142ca6b0a20e55382f396f",
+      "updated_at": 1494569251195
+    },
+    "1494572218846": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x25fd9707d3546bf55add87d9467e9899fcd35065",
+      "updated_at": 1494572232794
+    },
+    "1494573012240": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf224487b64230fc17a28484aca23d317c01ac2b7",
+      "updated_at": 1494573026654
+    },
+    "1494574303853": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x564eae6d52621eb7a6437eb065f6e890c88bac9c",
+      "updated_at": 1494574318509
+    },
+    "1494581791342": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x5eabae187087504c9c7d3a66cce8e6f195b71d44",
+      "updated_at": 1494581878510
+    },
+    "1494582869792": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf217638886cec5f0ec9fdfa4e791c430e7e0536e",
+      "updated_at": 1494582887046
+    },
+    "1494588906408": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x7049d6996e88fa7dcd2b29af2df45d40b3030576",
+      "updated_at": 1494588970603
+    },
+    "1494596908850": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x78e28a6b754d51d3b299fddf1e2fe2c7859c146f",
+      "updated_at": 1494596926448
+    },
+    "1494663994394": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xc675340c4017663f316ba9f7ffb6494999ffbd4e",
+      "updated_at": 1494664045527
+    },
+    "1494668304168": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x26137a9e5db6036d6b322baa4c9537815e39f9bf",
+      "updated_at": 1494668325046
+    },
+    "1494668410396": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4a9cfd284879cced77a84969f2ed4eeed00aa95e",
+      "updated_at": 1494668417814
+    },
+    "1494668573011": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x72febe70263c1132c454a75e702a4d8cfd078561",
+      "updated_at": 1494668581095
+    },
+    "1494668616325": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x94437e38f5dfde89176ca1ac680c60ac05961163",
+      "updated_at": 1494668626656
+    },
+    "1494669007697": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x1b23d1db1c0ce0e59ebffcd7b18fbf0113e44726",
+      "updated_at": 1494669016325
+    },
+    "1494669676932": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x5d35617ec9599d2b9896739fc4a382df91fe59a7",
+      "updated_at": 1494669696019
+    },
+    "1494670115427": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xdcfbd34dbfc5022461e8499e9655760cf440b025",
+      "updated_at": 1494670123153
+    },
+    "1494670733341": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x970569ad622c1e36fbcbafabcc08b3b0d948ab5f",
+      "updated_at": 1494670740770
+    },
+    "1494670796670": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4150b2bd41d1e676d6bb525dc48a508d5a48ba38",
+      "updated_at": 1494670806949
+    },
+    "1494671204374": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x0d915e3941d9f7373c9d56a6f84f777e822ba618",
+      "updated_at": 1494671217821
+    },
+    "1494671277938": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x46237c96f164dd94b7bb3c67d71fed2b4e461553",
+      "updated_at": 1494671286559
+    },
+    "1494671435949": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa5346bd97c6c5d7eca1bd872cae2604576863f16",
+      "updated_at": 1494671443973
+    },
+    "1494672066308": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa92120fcfc19076c8784d91e7df48f76b7147ce5",
+      "updated_at": 1494672117022
+    },
+    "1494673049597": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa50b5ab3ddafa938d962b0b3fbea8ad120a60f16",
+      "updated_at": 1494673058041
+    },
+    "1494678911307": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x9b4f1fc5a703e8d9b3c2a354e0a14ffa88c8b5e3",
+      "updated_at": 1494678949942
+    },
+    "1494678993809": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x4f845fae1e3920d5a2839fe94e25a648a0f983e8",
+      "updated_at": 1494679002026
+    },
+    "1494679157250": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x41b4b282e4432867ac1150aa6fc79881a4e9166d",
+      "updated_at": 1494679166148
+    },
+    "1494679341446": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x79757f3c401617148e08d40500b7e65c301a99aa",
+      "updated_at": 1494679349317
+    },
+    "1494680167507": {
+      "events": {
+        "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        "0x65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "who",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WithdrawShares",
+          "type": "event"
+        },
+        "0xc0feee4291bd5b20db53763b87864bd1434da2717d6a9ba76efa4bafa8f6a99c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "message",
+              "type": "bytes32"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        },
+        "0xb5e98b3b120759d320eba5ef6e4556b40f571e9864d6030bf4a3a5922507d5a0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "hash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "exec",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x54b81d5e6a9812801543279c9983a5d07e4b315a",
+      "updated_at": 1494680176064
+    }
+  },
   "schema_version": "0.0.5",
-  "updated_at": 1494377247815
+  "updated_at": 1494680176064
 }

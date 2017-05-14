@@ -3,8 +3,8 @@ pragma solidity ^0.4.8;
 import "./Managed.sol";
 
 contract UserManager is Managed {
-    event cbeUpdate(address key);
-    event setReq(uint required);
+    event CBEUpdate(address key);
+    event SetRequired(uint required);
 
     function init(address _userStorage, address _shareable) returns (bool) {
         if (userStorage != 0x0) {
@@ -18,22 +18,17 @@ contract UserManager is Managed {
 
     function addCBE(address _key, bytes32 _hash) multisig {
         if (!UserStorage(userStorage).getCBE(_key)) { // Make sure that the key being submitted isn't already CBE
-            if (!UserStorage(userStorage).addMember(_key, true)) { // member already exist
-                if (UserStorage(userStorage).setCBE(_key, true)) {
-                    setMemberHash(_key, _hash);
-                    cbeUpdate(_key);
-                }
-            } else {
+            if (UserStorage(userStorage).addMember(_key, true) || UserStorage(userStorage).setCBE(_key, true)) {
                 setMemberHash(_key, _hash);
-                cbeUpdate(_key);
+                CBEUpdate(_key);
             }
         }
     }
 
-    function revokeCBE(address key) multisig {
-        if (UserStorage(userStorage).getCBE(key)) { // Make sure that the key being revoked is exist and is CBE
-            UserStorage(userStorage).setCBE(key, false);
-            cbeUpdate(key);
+    function revokeCBE(address _key) multisig {
+        if (UserStorage(userStorage).getCBE(_key)) { // Make sure that the key being revoked is exist and is CBE
+            UserStorage(userStorage).setCBE(_key, false);
+            CBEUpdate(_key);
         }
     }
 
@@ -41,7 +36,7 @@ contract UserManager is Managed {
         UserStorage(userStorage).addMember(key, false);
     }
 
-    function setMemberHash(address key, bytes32 _hash) onlyAuthorized() returns (bool) {
+    function setMemberHash(address key, bytes32 _hash) onlyAuthorized returns (bool) {
         createMemberIfNotExist(key);
         UserStorage(userStorage).setHashes(key, _hash);
         return true;
@@ -62,8 +57,11 @@ contract UserManager is Managed {
     }
 
     function setRequired(uint _required) multisig returns (bool) {
-        setReq(_required);
-        return UserStorage(userStorage).setRequired(_required);
+        if (UserStorage(userStorage).setRequired(_required)) {
+            SetRequired(_required);
+            return true;
+        }
+        return false;
     }
 
     function()
