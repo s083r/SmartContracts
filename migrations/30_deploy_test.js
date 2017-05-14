@@ -3,6 +3,7 @@ var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
 var FakeCoin3 = artifacts.require("./FakeCoin3.sol");
 var Stub = artifacts.require("./helpers/Stub.sol");
 var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable.sol");
+var KrakenPriceTicker = artifacts.require("./KrakenPriceTicker.sol");
 module.exports = function(deployer,network) {
 if(network === 'development') {
  deployer.deploy(Stub)
@@ -10,5 +11,6 @@ if(network === 'development') {
  deployer.deploy(FakeCoin)
  deployer.deploy(FakeCoin2)
  deployer.deploy(FakeCoin3)
+ deployer.deploy(KrakenPriceTicker,true)
 }
 }

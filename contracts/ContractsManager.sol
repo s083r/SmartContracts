@@ -105,10 +105,10 @@ contract ContractsManager is Managed {
     function claimContractOwnership(address _addr, bool _erc20) onlyAuthorized() returns (bool) {
         if (OwnedInterface(_addr).claimContractOwnership()) {
             if(_erc20) {
-                setAddress(_addr);
+                setAddressInt(_addr);
             }
             else {
-                setOtherAddress(_addr);
+                setOtherAddressInt(_addr);
             }
             return true;
         }
@@ -189,6 +189,10 @@ contract ContractsManager is Managed {
     }
 
     function setAddress(address value) multisig returns (uint) {
+        return setAddressInt(value);
+    }
+
+    function setAddressInt(address value) internal returns (uint) {
         if (contractsId[value] == uint(0x0)) {
             ERC20Interface(value).totalSupply();
             contracts[contractsCounter] = value;
@@ -230,14 +234,17 @@ contract ContractsManager is Managed {
     }
 
     function setOtherAddress(address value) multisig returns (uint) {
-        if (otherContractsId[value] == uint(0x0)) {
-            otherContracts[otherContractsCounter] = value;
-            otherContractsId[value] = otherContractsCounter;
-            UpdateOtherContract(value, otherContractsId[value]);
-            otherContractsCounter++;
-            return otherContractsCounter;
-        }
-        return otherContractsId[value];
+        return setOtherAddressInt(value);
+    }
+
+    function setOtherAddressInt(address value) internal returns (uint) {
+       if (otherContractsId[value] == uint(0x0)) {
+           otherContracts[otherContractsCounter] = value;
+           otherContractsId[value] = otherContractsCounter;
+           UpdateOtherContract(value,otherContractsId[value]);
+           return otherContractsCounter++;
+       }
+       return otherContractsId[value];
     }
 
     function changeOtherAddress(address _from, address _to) multisig returns (bool) {

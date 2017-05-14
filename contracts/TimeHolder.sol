@@ -27,9 +27,10 @@ contract TimeHolder is Managed {
     event Error(bytes32 message);
 
 /**
- * Sets shares contract.
+ * Init TimeHolder contract.
  *
  *
+ * @param _userStorage address.
  * @param _sharesContract ERC20 token address to act as shares.
  *
  * @return success.

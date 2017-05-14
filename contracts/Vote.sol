@@ -62,8 +62,10 @@ contract Vote is Managed {
 
     //initiator function that stores the necessary poll information
     function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) returns (uint) {
-        if(_votelimit > getVoteLimit())
+        if(_votelimit > getVoteLimit()) {
+            Error(bytes32("Vote limit exceeded"));
             throw;
+        }
         uint id;
         if(deletedIds.length == 0)
             id = pollsCount++;
@@ -77,7 +79,7 @@ contract Vote is Managed {
             polls[id].optionsId[i] = _options[i-1];
             polls[id].optionsCount++;
         }
-        New_Poll(pollsCount);
+        New_Poll(id);
         return id;
     }
 

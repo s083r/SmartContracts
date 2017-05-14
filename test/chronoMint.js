@@ -15,6 +15,7 @@ var UserStorage = artifacts.require("./UserStorage.sol");
 var Shareable = artifacts.require("./PendingManager.sol");
 var LOC = artifacts.require("./LOC.sol");
 var TimeHolder = artifacts.require("./TimeHolder.sol");
+var RateTracker = artifacts.require("./KrakenPriceTicker.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
 var bytes32fromBase58 = require('./helpers/bytes32fromBase58');
@@ -47,6 +48,7 @@ contract('ChronoMint', function(accounts) {
   var userManager;
   var userStorage;
   var timeHolder;
+  var rateTracker;
   var loc_contracts = [];
   var labor_hour_token_contracts = [];
   var Status = {maintenance:0,active:1, suspended:2, bankrupt:3};
@@ -86,6 +88,21 @@ contract('ChronoMint', function(accounts) {
       return UserManager.deployed()
     }).then(function (instance) {
       return instance.init(UserStorage.address, Shareable.address)
+    }).then(function () {
+      return RateTracker.deployed()
+    }).then(function (instance) {
+      rateTracker = instance
+      var events = rateTracker.newOraclizeQuery({fromBlock: "latest"});
+      events.watch(function(error, result) {
+      // This will catch all Transfer events, regardless of how they originated.
+        if (error == null) {
+          console.log(result.args);
+        }
+      })
+    }).then(function () {
+      return web3.eth.sendTransaction({to: rateTracker.address, value: web3.toWei(1, "ether"), from: accounts[0]});
+    }).then(function () {
+      return rateTracker.update()
     }).then(function () {
       return ChronoBankPlatform.deployed()
     }).then(function (instance) {
@@ -220,10 +237,11 @@ contract('ChronoMint', function(accounts) {
     }).then(function (instance) {
       return instance.changeOwnership(SYMBOL2, ContractsManager.address, {from: accounts[0]})
     }).then(function () {
-      return chronoBankPlatform.changeContractOwnership(ContractsManager.address, {from: accounts[0]})
-    }).then(function () {
-      return contractsManager.claimContractOwnership(chronoBankPlatform.address, false, {from: accounts[0]})
-    }).then(function () {
+      return Rewards.deployed()
+    }).then(function (instance) {
+      rewards = instance;
+      return rewards.init(TimeHolder.address, 0)
+    }).then(function (instance) {
       return Exchange.deployed()
     }).then(function (instance) {
       exchange = instance;
@@ -233,10 +251,9 @@ contract('ChronoMint', function(accounts) {
     }).then(function () {
       return contractsManager.claimContractOwnership(exchange.address, false, {from: accounts[0]})
     }).then(function () {
-      return Rewards.deployed()
-    }).then(function (instance) {
-      rewards = instance;
-      return rewards.init(TimeHolder.address, 0)
+      return rewards.changeContractOwnership(contractsManager.address, {from: accounts[0]})
+    }).then(function () {
+      return contractsManager.claimContractOwnership(rewards.address, false, {from: accounts[0]})
     }).then(function () {
       return TimeHolder.deployed()
     }).then(function (instance) {
@@ -244,11 +261,7 @@ contract('ChronoMint', function(accounts) {
       return instance.init(UserStorage.address, ChronoBankAssetProxy.address)
     }).then(function () {
       return timeHolder.addListener(rewards.address)
-    }).then(function () {
-      return contractsManager.setOtherAddress(exchange.address, {from: accounts[0]})
-    }).then(function () {
-      return contractsManager.setOtherAddress(rewards.address, {from: accounts[0]})
-    }).then(function () {
+    }).then(function() {
       return contractsManager.setAddress(ChronoBankAssetProxy.address, {from: accounts[0]})
     }).then(function () {
       return contractsManager.setAddress(ChronoBankAssetWithFeeProxy.address, {from: accounts[0]})
@@ -1235,6 +1248,13 @@ contract('ChronoMint', function(accounts) {
         })
       })
     })
+ 
+    it("should be able to TIME exchange rate from Bittrex", function() {
+      return rateTracker.rate.call().then((r) => {
+        assert.notEqual(r,null)
+      })
+    })
+      
 
   });
 });
