@@ -11,7 +11,6 @@ script:
 - testrpc -g 1 > /dev/null &
 - sleep 5
 - cd node_modules/ethereum-bridge
-- mkdir database
 - node bridge.js -H localhost:8545 > /dev/null &
 - cd ../..
 - truffle test

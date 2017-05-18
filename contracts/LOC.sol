@@ -13,7 +13,7 @@ contract LOC is Configurable {
         settings[uint(Setting.publishedHash)] = _publishedHash;
         settings[uint(Setting.issueLimit)] = bytes32(_issueLimit);
         settings[uint(Setting.expDate)] = bytes32(_expDate);
-        settings[uint(Setting.securityPercentage)] = bytes32(2);
+        //settings[uint(Setting.securityPercentage)] = bytes32(2);
     }
 
     function getContractOwner() constant returns(address) {

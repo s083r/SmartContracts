@@ -31,7 +31,10 @@ contract('Vote', function(accounts) {
   var conf_sign;
   var conf_sign2;
   var chronoMint;
+  var chronoBankPlatform;
+  var chronoBankPlatformEmitter;
   var contractsManager;
+  var eventsHistory;
   var rewardContract;
   var platform;
   var timeContract;
@@ -107,6 +110,7 @@ contract('Vote', function(accounts) {
     }).then(function () {
       return Vote.deployed()
     }).then(function (instance) {
+      vote = instance;	     
       return instance.init(TimeHolder.address, UserStorage.address, Shareable.address)
     }).then(function () {
       return Shareable.deployed()
@@ -144,9 +148,6 @@ contract('Vote', function(accounts) {
       return UserStorage.deployed()
     }).then(function (instance) {
       userStorage = instance;
-      return Vote.deployed()
-    }).then(function(instance) {
-      vote = instance;
       return TimeHolder.deployed()
     }).then(function (instance) {
       timeHolder = instance;

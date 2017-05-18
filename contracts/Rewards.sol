@@ -50,11 +50,15 @@ contract Rewards is Owned {
 
     address public timeHolder;
 
+    address[] public assets;
+    mapping(address => uint) assetsId;
+    uint[] deletedIds;
+
 // Minimum period length, in days.
     uint public closeInterval;
 
 // Maximum shares which can be transfered in on TX
-    uint public maxSharesTransfer = 100;
+    uint public maxSharesTransfer = 30;
 
 // Asset rewards accumulated for shareholder.
     mapping(address => mapping(address => uint)) rewards;
@@ -101,6 +105,7 @@ contract Rewards is Owned {
         periods.length++;
         periods[0].shareholdersCount = 1;
         periods[0].startDate = now;
+        assets.push(0);
 
         return true;
     }
@@ -140,6 +145,7 @@ contract Rewards is Owned {
  */
     function closePeriod() returns(bool) {
         Period period = periods[lastPeriod()];
+
         if ((period.startDate + (closeInterval * 1 days)) > now) {
             Error("Cannot close period yet");
             return false;
@@ -150,6 +156,11 @@ contract Rewards is Owned {
         periods[lastPeriod()].startDate = now;
         periods[lastClosedPeriod()].shareholdersCount = TimeHolder(timeHolder).shareholdersCount();
         //periods[lastClosedPeriod()].totalShares = TimeHolder(timeHolder).totalShares();
+        if(assets.length != 0) {
+            for(uint i = 1;i<assets.length;i++) {
+                registerAsset(Asset(assets[i]));
+            }
+        }
 
         return storeDeposits(0);
     }
@@ -172,19 +183,33 @@ contract Rewards is Owned {
         uint last = first + maxSharesTransfer;
         if(last >= periods[lastClosedPeriod()].shareholdersCount)
             last = periods[lastClosedPeriod()].shareholdersCount;
+        address holder;
         for(;first < last;first++) {
-            address holder = TimeHolder(timeHolder).shareholders(first);
+            holder = TimeHolder(timeHolder).shareholders(first);
             if(periods[lastClosedPeriod()].shares[holder] == 0) {
-              //  if(periods[lastClosedPeriod()].shares[holder] > 9) {
                     periods[lastClosedPeriod()].shares[holder] = TimeHolder(timeHolder).shares(holder);
                     periods[lastClosedPeriod()].totalShares += periods[lastClosedPeriod()].shares[holder];
-               // }
             }
         }
-
+        first = _part * maxSharesTransfer + 1;
+        for(;first < last;first++) {
+            holder = TimeHolder(timeHolder).shareholders(first);
+            for(uint i = 1;i<assets.length;i++) {
+                calculateRewardFor(Asset(assets[i]),holder);
+            }
+        }
         if(periods[lastClosedPeriod()].totalShares == TimeHolder(timeHolder).totalShares()) {
             periods[lastClosedPeriod()].isClosed = true;
             PeriodClosed();
+            return true;
+        }
+        return false;
+    }
+
+    function addAsset(address _asset) onlyContractOwner returns(bool) {
+        if(_asset != 0x0 && assetsId[_asset] == 0) {
+            assetsId[_asset] = assets.length;
+            assets.push(_asset);
             return true;
         }
         return false;
@@ -234,7 +259,7 @@ contract Rewards is Owned {
  *
  * @return success.
  */
-    function calculateReward(address _assetAddress) returns(bool) {
+    function calculateReward(address _assetAddress) internal returns(bool) {
         return calculateRewardForAddressAndPeriod(_assetAddress, msg.sender, lastClosedPeriod());
     }
 
@@ -253,7 +278,7 @@ contract Rewards is Owned {
  *
  * @return success.
  */
-    function calculateRewardFor(address _assetAddress, address _address) returns(bool) {
+    function calculateRewardFor(address _assetAddress, address _address) internal returns(bool) {
         return calculateRewardForAddressAndPeriod(_assetAddress, _address, lastClosedPeriod());
     }
 
@@ -269,7 +294,7 @@ contract Rewards is Owned {
  *
  * @return success.
  */
-    function calculateRewardForPeriod(address _assetAddress, uint _period) returns(bool) {
+    function calculateRewardForPeriod(address _assetAddress, uint _period) internal returns(bool) {
         return calculateRewardForAddressAndPeriod(_assetAddress, msg.sender, _period);
     }
 
@@ -286,10 +311,10 @@ contract Rewards is Owned {
  *
  * @return success.
  */
-    function calculateRewardForAddressAndPeriod(address _assetAddress, address _address, uint _period) returns(bool) {
+    function calculateRewardForAddressAndPeriod(address _assetAddress, address _address, uint _period) internal returns(bool) {
         Period period = periods[_period];
-        if(period.isClosed) {
-            if (!isClosed(_period) || period.assetBalances[_assetAddress] == 0) {
+        //if(period.isClosed) {
+            if (period.assetBalances[_assetAddress] == 0) {
                 Error("Reward calculation failed");
                 return false;
             }
@@ -305,7 +330,7 @@ contract Rewards is Owned {
 
             CalculateReward(_assetAddress, _address, reward);
             return true;
-        }
+        //}
         return false;
     }
 

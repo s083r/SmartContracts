@@ -1,21 +1,38 @@
 {
   "name": "chronobank-smart-contracts",
-  "version": "1.1.11",
+  "version": "1.1.21",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
   "scripts": {
     "release": "standard-version",
+    "install": "mv truffle-config.js truffle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "loose": true
+        }
+      ]
+    ]
   },
   "author": "Mike Fluff <mf@mikefluff.com> (http://mikefluff.com)",
   "license": "GPLv3",
   "dependencies": {
-    "@digix/tempo": "^0.2.0",
+    "truffle": "Mikefluff/truffle",	 
+    "web3-provider-engine": "12.0.6",
     "ethereum-bridge": "oraclize/ethereum-bridge",
-    "ethereumjs-testrpc": "3.0.5",
+    "ethereumjs-testrpc": "mikefluff/testrpc",
+    "ethereumjs-wallet": "0.6.0"
+  },
+  "devDependencies": {
+    "@digix/contest": "^0.2.6",
+    "@digix/tempo": "^0.2.0",
     "ethereumjs-wallet": "0.6.0",
     "standard-version": "^4.0.0",
-    "truffle": "Mikefluff/truffle",
-    "web3-provider-engine": "12.0.5"
+    "babel-preset-env": "^1.4.0",
+    "babel-register": "^6.24.1"
   }
 }

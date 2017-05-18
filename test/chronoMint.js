@@ -1,3 +1,5 @@
+import Contest from '@digix/contest';
+const contest = new Contest({ debug: true, timeout: 2000 });
 var FakeCoin = artifacts.require("./FakeCoin.sol");
 var ChronoBankPlatform = artifacts.require("./ChronoBankPlatform.sol");
 var ChronoBankPlatformEmitter = artifacts.require("./ChronoBankPlatformEmitter.sol");
@@ -36,7 +38,10 @@ contract('ChronoMint', function(accounts) {
   var conf_sign2;
   var coin;
   var chronoMint;
+  var chronoBankPlatform;
+  var chronoBankPlatformEmitter;
   var contractsManager;
+  var eventsHistory;
   var shareable;
   var platform;
   var timeContract;
@@ -242,6 +247,8 @@ contract('ChronoMint', function(accounts) {
       rewards = instance;
       return rewards.init(TimeHolder.address, 0)
     }).then(function (instance) {
+      return rewards.addAsset(ChronoBankAssetWithFeeProxy.address)
+    }).then(function () {
       return Exchange.deployed()
     }).then(function (instance) {
       exchange = instance;
@@ -1231,7 +1238,7 @@ contract('ChronoMint', function(accounts) {
         return rewards.registerAsset(lhProxyContract.address).then(() => {
           return rewards.depositBalanceInPeriod.call(owner, 0, {from: owner}).then((r1) => {
             return rewards.totalDepositInPeriod.call(0, {from: owner}).then((r2) => {
-              return rewards.calculateReward(lhProxyContract.address, 0).then(() => {
+              //return rewards.calculateReward(lhProxyContract.address, 0).then(() => {
                 return rewards.rewardsFor.call(lhProxyContract.address, owner).then((r3) => {
                   return rewards.withdrawReward(lhProxyContract.address, r3).then(() => {
                     return lhProxyContract.balanceOf.call(owner).then((r4) => {
@@ -1242,7 +1249,7 @@ contract('ChronoMint', function(accounts) {
                     })
                   })
                 })
-              })
+              //})
             })
           })
         })

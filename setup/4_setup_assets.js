@@ -111,6 +111,11 @@ module.exports = (callback) => {
       contractsManager = i
     })
     .then(() => {
+      return Vote.deployed()
+    }).then((instance) => {
+      vote = instance;
+      return instance.init(TimeHolder.address, UserStorage.address, Shareable.address)
+    }).then(() => {
       return TimeHolder.deployed()
     })
     .then(i => {
@@ -216,7 +221,7 @@ module.exports = (callback) => {
       return chronoBankAssetWithFee.setupFee(Rewards.address, 100, {from: accounts[0]})
     }).then(function () {
       return chronoBankPlatform.changeOwnership(SYMBOL2, ContractsManager.address, params)
-    .then(() => {
+    }).then(() => {
       return Exchange.deployed()
     }).then(i => {
       exchange = i
@@ -231,6 +236,8 @@ module.exports = (callback) => {
     }).then(i => {
       rewards = i
       return rewards.init(TimeHolder.address, 0)
+    }).then(() => {
+      return rewards.addAsset(chronoBankAssetWithFeeProxy.address)
     }).then(() => {
       return rewards.changeContractOwnership(contractsManager.address, params)
     }).then(() => {

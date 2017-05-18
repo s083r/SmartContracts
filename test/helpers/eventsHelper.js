@@ -7,7 +7,7 @@ function EventsHelper() {
       var transactionCheck = function() {
        //web3.eth.getTransactionReceipt(transactionHash.transactionHash, function(err, transaction) {
       //  console.info(transaction);    
-        receipt = transactionHash.receipt;
+        var receipt = transactionHash.receipt;
        // console.log(receipt);
         if (receipt) {
           var count = 0;

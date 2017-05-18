@@ -215,9 +215,11 @@ contract ContractsManager is Managed {
     }
 
     function removeAddress(address value) multisig {
-        removeAddr(contractsId[value]);
-        UpdateContract(value, contractsId[value]);
-        delete contractsId[value];
+        if(contractsId[value] > 0) {
+            removeAddr(contractsId[value]);
+            UpdateContract(value, contractsId[value]);
+            delete contractsId[value];
+        }
     }
 
     function removeAddr(uint i) internal {
@@ -259,9 +261,11 @@ contract ContractsManager is Managed {
     }
 
     function removeOtherAddress(address value) multisig {
-        removeOtherAddr(otherContractsId[value]);
-        UpdateOtherContract(value, otherContractsId[value]);
-        delete otherContractsId[value];
+        if(otherContractsId[value] > 0) {
+            removeOtherAddr(otherContractsId[value]);
+            UpdateOtherContract(value, otherContractsId[value]);
+            delete otherContractsId[value];
+        }
     }
 
     function removeOtherAddr(uint i) internal {
