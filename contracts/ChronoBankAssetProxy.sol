@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 
-import "./ChronoBankPlatform.sol";
+import {ChronoBankPlatformInterface as ChronoBankPlatform} from "./ChronoBankPlatformInterface.sol";
 import {ChronoBankAssetInterface as ChronoBankAsset} from "./ChronoBankAssetInterface.sol";
 import {ERC20Interface as ERC20} from "./ERC20Interface.sol";
 

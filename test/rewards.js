@@ -1,33 +1,47 @@
-var Rewards = artifacts.require("./Rewards.sol");
-var TimeHolder = artifacts.require("./TimeHolder.sol");
-var FakeCoin = artifacts.require("./FakeCoin.sol");
-var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
-var FakeCoin3 = artifacts.require("./FakeCoin3.sol");
-var UserManager = artifacts.require("./UserManager.sol");
-var UserStorage = artifacts.require("./UserStorage.sol");
-var Reverter = require('./helpers/reverter');
-var bytes32 = require('./helpers/bytes32');
-var eventsHelper = require('./helpers/eventsHelper');
+const Rewards = artifacts.require("./Rewards.sol");
+const ContractsManager = artifacts.require("./ContractsManager.sol");
+const TimeHolder = artifacts.require("./TimeHolder.sol");
+const LOCManager = artifacts.require('./LOCManager.sol')
+const FakeCoin = artifacts.require("./FakeCoin.sol");
+const FakeCoin2 = artifacts.require("./FakeCoin2.sol");
+const FakeCoin3 = artifacts.require("./FakeCoin3.sol");
+const UserManager = artifacts.require("./UserManager.sol");
+const AssetsManagerMock = artifacts.require("./AssetsManagerMock.sol");
+const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol');
+const Storage = artifacts.require("./Storage.sol");
+const ManagerMock = artifacts.require('./ManagerMock.sol');
+const Reverter = require('./helpers/reverter');
+const bytes32 = require('./helpers/bytes32');
+const eventsHelper = require('./helpers/eventsHelper');
 contract('Rewards', (accounts) => {
   let reverter = new Reverter(web3);
   afterEach('revert', reverter.revert);
 
   let reward;
   let timeHolder;
-  let userStorage;
+  let storage;
   let userManager;
+  let multiEventsHistory;
+  let assetsManager;
+  let chronoMint;
   let shares;
   let asset1;
   let asset2;
 
+  const fakeArgs = [0,0,0,0,0,0,0,0];
   const ZERO_INTERVAL = 0;
   const SHARES_BALANCE = 1161;
 
-  let defaultInit = () => { return reward.init(timeHolder.address, ZERO_INTERVAL)
-    .then(() => userStorage.addOwner(userManager.address))
-    .then(() => userManager.init(userStorage.address, 0x1))
-    .then(() => timeHolder.init(userStorage.address, shares.address))
-    .then(() => timeHolder.addListener(reward.address));
+  let defaultInit = () => { return storage.setManager(ManagerMock.address)
+    .then(() => contractsManager.init())
+    .then(() => assetsManager.init(contractsManager.address))
+    .then(() => reward.init(contractsManager.address, ZERO_INTERVAL))
+    .then(() => userManager.init(contractsManager.address))
+    .then(() => timeHolder.init(contractsManager.address, shares.address))
+    .then(() => timeHolder.addListener(reward.address))
+    .then(() => assetsManager.addAsset(asset1.address, 'LHT', chronoMint.address))
+    .then(() => reward.setupEventsHistory(multiEventsHistory.address))
+    .then(() => multiEventsHistory.authorize(reward.address))
   };
 
   let assertSharesBalance = (address, expectedBalance) => {
@@ -61,7 +75,7 @@ contract('Rewards', (accounts) => {
   };
 
   let assertRewardsLeft = (assetAddress, expectedBalance) => {
-    return reward.rewardsLeft(assetAddress)
+    return reward.getRewardsLeft(assetAddress)
       .then((balance) => assert.equal(balance.toString(), '' + expectedBalance));
   };
 
@@ -85,22 +99,30 @@ contract('Rewards', (accounts) => {
 
   before('Setup', (done) => {
     Rewards.deployed().then(function(instance) {
-    reward = instance});
+      reward = instance});
+    AssetsManagerMock.deployed().then(function(instance) {
+      assetsManager = instance});
+    LOCManager.deployed().then(function(instance) {
+      chronoMint = instance});
     TimeHolder.deployed().then(function(instance) {
-    timeHolder = instance});
-    UserStorage.deployed().then(function(instance) {
-    userStorage = instance});
+      timeHolder = instance});
+    ContractsManager.deployed().then(function(instance) {
+      contractsManager = instance});
+    Storage.deployed().then(function(instance) {
+      storage = instance});
     UserManager.deployed().then(function(instance) {
-    userManager = instance});
+      userManager = instance});
+    MultiEventsHistory.deployed().then(function(instance) {
+      multiEventsHistory = instance;});
     FakeCoin.deployed().then(function(instance) {
-    shares = instance 
-// init shares
-    shares.mint(accounts[0], SHARES_BALANCE)
-      .then(() => shares.mint(accounts[1], SHARES_BALANCE))
-      .then(() => shares.mint(accounts[2], SHARES_BALANCE))
-      // snapshot
-      .then(() => reverter.snapshot(done))
-      .catch(done);
+      shares = instance
+  // init shares
+      shares.mint(accounts[0], SHARES_BALANCE)
+        .then(() => shares.mint(accounts[1], SHARES_BALANCE))
+        .then(() => shares.mint(accounts[2], SHARES_BALANCE))
+        // snapshot
+        .then(() => reverter.snapshot(done))
+        .catch(done);
   });
     FakeCoin2.deployed().then(function(instance) {
     asset1 = instance;});
@@ -109,19 +131,26 @@ contract('Rewards', (accounts) => {
 });
 
   // init(address _timeHolder, uint _closeIntervalDays) returns(bool)
-  it('should receive the right TimeHolder contract address after init() call', () => {
+  it('should receive the right ContractsManager contract address after init() call', () => {
     return defaultInit()
-      .then(reward.timeHolder)
-      .then((address) => assert.equal(address, timeHolder.address));
+      .then(reward.getContractsManager)
+      .then((address) => { console.log(address); assert.equal(address, contractsManager.address) });
   });
 
   it('should not be possible to call init twice', () => {
     return defaultInit()
       .then(() => reward.init('0x1', 30))
-      .then(reward.timeHolder)
-      .then((address) => assert.equal(address, timeHolder.address))
-      .then(reward.closeInterval)
+      .then(reward.getContractsManager)
+      .then((address) => assert.equal(address, contractsManager.address))
+      .then(reward.getCloseInterval)
       .then((interval) => assert.equal(interval, ZERO_INTERVAL));
+  });
+
+  // init(address _timeHolder, uint _closeIntervalDays) returns(bool)
+  it('should receive the rigth reward assets list', () => {
+    return defaultInit()
+      .then(reward.getAssets)
+      .then((result) => { console.log(result); assert.equal(result[0], asset1.address) });
   });
 
   // depositFor(address _address, uint _amount) returns(bool)
@@ -173,7 +202,7 @@ contract('Rewards', (accounts) => {
       // 1st period - deposit 50
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.depositFor(accounts[0], 50))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       .then(() => assertTotalDepositInPeriod(0, 50))
       //.then(() => reward.registerAsset(asset1.address))
@@ -192,7 +221,14 @@ contract('Rewards', (accounts) => {
 
   // closePeriod() returns(bool)
   it('should not be possible to close period if period.startDate + closeInterval * 1 days > now', () => {
-    return reward.init(shares.address, ZERO_INTERVAL + 1)
+    return storage.setManager(ManagerMock.address)
+      .then(() => contractsManager.init())
+      .then(() => reward.init(contractsManager.address, ZERO_INTERVAL + 1))
+      .then(() => userManager.init(contractsManager.address))
+      .then(() => timeHolder.init(contractsManager.address, shares.address))
+      .then(() => timeHolder.addListener(reward.address))
+      .then(() => reward.setupEventsHistory(multiEventsHistory.address))
+      .then(() => multiEventsHistory.authorize(reward.address))
       .then(() => reward.closePeriod.call())
       .then((res) => assert.isFalse(res))
       .then(() => reward.closePeriod())
@@ -218,12 +254,12 @@ contract('Rewards', (accounts) => {
       );
   });
 
-  it('should not be possible to register asset twice with non zero balance', () => {
+ it('should not be possible to register asset twice with non zero balance', () => {
     return defaultInit()
       .then(() => asset1.mint(reward.address, 100))
-      .then(() => reward.addAsset.call(asset1.address)) 
-      .then((res) => assert.isTrue(res))
-      .then(() => reward.addAsset(asset1.address)) 
+      .then(() => assetsManager.addAsset(asset1.address, 'LHT2', chronoMint.address))
+      //.then((res) => assert.isTrue(res))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       // 1st registration - true
       //.then(() => reward.registerAsset.call(asset1.address))
@@ -257,7 +293,7 @@ contract('Rewards', (accounts) => {
     return defaultInit()
       // 1st period
       .then(() => asset1.mint(reward.address, 100))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       //.then(() => reward.registerAsset(asset1.address))
       .then(() => assertAssetBalanceInPeriod(asset1.address, 0, 100))
@@ -307,7 +343,7 @@ contract('Rewards', (accounts) => {
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.deposit(75, { from: accounts[0] }))
       .then(() => timeHolder.deposit(25, { from: accounts[1] }))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       .then(() => assertTotalDepositInPeriod(0, 100))
 
@@ -330,7 +366,7 @@ contract('Rewards', (accounts) => {
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.depositFor(accounts[0], 50))
       .then(() => timeHolder.depositFor(accounts[1], 50))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       .then(() => assertTotalDepositInPeriod(0, 100))
       //.then(() => reward.registerAsset(asset1.address))
@@ -407,7 +443,7 @@ contract('Rewards', (accounts) => {
     return defaultInit()
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.depositFor(accounts[0], 100))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       //.then(() => reward.registerAsset(asset1.address))
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[0], 0))
@@ -423,7 +459,7 @@ contract('Rewards', (accounts) => {
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.depositFor(accounts[0], 100))
       .then(() => timeHolder.depositFor(accounts[1], 200))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       //.then(() => reward.registerAsset(asset1.address))
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[0], 0))
@@ -443,7 +479,7 @@ contract('Rewards', (accounts) => {
     return defaultInit()
       .then(() => asset1.mint(reward.address, 100))
       .then(() => timeHolder.depositFor(accounts[0], 100))
-      .then(() => reward.addAsset(asset1.address))
+      //.then(() => reward.addAsset(asset1.address))
       .then(() => reward.closePeriod())
       //.then(() => reward.registerAsset(asset1.address))
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[0], 0))
@@ -455,7 +491,7 @@ contract('Rewards', (accounts) => {
       .then(() => assertRewardsFor(accounts[0], asset1.address, 70));
   });
 
-    it('should allow 1111 shareholders to deposit, calculate and withdrawn', () => {
+  /*  it('should allow 1111 shareholders to deposit, calculate and withdrawn', () => {
         return defaultInit()
           .then(() => asset1.mint(reward.address, 1000000))
           .then(() => timeHolder.depositFor(accounts[0], 50))
@@ -465,7 +501,7 @@ contract('Rewards', (accounts) => {
           .then(() => timeHolder.withdrawShares(25))
           .then(() => { return reward.getPartsCount.call() })
           .then((res) => {
-            data = [];
+            let data = [];
             for(let i=1;i<res;i++) {
                 data.push(reward.storeDeposits(i));
             }
@@ -475,6 +511,6 @@ contract('Rewards', (accounts) => {
           .then(() => assertTotalDepositInPeriod(0, 736))
           .then(() => timeHolder.withdrawShares(25))
           .then(() => assertTotalDepositInPeriod(0, 736))
-    });
+    });*/
 
 });

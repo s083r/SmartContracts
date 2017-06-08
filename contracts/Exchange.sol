@@ -3,6 +3,10 @@ pragma solidity ^0.4.8;
 import "./Owned.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 
+contract ExchangeEmitter {
+    function emitError(bytes32 _message);
+}
+
 /**
  * @title ERC20-Ether exchange contract.
  *
@@ -20,11 +24,25 @@ contract Exchange is Owned {
     // Assigned ERC20 token.
     Asset public asset;
 
+    address rewards;
+
+    address delegate;
+
+    //Switch for turn on and off the exchange operations
+    bool public isActive;
+
     // Price in wei at which exchange buys tokens.
     uint public buyPrice = 1;
 
     // Price in wei at which exchange sells tokens.
     uint public sellPrice = 2;
+
+    uint public minAmount;
+
+    uint public maxAmount;
+
+    // Fee value for operations 10000 is 0.01.
+    uint public feePercent = 10000;
 
     // User sold tokens and received wei.
     event Sell(address indexed who, uint token, uint eth);
@@ -36,6 +54,45 @@ contract Exchange is Owned {
     event Error(bytes32 message);
 
     /**
+     * @dev On received ethers
+     * @param sender Ether sender
+     * @param amount Ether value
+     */
+    event ReceivedEther(address indexed sender,
+    uint256 indexed amount);
+
+
+    // Should use interface of the emitter, but address of events history.
+    ExchangeEmitter public eventsHistory;
+
+    /**
+     * Emits Error event with specified error message.
+     *
+     * Should only be used if no state changes happened.
+     *
+     * @param _message error message.
+     */
+    function _error(bytes32 _message) internal {
+        eventsHistory.emitError(_message);
+    }
+    /**
+     * Sets EventsHstory contract address.
+     *
+     * Can be set only once, and only by contract owner.
+     *
+     * @param _eventsHistory EventsHistory contract address.
+     *
+     * @return success.
+     */
+    function setupEventsHistory(address _eventsHistory) onlyContractOwner returns(bool) {
+        if (address(eventsHistory) != 0) {
+            return false;
+        }
+        eventsHistory = ExchangeEmitter(_eventsHistory);
+        return true;
+    }
+
+    /**
      * Assigns ERC20 token for exchange.
      *
      * Can be set only once, and only by contract owner.
@@ -44,13 +101,34 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function init(Asset _asset) onlyContractOwner() returns(bool) {
+    function init(Asset _asset, address _rewards, address _delegate, uint _fee) onlyContractOwner() returns(bool) {
         if (address(asset) != 0x0) {
             return false;
         }
+        if (rewards != 0x0) {
+            return false;
+        }
         asset = _asset;
+        rewards = _rewards;
+        delegate = _delegate;
+        setFee(_fee);
+        isActive = true;
         return true;
     }
+
+    function setFee(uint _feePercent) internal returns(bool) {
+        if(feePercent < 1 || feePercent > 10000) {
+            return false;
+        }
+        feePercent = _feePercent;
+        return true;
+    }
+
+    function setActive(bool _active) onlyContractOwner() returns(bool) {
+        isActive = _active;
+    }
+
+
 
     /**
      * Set exchange operation prices.
@@ -65,7 +143,7 @@ contract Exchange is Owned {
      */
     function setPrices(uint _buyPrice, uint _sellPrice) onlyContractOwner() returns(bool) {
         if (_sellPrice < _buyPrice) {
-            Error("Incorrect price");
+            _error("Incorrect price");
             return false;
         }
         buyPrice = _buyPrice;
@@ -96,22 +174,26 @@ contract Exchange is Owned {
      * @return success.
      */
     function sell(uint _amount, uint _price) returns(bool) {
+        if(!isActive) {
+            _error("Maintenance mode");
+        }
+
         if (_price > buyPrice) {
-            Error("Price is too high");
+            _error("Price is too high");
             return false;
         }
         if (_balanceOf(msg.sender) < _amount) {
-            Error("Insufficient token balance");
+            _error("Insufficient token balance");
             return false;
         }
 
         uint total = _mul(_amount, _price);
         if (this.balance < total) {
-            Error("Insufficient ether supply");
+            _error("Insufficient ether supply");
             return false;
         }
         if (!asset.transferFrom(msg.sender, this, _amount)) {
-            Error("Payment failed");
+            _error("Payment failed");
             return false;
         }
         if (!msg.sender.send(total)) {
@@ -133,22 +215,26 @@ contract Exchange is Owned {
      * @return success.
      */
     function buy(uint _amount, uint _price) payable returns(bool) {
+        if(!isActive) {
+            _error("Maintenance mode");
+        }
+
         if (_price < sellPrice) {
-            Error("Price is to low");
+            _error("Price is to low");
             throw;
         }
         if (_balanceOf(this) < _amount) {
-            Error("Insufficient token balance");
+            _error("Insufficient token balance");
             throw;
         }
 
         uint total = _mul(_amount, _price);
         if (msg.value != total) {
-            Error("Insufficient ether supply");
+            _error("Insufficient ether supply");
             throw;
         }
         if (!asset.transfer(msg.sender, _amount)) {
-            Error("Payment failed");
+            _error("Payment failed");
             throw;
         }
 
@@ -168,15 +254,23 @@ contract Exchange is Owned {
      */
     function withdrawTokens(address _recipient, uint _amount) onlyContractOwner() returns(bool) {
         if (_balanceOf(this) < _amount) {
-            Error("Insufficient token supply");
-            return false;
-        }
-        if (!asset.transfer(_recipient, _amount)) {
-            Error("Transfer failed");
+            _error("Insufficient token supply");
             return false;
         }
 
-        WithdrawTokens(_recipient, _amount);
+        uint amount = (_amount * 10000)/(10000 + feePercent);
+
+        if (!asset.transfer(_recipient, amount)) {
+            _error("Transfer failed");
+            return false;
+        }
+
+        WithdrawTokens(_recipient, amount);
+
+        if(!asset.transfer(rewards, _amount - amount)) {
+            _error("Fee transfer failed");
+        }
+
         return true;
     }
 
@@ -205,15 +299,23 @@ contract Exchange is Owned {
      */
     function withdrawEth(address _recipient, uint _amount) onlyContractOwner() returns(bool) {
         if (this.balance < _amount) {
-            Error("Insufficient ether supply");
-            return false;
-        }
-        if (!_recipient.send(_amount)) {
-            Error("Transfer failed");
+            _error("Insufficient ether supply");
             return false;
         }
 
-        WithdrawEth(_recipient, _amount);
+        uint amount = (_amount * 10000)/(10000 + feePercent);
+
+        if (!_recipient.send(amount)) {
+            _error("Transfer failed");
+            return false;
+        }
+
+        WithdrawEth(_recipient, amount);
+
+        if(!rewards.send(_amount - amount)) {
+            _error("Fee transfer failed");
+        }
+
         return true;
     }
 
@@ -270,5 +372,11 @@ contract Exchange is Owned {
     /**
      * Accept all ether to maintain exchange supply.
      */
-    function () payable {}
+    function () payable {
+        if(msg.value != 0)
+            ReceivedEther(msg.sender, msg.value);
+        else
+            throw;
+    }
+
 }

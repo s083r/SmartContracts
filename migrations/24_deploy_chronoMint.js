@@ -1,4 +1,5 @@
-var ChronoMint = artifacts.require("./ChronoMint.sol");
+var LOCManager = artifacts.require("./LOCManager.sol");
+const Storage = artifacts.require('./Storage.sol');
 module.exports = function(deployer, network) {
-    deployer.deploy(ChronoMint)
+    deployer.deploy(LOCManager,Storage.address,'LOCs Manager')
 }

@@ -1,38 +1,32 @@
 pragma solidity ^0.4.8;
 
 import "./Managed.sol";
-import "./TimeHolder.sol";
+import {TimeHolderInterface as TimeHolder} from "./TimeHolderInterface.sol";
+import "./VoteEmitter.sol";
 
-contract Vote is Managed {
+contract Vote is Managed, VoteEmitter {
 
-    //defines the poll
-    struct Poll {
-    address owner;
-    bytes32 title;
-    bytes32 description;
-    uint votelimit;
-    uint optionsCount;
-    uint deadline;
-    bool status;
-    uint ipfsHashesCount;
-    bool active;
-    mapping(address => uint) memberOption;
-    mapping(uint => bytes32) ipfsHashes;
-    mapping(uint => uint) options;
-    mapping(uint => bytes32) optionsId;
-    }
-
-    //percent of Shares for max votelimit, where 5 is 0.05
-    uint sharesPercent = 5;
-    //deleteIds storage
-    uint[] deletedIds;
-
-    // TimeHolder contract.
-    address public timeHolder;
-
-    // Polls ids member took part
-    mapping(address => uint[]) memberPolls;
-    mapping(address => uint[]) deletedMemberPolls;
+    StorageInterface.UInt polls;
+    StorageInterface.UInt activePolls;
+    StorageInterface.AddressUIntMapping memberPollsCount;
+    StorageInterface.AddressUIntUIntMapping memberPolls;
+    StorageInterface.UInt sharesPercent;
+    StorageInterface.UIntAddressMapping owner;
+    StorageInterface.UIntBytes32Mapping title;
+    StorageInterface.UIntBytes32Mapping description;
+    StorageInterface.UIntUIntMapping votelimit;
+    StorageInterface.UIntUIntMapping optionsCount;
+    StorageInterface.UIntUIntMapping memberCount;
+    StorageInterface.UIntUIntMapping deadline;
+    StorageInterface.UIntUIntMapping ipfsHashesCount;
+    StorageInterface.UIntBoolMapping status;
+    StorageInterface.UIntBoolMapping active;
+    StorageInterface.UIntUIntAddressMapping members;
+    StorageInterface.UIntAddressUIntMapping memberOption;
+    StorageInterface.UIntAddressUIntMapping memberVotes;
+    StorageInterface.UIntUIntBytes32Mapping ipfsHashes;
+    StorageInterface.UIntUIntBytes32Mapping optionsId;
+    StorageInterface.UIntUIntUIntMapping options;
 
     // event tracking new Polls
     event New_Poll(uint _pollId);
@@ -43,178 +37,280 @@ contract Vote is Managed {
     // Something went wrong.
     event Error(bytes32 message);
 
-    // declare an polls mapping called polls
-    mapping(uint => Poll) public polls;
-    // Polls counter for mapping
-    uint public pollsCount;
+    function Vote(Storage _store, bytes32 _crate) StorageAdapter(_store, _crate) {
+        polls.init('polls');
+        activePolls.init('activePolls');
+        memberPolls.init('memberPolls');
+        memberPollsCount.init('memberPollsCount');
+        memberCount.init('memberCount');
+        members.init('members');
+        memberVotes.init('memberVotes');
+        sharesPercent.init('sharesPercent');
+        owner.init('owner');
+        title.init('title');
+        description.init('description');
+        votelimit.init('votelimit');
+        optionsCount.init('optionsCount');
+        deadline.init('deadline');
+        ipfsHashesCount.init('ipfsHashesCount');
+        status.init('status');
+        active.init('active');
+        memberOption.init('memberOption');
+        ipfsHashes.init('ipfsHashes');
+        optionsId.init('optionsId');
+        options.init('options');
+    }
 
-    uint public activePollsCount;
+    function init(address _contractsManager) returns(bool) {
+        if(store.get(contractsManager) != 0x0)
+            return false;
+        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.Voting))
+            return false;
+        store.set(contractsManager, _contractsManager);
+        store.set(sharesPercent,1);
+        return true;
+    }
 
-    function init(address _timeHolder, address _userStorage, address _shareable) returns (bool) {
-        if (userStorage != 0x0) {
+    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns(bool) {
+        if (getEventsHistory() != 0x0) {
             return false;
         }
-        userStorage = _userStorage;
-        shareable = _shareable;
-        timeHolder = _timeHolder;
+        _setEventsHistory(_eventsHistory);
         return true;
     }
 
     //initiator function that stores the necessary poll information
-    function NewPoll(bytes32[16] _options, bytes32 _title, bytes32 _description, uint _votelimit, uint _count, uint _deadline) returns (uint) {
+    function NewPoll(bytes32[16] _options, bytes32[4] _ipfsHashes, bytes32 _title, bytes32 _description, uint _votelimit, uint _deadline) returns (uint) {
         if(_votelimit > getVoteLimit()) {
             Error(bytes32("Vote limit exceeded"));
             throw;
         }
-        uint id;
-        if(deletedIds.length == 0)
-            id = pollsCount++;
-        else {
-            id = deletedIds[deletedIds.length-1];
-            deletedIds.length--;
+        uint id = store.get(polls);
+        uint i;
+        store.set(owner,id,msg.sender);
+        store.set(title,id,_title);
+        store.set(description,id,_description);
+        store.set(votelimit,id,_votelimit);
+        store.set(deadline,id,_deadline);
+        store.set(status,id,true);
+        store.set(active,id,false);
+        for(i = 0; i < _options.length; i++) {
+            if(_options[i] != bytes32(0)) {
+                store.set(optionsId,id,i+1,_options[i]);
+                store.set(optionsCount,id,i+1);
+            }
         }
-        polls[id] = Poll(msg.sender,_title,_description,_votelimit,0,_deadline,true,0,false);
-        for(uint i = 1; i < _count+1; i++) {
-            polls[id].options[i] = 0;
-            polls[id].optionsId[i] = _options[i-1];
-            polls[id].optionsCount++;
+        for(i = 0; i < _ipfsHashes.length; i++) {
+            if(_ipfsHashes[i] != bytes32(0)) {
+                store.set(ipfsHashes,id,i,_ipfsHashes[i]);
+                store.set(ipfsHashesCount,id,i+1);
+            }
         }
+        store.set(polls,store.get(polls)+1);
         New_Poll(id);
         return id;
     }
 
+    function pollsCount() constant returns (uint) {
+        return store.get(polls);
+    }
+
     function getVoteLimit() constant returns (uint) {
-        return TimeHolder(timeHolder).totalSupply() / 10000 * sharesPercent;
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
+        return TimeHolder(timeHolder).totalSupply() / 10000 * store.get(sharesPercent);
     }
 
     function getPollTitles() constant returns (bytes32[] result) {
+        uint pollsCount = store.get(polls);
         result = new bytes32[](pollsCount);
         for(uint i = 0; i<pollsCount; i++)
         {
-            result[i] = polls[i].title;
+            result[i] = store.get(title,i);
         }
         return (result);
     }
 
-    function getActivePolls() constant returns (uint result) {
-        Poll memory p;
+    function getActivePollsCount() constant returns (uint result) {
+        uint pollsCount = store.get(polls);
         for(uint i = 0; i < pollsCount; i++) {
-            p = polls[i];
-            if(p.active)
+            if(store.get(active,i))
                 result++;
+        }
+        return result;
+    }
+
+    function getActivePolls() constant returns (uint[] result) {
+        uint pollsCount = store.get(polls);
+        uint activePollsCount = getActivePollsCount();
+        uint j;
+        result = new uint[](activePollsCount);
+        for(uint i = 0; i < pollsCount; i++) {
+            if(store.get(active,i)) {
+                result[j] = i;
+                j++;
+            }
         }
         return result;
     }
 
     function checkPollIsActive(uint _pollId) constant returns (bool) {
-        Poll memory p = polls[_pollId];
-        if(p.active)
+        if(store.get(active,_pollId))
             return true;
         return false;
     }
 
-    function getInactivePolls() constant returns (uint result) {
-        Poll memory p;
+    function getInactivePollsCount() constant returns (uint result) {
+        uint pollsCount = store.get(polls);
         for(uint i = 0; i < pollsCount; i++) {
-            p = polls[i];
-            if(!p.active && p.status)
+            if(!store.get(active,i) && store.get(status,i))
                 result++;
         }
         return result;
     }
 
-    function getMemberPolls() constant returns (uint[],uint[]) {
-        return (memberPolls[msg.sender],deletedMemberPolls[msg.sender]);
+    function getInactivePolls() constant returns (uint[] result) {
+        uint pollsCount = store.get(polls);
+        uint inactivePollsCount = getInactivePollsCount();
+        uint j;
+        result = new uint[](inactivePollsCount);
+        for(uint i = 0; i < pollsCount; i++) {
+            if(!store.get(active,i) && store.get(status,i)) {
+                result[j] = i;
+                j++;
+            }
+        }
+        return result;
+    }
+
+    function getMemberPolls() constant returns (uint[] result) {
+        uint _memberPollsCount = store.get(memberPollsCount,msg.sender);
+        result = new uint[](_memberPollsCount);
+        for(uint i = 0; i < _memberPollsCount; i++) {
+            result[i] = store.get(memberPolls,msg.sender,i);
+        }
+        return result;
     }
 
     function getMemberVotesForPoll(uint _id) constant returns (uint result) {
-        Poll p = polls[_id];
-        result = p.memberOption[msg.sender];
+        result = store.get(memberOption,_id,msg.sender);
         return (result);
     }
 
     function getOptionsForPoll(uint _id) constant returns (bytes32[] result) {
-        Poll p = polls[_id];
-        result = new bytes32[](p.optionsCount);
-        for(uint i = 0; i < p.optionsCount; i++)
+        uint _optionsCount = store.get(optionsCount,_id);
+        result = new bytes32[](_optionsCount);
+        for(uint i = 0; i < _optionsCount; i++)
         {
-            result[i] = p.optionsId[i+1];
+            result[i] = store.get(optionsId,_id,i+1);
         }
         return result;
     }
 
     function getOptionsVotesForPoll(uint _id) constant returns (uint[] result) {
-        Poll p = polls[_id];
-        result = new uint[](p.optionsCount);
-        for(uint i = 0; i < p.optionsCount; i++)
+        uint _optionsCount = store.get(optionsCount,_id);
+        result = new uint[](_optionsCount);
+        for(uint i = 0; i < _optionsCount; i++)
         {
-            result[i] = p.options[i+1];
+            result[i] = store.get(options,_id,i+1);
         }
         return result;
     }
 
     modifier onlyCreator(uint _id) {
-        Poll p = polls[_id];
-        if(p.owner == msg.sender)
+        if(isPollOwner(_id))
         {
             _;
         }
     }
 
+    function isPollOwner(uint _id) constant returns(bool) {
+        if(store.get(owner,_id) == msg.sender) {
+            return true;
+        }
+        return false;
+    }
+
     function addIpfsHashToPoll(uint _id, bytes32 _hash) onlyCreator(_id) returns(bool) {
-        Poll p = polls[_id];
-        if(p.ipfsHashesCount < 5) {
-            p.ipfsHashes[p.ipfsHashesCount++] = _hash;
+        uint _ipfsHashesCount = store.get(ipfsHashesCount,_id);
+        if(_ipfsHashesCount < 5) {
+            store.set(ipfsHashes,_id,_ipfsHashesCount++,_hash);
+            store.set(ipfsHashesCount,_id,_ipfsHashesCount);
             return true;
         }
         return false;
     }
 
     function getIpfsHashesFromPoll(uint _id) constant returns (bytes32[] result) {
-        Poll p = polls[_id];
-        result = new bytes32[](p.ipfsHashesCount);
-        for(uint i = 0; i < p.ipfsHashesCount; i++)
+        uint _ipfsHashesCount = store.get(ipfsHashesCount,_id);
+        result = new bytes32[](_ipfsHashesCount);
+        for(uint i = 0; i < _ipfsHashesCount; i++)
         {
-            result[i] = p.ipfsHashes[i];
+            result[i] = store.get(ipfsHashes,_id,i);
         }
         return result;
     }
 
-
     //function for user vote. input is a string choice
     function vote(uint _pollId, uint _choice) returns (bool) {
-        Poll p = polls[_pollId];
-        if (_choice == 0 || p.status != true || p.active == false || TimeHolder(timeHolder).shares(msg.sender) == 0 || p.memberOption[msg.sender] != 0) {
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
+        if (!store.get(status,_pollId) || !store.get(active,_pollId) || TimeHolder(timeHolder).shares(msg.sender) == 0 || store.get(memberOption,_pollId,msg.sender) != 0) {
             return false;
         }
-        p.options[_choice] += TimeHolder(timeHolder).shares(msg.sender);
-        p.memberOption[msg.sender] = _choice;
-        if(deletedMemberPolls[msg.sender].length == 0)
-            memberPolls[msg.sender].push(_pollId);
-        else {
-            memberPolls[msg.sender][deletedMemberPolls[msg.sender][deletedMemberPolls[msg.sender].length - 1]] = _pollId;
-            deletedMemberPolls[msg.sender].length--;
-        }
+        store.set(options,_pollId,_choice,store.get(options,_pollId,_choice) + TimeHolder(timeHolder).shares(msg.sender));
+        store.set(memberVotes,_pollId,msg.sender,TimeHolder(timeHolder).shares(msg.sender));
+        uint _membersCount = store.get(memberCount,_pollId);
+        store.set(members,_pollId,_membersCount,msg.sender);
+        store.set(memberCount,_pollId,_membersCount+1);
+        store.set(memberOption,_pollId,msg.sender,_choice);
+        uint _memberPollsCount = store.get(memberPollsCount,msg.sender);
+        store.set(memberPolls,msg.sender,_memberPollsCount++,_pollId);
+        store.set(memberPollsCount,msg.sender,_memberPollsCount);
         NewVote(_choice, _pollId);
-
         // if votelimit reached, end poll
-        if (p.votelimit > 0 || p.deadline <= now) {
-            if (p.options[_choice] >= p.votelimit) {
+        if (store.get(votelimit,_pollId) > 0 || store.get(deadline,_pollId) <= now) {
+            if (store.get(options,_pollId,_choice) >= store.get(votelimit,_pollId)) {
                 endPoll(_pollId);
             }
         }
         return true;
     }
 
+    function getPoll(uint _pollId) constant returns (address _owner,
+    bytes32 _title,
+    bytes32 _description,
+    uint _votelimit,
+    uint _deadline,
+    bool _status,
+    bool _active,
+    bytes32[] _options,
+    bytes32[] _hashes) {
+        _owner = store.get(owner,_pollId);
+        _title = store.get(title,_pollId);
+        _description = store.get(description,_pollId);
+        _votelimit = store.get(votelimit,_pollId);
+        _deadline = store.get(deadline,_pollId);
+        _status = store.get(status,_pollId);
+        _active = store.get(active,_pollId);
+        _options = new bytes32[](store.get(optionsCount,_pollId));
+        _hashes = new bytes32[](store.get(ipfsHashesCount,_pollId));
+        uint i;
+        for(i=0;i<store.get(optionsCount,_pollId);i++) {
+            _options[i] = store.get(optionsId,_pollId,i+1);
+        }
+        for(i=0;i<store.get(ipfsHashesCount,_pollId);i++) {
+            _hashes[i] = store.get(ipfsHashes,_pollId,i);
+        }
+        return (_owner,_title,_description,_votelimit,_deadline,_status,_active,_options,_hashes);
+    }
+
     function setVotesPercent(uint _percent) multisig returns(bool) {
         if(_percent > 0 && _percent < 100) {
-            sharesPercent = _percent;
+            store.set(sharesPercent,_percent);
         }
     }
 
     function removePoll(uint _pollId) onlyAuthorized returns(bool) {
-        Poll memory p = polls[_pollId];
-        if(!p.active && p.status) {
+        if(!store.get(active,_pollId) && store.get(status,_pollId)) {
             deletePoll(_pollId);
             return true;
         }
@@ -222,39 +318,36 @@ contract Vote is Managed {
     }
 
     function cleanInactivePolls() onlyAuthorized returns(bool) {
-        Poll memory p;
-        for(uint i = 0; i < pollsCount; i++) {
-            p = polls[i];
-            if(!p.active && p.status)
-                deletePoll(i);
+        uint[] memory result = getInactivePolls();
+        for(uint i = 0; i < result.length; i++) {
+                deletePoll(result[i]);
         }
         return true;
     }
 
     function deletePoll(uint _pollId) internal returns(bool) {
-        if(_pollId == pollsCount - 1)
-            pollsCount--;
-        else
-            deletedIds.push(_pollId);
-        delete polls[_pollId];
-
+        uint pollsCount = store.get(polls);
+        if(_pollId >= pollsCount)
+            return false;
+        store.set(polls,pollsCount-1);
+        return true;
     }
 
     //when time or vote limit is reached, set the poll status to false
     function endPoll(uint _pollId) internal returns (bool) {
-        Poll p = polls[_pollId];
-        p.status = false;
-        p.active = false;
-        activePollsCount--;
+        store.set(status,_pollId,false);
+        store.set(active,_pollId,false);
+        uint _activePollsCount = store.get(activePolls);
+        store.set(activePolls,_activePollsCount-1);
         return true;
     }
 
     function activatePoll(uint _pollId) multisig returns (bool) {
-        if(activePollsCount <= 20) {
-            Poll p = polls[_pollId];
-            if(p.status) {
-                p.active = true;
-                activePollsCount++;
+        uint _activePollsCount = store.get(activePolls);
+        if(_activePollsCount <= 20) {
+            if(store.get(status,_pollId)) {
+                store.set(active,_pollId,true);
+                store.set(activePolls,_activePollsCount+1);
                 return true;
             }
         }
@@ -267,23 +360,25 @@ contract Vote is Managed {
 
     //TimeHolder interface implementation
     modifier onlyTimeHolder() {
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
         if (msg.sender == timeHolder) {
             _;
         }
     }
 
     function deposit(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
-        for(uint i=0;i<memberPolls[_address].length;i++){
-            Poll p = polls[memberPolls[_address][i]];
-            if(p.status && p.active) {
-                uint choice = p.memberOption[_address];
-                p.options[choice] += _amount;
+        for(uint i=0;i<store.get(memberPollsCount,_address);i++){
+            uint _pollId = store.get(memberPolls,_address,i);
+            if(store.get(status,_pollId) && store.get(active,_pollId)) {
+                uint choice = store.get(memberOption,_pollId,_address);
+                uint value = store.get(options,_pollId,choice);
+                value = value + _amount;
+                store.set(memberVotes,_pollId,_address,_total);
+                store.set(options,_pollId,choice,value);
             }
-            if (p.votelimit > 0 || p.deadline <= now) {
-                if (p.options[choice] >= p.votelimit) {
-                    p.status = false;
-                    p.active = false;
-                    activePollsCount--;
+            if (store.get(votelimit,_pollId) > 0 || store.get(votelimit,_pollId) <= now) {
+                if (value >= store.get(votelimit,_pollId)) {
+                    endPoll(_pollId);
                 }
             }
         }
@@ -291,25 +386,42 @@ contract Vote is Managed {
     }
 
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns(bool) {
-        for(uint i=0;i<memberPolls[_address].length;i++){
-            Poll p = polls[memberPolls[_address][i]];
-            if(p.status && p.active) {
-                uint choice = p.memberOption[_address];
-                p.options[choice] -= _amount;
+        uint _memberPollsCount = store.get(memberPollsCount,_address);
+        for(uint i=0;i<_memberPollsCount;i++){
+            uint _pollId = store.get(memberPolls,_address,i);
+            if(store.get(status,_pollId) && store.get(active,_pollId)) {
+                uint choice = store.get(memberOption,_pollId,_address);
+                uint value = store.get(options,_pollId,choice);
+                value = value - _amount;
+                store.set(memberVotes,_pollId,_address,_total);
+                store.set(options,_pollId,choice,value);
                 if(_total == 0) {
-                    if(i == memberPolls[_address].length - 1) {
-                        delete memberPolls[_address];
-                        memberPolls[_address].length--;
+                    if(i == _memberPollsCount - 1) {
+                        store.set(memberPollsCount,_address,_memberPollsCount-1);
                     }
                     else {
-                        delete memberPolls[_address];
-                        deletedMemberPolls[msg.sender].push(i);
+                        store.set(memberPolls,_address,i,store.get(memberPolls,_address,_memberPollsCount - 1));
+                        store.set(memberPollsCount,_address,_memberPollsCount-1);
                     }
-                    delete p.memberOption[_address];
+                    removeMember(_pollId, _address);
                 }
             }
         }
         return true;
+    }
+
+    function removeMember(uint _pollId, address _address) {
+        store.set(memberOption,_pollId,_address,0);
+        store.set(memberVotes,_pollId,_address,0);
+        uint _membersCount = store.get(memberCount,_pollId);
+        for(uint i=0;i<_membersCount;i++) {
+            address _member = store.get(members,_pollId,i);
+            if(_member == _address) {
+                if(i != _membersCount - 1)
+                    store.set(members,_pollId,i,store.get(members,_pollId,_membersCount-1));
+                store.set(memberCount,_pollId,store.get(memberCount,_pollId)-1);
+            }
+        }
     }
 
     function()

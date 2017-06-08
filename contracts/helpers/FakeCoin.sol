@@ -28,4 +28,10 @@ contract FakeCoin {
     function balanceEth(address _address) constant returns(uint) {
         return _address.balance;
     }
+
+    function () payable {
+        if(msg.value == 0)
+            throw;
+    }
+
 }

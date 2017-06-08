@@ -3,16 +3,12 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-- npm install
 - export PATH=$PATH:$(pwd)/node_modules/.bin
 - git config --global user.email "mike@chronobank.com"
 - git config --global user.name "Travis-CI"
 script:
 - testrpc -g 1 > /dev/null &
-- sleep 5
-- cd node_modules/ethereum-bridge
-- node bridge.js -H localhost:8545 > /dev/null &
-- cd ../..
+- truffle migrate
 - truffle test
 - if [ "$TRAVIS_BRANCH" == "deploy" ]; then
     truffle migrate --network kovan;
@@ -41,6 +37,3 @@ deploy:
 env:
   global:
     secure: Xd5gNWvEmiefw835mdgq8Z2YdBmBTQTJ5gMMgw5eZ3/7dNS8PlErKWGQbg21X+YMfBR/v/qyYcST9PDWLLc452LAHIYGQsKJTLTlWOpIISVgvL0525bW/koFaRoGRgG2lLiD9vvv4/zNoM+tI8EUQo5VyUvpv5if5GWDAzYL0LHfFH0O5AoW7JNTDPbFkDKU+m2/E8VfYQdcRlhInjPb41Shme9D5gm9ut4OcQ+yP+FhHK/3roqNEyvmmYg1r15SHEk7s6mNTzlisZXk7wAeCVWW4C+FBB4jwJ+6Hw5H+WnNtzyV+Gr2jJmdFBL4kEyk7ReTmL6iDmSlunAL4NxJjB0Lj1333xN5TRv1X8nWZQopEmY3/6z4hJW3DtyeFYcf/ZpveLW3YWH3fQe6F4q6A1TJjl5EKYbnlp5h46ZLHhk1qquxY9eGkT6IGPSF3K95qyAPbU2KfpWN7888ChzbL/u+4BzirRLdtZ4qIec4RGgreOnAdQH246jyLTDiWJ/0CufWdQrevlf6z7OKBZvYoAfSKQr5f7r1S5I5TkoQkmm+IwSzr+YskZ1qQs2RLwiBAT1YHkHgSFOdOoh9ABkyUbeR9vXJ0bDwZH3FnSkaGQSCGMk0iLnkwySwCFtrD7cC6tSih5M0Uv22hAvgwYQbTjVW3Rh4NlpRc7P/In1wXHc=
-cache:
-  directories:
-    - node_modules

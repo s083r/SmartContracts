@@ -1,4 +1,5 @@
-var Shareable = artifacts.require("./PendingManager.sol");
+const Storage = artifacts.require('./Storage.sol');
+var PendingManager = artifacts.require("./PendingManager.sol");
 module.exports = function(deployer, network) {
-    deployer.deploy(Shareable)
+    deployer.deploy(PendingManager,Storage.address,'Pending Manager')
 }
