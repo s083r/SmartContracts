@@ -204,7 +204,7 @@ contract('LOC Manager', function(accounts) {
         ).then(function(){
           return Setup.chronoMint.getLOCById.call(0).then(function(r2){
             console.log(r,r2);
-            assert.equal(r,1)
+            assert.equal(r,0)
             assert.equal(r2[6], Status.maintenance);
           });
         });

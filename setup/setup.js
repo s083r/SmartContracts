@@ -310,9 +310,9 @@ var setup = function (callback) {
     callback()
   }).catch(function (e) {
     console.log(e)
+    callback(e);
   })
 }
 
 module.exports.setup = setup
 module.exports.contractTypes = contractTypes
-
