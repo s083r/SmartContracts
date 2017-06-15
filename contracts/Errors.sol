@@ -8,6 +8,7 @@ library Errors {
   * TODO
   */
   enum E {
+    UNEXPECTED,
     OK,
 
     // LOC errors
@@ -25,6 +26,8 @@ library Errors {
     // User Manager errors
     USER_NOT_FOUND,
     USER_INVALID_PARAMETER,
+    USER_INVALID_INVOCATION,
+    USER_INVALID_STATE,
     USER_ALREADY_CBE,
     USER_NOT_CBE,
     USER_SAME_HASH,
@@ -36,7 +39,7 @@ library Errors {
   */
   function code(E error) internal constant returns (uint) {
       if (error == E.OK) {
-          return 0;
+          return 1;
       } else if (uint(error) >= uint(E.LOC_NOT_FOUND) && uint(error) <= uint(E.LOC_REVOKING_ASSET_FAILED)) {
           return 1000 + uint(error) - uint(E.LOC_NOT_FOUND);
       } else if (uint(error) >= uint(E.USER_NOT_FOUND) && uint(error) <= uint(E.USER_INVALID_REQURED)) {

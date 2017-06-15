@@ -2,8 +2,11 @@ pragma solidity ^0.4.8;
 
 import "./Managed.sol";
 import "./UserManagerEmitter.sol";
+import './Errors.sol';
 
 contract UserManager is Managed, UserManagerEmitter {
+    using Errors for Errors.E;
+
     StorageInterface.UInt req;
     StorageInterface.AddressesSet members;
     StorageInterface.AddressesSet admins;
@@ -16,113 +19,143 @@ contract UserManager is Managed, UserManagerEmitter {
         hashes.init('hashes');
     }
 
-    function init(address _contractsManager) returns (bool) {
-        addMember(msg.sender, true);
-        if(store.get(contractsManager) != 0x0)
-        return false;
-        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.UserManager))
-        return false;
-        store.set(contractsManager,_contractsManager);
-        return true;
+    function init(address _contractsManager) returns (uint) {
+        Errors.E e;
+
+        e = addMember(msg.sender, true);
+        if (e != Errors.E.OK) {
+            return _emitError(e).code();
+        }
+
+        if (store.get(contractsManager) != 0x0) {
+            return _emitError(Errors.E.USER_INVALID_STATE).code();
+        }
+
+        if (!ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.UserManager)) {
+            return _emitError(Errors.E.USER_INVALID_INVOCATION).code(); // TODO: use origin err code
+        }
+
+        store.set(contractsManager, _contractsManager);
+
+        return e.code();
     }
 
-    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns(bool) {
+    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return false;
+            return _emitError(Errors.E.USER_INVALID_STATE).code();
         }
+
         _setEventsHistory(_eventsHistory);
-        return true;
+        return Errors.E.OK.code();
     }
 
-    function addCBE(address _key, bytes32 _hash) multisig returns(bool) {
-        if (!getCBE(_key)) { // Make sure that the key being submitted isn't already CBE
-            if (addMember(_key, true)) {
-                setMemberHashInt(_key, _hash);
-                _emitCBEUpdate(_key);
-                return true;
-            }
-        } else {
-            _emitError("This address is already CBE");
-            return false;
+    function addCBE(address _key, bytes32 _hash) multisig returns (uint) {
+        if (getCBE(_key)) {
+            return _emitError(Errors.E.USER_ALREADY_CBE).code();
         }
+
+        Errors.E e;
+        e = addMember(_key, true);
+        if (e != Errors.E.OK) {
+            return _emitError(e).code();
+        }
+
+        e = setMemberHashInt(_key, _hash);
+        if (e != Errors.E.OK) {
+            return _emitError(e).code();
+        }
+
+        _emitCBEUpdate(_key);
+        return e.code();
     }
 
-    function revokeCBE(address _key) multisig {
-        if (getCBE(_key)) { // Make sure that the key being revoked is exist and is CBE
-            setCBE(_key, false);
-            _emitCBEUpdate(_key);
+    function revokeCBE(address _key) multisig returns (uint) {
+        if (!getCBE(_key)) {
+            return _emitError(Errors.E.USER_NOT_CBE).code();
         }
-        else {
-            _emitError("This address in not CBE");
+
+        Errors.E e;
+        e = setCBE(_key, false);
+        if (e != Errors.E.OK) {
+            return _emitError(e).code();
         }
+
+        _emitCBEUpdate(_key);
+        return e.code();
     }
 
-    function createMemberIfNotExist(address key) internal returns (bool) {
+    function setMemberHash(address key, bytes32 _hash) onlyAuthorized returns (uint) {
+        createMemberIfNotExist(key);
+        Errors.E e = setMemberHashInt(key, _hash);
+        return e.code();
+    }
+
+    function setOwnHash(bytes32 _hash) returns (uint) {
+        Errors.E e = setMemberHashInt(msg.sender, _hash);
+        return e.code();
+    }
+
+    function setRequired(uint _required) multisig returns (uint) {
+        if (!(_required <= store.count(admins))) {
+            return _emitError(Errors.E.USER_INVALID_REQURED).code();
+        }
+
+        store.set(req, _required);
+        _emitSetRequired(_required);
+
+        return Errors.E.OK.code();
+    }
+
+    function createMemberIfNotExist(address key) internal returns (Errors.E e) {
         return addMember(key, false);
     }
 
-    function setMemberHash(address key, bytes32 _hash) onlyAuthorized returns (bool) {
-        createMemberIfNotExist(key);
-        return setMemberHashInt(key, _hash);
+    function addMember(address key, bool isCBE) internal returns (Errors.E e) {
+        store.add(members, key);
+        return setCBE(key, isCBE);
     }
 
-    function setMemberHashInt(address key, bytes32 _hash) internal returns (bool) {
+    function setMemberHashInt(address key, bytes32 _hash) internal returns (Errors.E e) {
         bytes32 oldHash = getMemberHash(key);
-        if(!(_hash == oldHash)) {
-            _emitHashUpdate(key,oldHash, _hash);
-            setHashes(key, _hash);
-            return true;
+        if (_hash == oldHash) {
+            return _emitError(Errors.E.USER_SAME_HASH);
         }
-        _emitError("Same hash set");
-        return false;
+
+        e = setHashes(key, _hash);
+        if (e != Errors.E.OK) {
+            return _emitError(e);
+        }
+
+        _emitHashUpdate(key, oldHash, _hash);
     }
 
-    function setOwnHash(bytes32 _hash) returns (bool) {
-        return setMemberHashInt(msg.sender, _hash);
-    }
-
-    function setRequired(uint _required) multisig returns (bool) {
-            if(!(_required <= store.count(admins))) {
-                _emitError("Required to high");
-                return false;
+    function setCBE(address key, bool isCBE) internal returns (Errors.E e) {
+        if (isCBE) {
+            store.add(admins, key);
+        } else {
+            store.remove(admins, key);
+            if (store.get(req) > store.count(admins)) {
+                store.set(req, store.get(req) - 1);
             }
-            store.set(req,_required);
-            _emitSetRequired(_required);
-            return true;
-    }
-
-    function addMember(address key, bool isCBE) internal returns(bool){
-        store.add(members,key);
-        setCBE(key,isCBE);
-        return true;
-    }
-
-    function setCBE(address key, bool isCBE) internal returns(bool) {
-        if(isCBE) {
-            store.add(admins,key);
         }
-        else {
-            store.remove(admins,key);
-            if(store.get(req) > store.count(admins))
-                store.set(req,store.get(req)-1);
-        }
-        return true;
+        return Errors.E.OK;
     }
 
-    function setHashes(address key, bytes32 hash) internal {
-        store.set(hashes,key,hash);
+    function setHashes(address key, bytes32 _hash) internal returns (Errors.E e) {
+        store.set(hashes, key, _hash);
+        return Errors.E.OK;
     }
 
     function getMemberHash(address key) constant returns (bytes32) {
-        return store.get(hashes,key);
+        return store.get(hashes, key);
     }
 
     function getCBE(address key) constant returns (bool) {
-        return store.includes(admins,key);
+        return store.includes(admins, key);
     }
 
     function getMemberId(address sender) constant returns (uint) {
-        return store.getIndex(members,sender);
+        return store.getIndex(members, sender);
     }
 
     function required() constant returns (uint) {
@@ -140,26 +173,29 @@ contract UserManager is Managed, UserManagerEmitter {
     function getCBEMembers() constant returns (address[] _addresses, bytes32[] _hashes) {
         _hashes = new bytes32[](adminCount());
         for (uint i = 0; i < adminCount(); i++) {
-            _hashes[i] = store.get(hashes,store.get(admins,i));
+            _hashes[i] = store.get(hashes, store.get(admins, i));
         }
         return (store.get(admins), _hashes);
     }
 
-    function _emitCBEUpdate(address key) {
+    function _emitCBEUpdate(address key) internal {
         UserManager(getEventsHistory()).emitCBEUpdate(key);
     }
-    function _emitSetRequired(uint required) {
+
+    function _emitSetRequired(uint required) internal {
         UserManager(getEventsHistory()).emitSetRequired(required);
     }
-    function _emitHashUpdate(address key,bytes32 oldHash, bytes32 newHash) {
-        UserManager(getEventsHistory()).emitHashUpdate(key,oldHash,newHash);
-    }
-    function _emitError(bytes32 _error) {
-        UserManager(getEventsHistory()).emitError(_error);
+
+    function _emitHashUpdate(address key, bytes32 oldHash, bytes32 newHash) internal {
+        UserManager(getEventsHistory()).emitHashUpdate(key, oldHash, newHash);
     }
 
-    function()
-    {
+    function _emitError(Errors.E e) internal returns (Errors.E) {
+        UserManager(getEventsHistory()).emitError(e);
+        return e;
+    }
+
+    function() {
         throw;
     }
 }
