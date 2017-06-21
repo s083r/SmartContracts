@@ -3,10 +3,22 @@ pragma solidity ^0.4.11;
 import "./Managed.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 import "./ERC20ManagerEmitter.sol";
+import "./Errors.sol";
 
 contract ERC20Manager is Managed, ERC20ManagerEmitter {
+    using Errors for Errors.E;
 
     event LogAddToken(
+    address token,
+    bytes32 name,
+    bytes32 symbol,
+    bytes32 url,
+    uint8 decimals,
+    bytes32 ipfsHash,
+    bytes32 swarmHash
+    );
+
+    event LogTokenChange (
     address token,
     bytes32 name,
     bytes32 symbol,
@@ -41,30 +53,6 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     StorageInterface.AddressBytes32Mapping swarmHash;
     StorageInterface.AddressUIntMapping decimals;
 
-    modifier tokenExists(address _token) {
-        if (store.includes(tokenAddresses,_token)) {
-            _;
-        }
-    }
-
-    modifier tokenSymbolExists(bytes32 _symbol) {
-        if (store.get(tokenBySymbol,_symbol) != address(0)) {
-            _;
-        }
-    }
-
-    modifier tokenDoesNotExist(address _token) {
-        if (!store.includes(tokenAddresses,_token)) {
-            _;
-        }
-    }
-
-    modifier tokenSymbolDoesNotExists(bytes32 _symbol) {
-        if (store.get(tokenBySymbol,_symbol) == address(0)) {
-            _;
-        }
-    }
-
     function ERC20Manager(Storage _store, bytes32 _crate) StorageAdapter(_store, _crate) {
         tokenAddresses.init('tokenAddresses');
         tokenBySymbol.init('tokeBySymbol');
@@ -76,21 +64,28 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         decimals.init('decimals');
     }
 
-    function init(address _contractsManager) returns(bool) {
-        if(store.get(contractsManager) != 0x0)
-            return false;
-        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.ERC20Manager))
-            return false;
+    function init(address _contractsManager) returns (uint) {
+        if(store.get(contractsManager) != 0x0) {
+            return Errors.E.ERCMANAGER_INVALID_INVOCATION.code();
+        }
+
+        Errors.E e = ContractsManagerInterface(_contractsManager)
+                .addContract(this,ContractsManagerInterface.ContractType.ERC20Manager);
+        if(Errors.E.OK != e) {
+            return e.code();
+        }
+
         store.set(contractsManager,_contractsManager);
-        return true;
+        return Errors.E.OK.code();
     }
 
-    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns(bool) {
+    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return false;
+            return Errors.E.ERCMANAGER_INVALID_INVOCATION.code();
         }
+
         _setEventsHistory(_eventsHistory);
-        return true;
+        return Errors.E.OK.code();
     }
 
     /// @dev Allows owner to add a new token to the registry.
@@ -102,17 +97,22 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     /// @param _ipfsHash IPFS hash of token icon.
     /// @param _swarmHash Swarm hash of token icon.
     function addToken(
-    address _token,
-    bytes32 _name,
-    bytes32 _symbol,
-    bytes32 _url,
-    uint8 _decimals,
-    bytes32 _ipfsHash,
-    bytes32 _swarmHash)
-    tokenSymbolDoesNotExists(_symbol)
-    tokenDoesNotExist(_token)
-    returns(bool)
-    {
+        address _token,
+        bytes32 _name,
+        bytes32 _symbol,
+        bytes32 _url,
+        uint8 _decimals,
+        bytes32 _ipfsHash,
+        bytes32 _swarmHash)
+    returns (uint) {
+        if (isTokenExists(_token)) {
+            return _emitError(Errors.E.ERCMANAGER_TOKEN_ALREADY_EXISTS).code();
+        }
+
+        if (isTokenSymbolExists(_symbol)) {
+            return _emitError(Errors.E.ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS).code();
+        }
+
         Asset(_token).totalSupply();
         store.add(tokenAddresses,_token);
         store.set(tokenBySymbol,_symbol,_token);
@@ -123,31 +123,27 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         store.set(ipfsHash,_token,_ipfsHash);
         store.set(swarmHash,_token,_swarmHash);
 
-        LogAddToken(
-        _token,
-        _name,
-        _symbol,
-        _url,
-        _decimals,
-        _ipfsHash,
-        _swarmHash
-        );
-        return true;
+        LogAddToken(_token, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
+        return Errors.E.OK.code();
     }
 
     function setToken(
-    address _token,
-    address _newToken,
-    bytes32 _name,
-    bytes32 _symbol,
-    bytes32 _url,
-    uint8 _decimals,
-    bytes32 _ipfsHash,
-    bytes32 _swarmHash)
+        address _token,
+        address _newToken,
+        bytes32 _name,
+        bytes32 _symbol,
+        bytes32 _url,
+        uint8 _decimals,
+        bytes32 _ipfsHash,
+        bytes32 _swarmHash)
     public
     onlyAuthorized
-    tokenExists(_token) returns(bool)
+    returns (uint)
     {
+        if (!isTokenExists(_token)) {
+            return _emitError(Errors.E.ERCMANAGER_TOKEN_NOT_EXISTS).code();
+        }
+
         bool changed;
         if(_symbol != store.get(symbol,_token)) {
             if (store.get(tokenBySymbol,_symbol) == address(0)) {
@@ -161,7 +157,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
                 }
                 changed = true;
             } else {
-                return false;
+                return _emitError(Errors.E.ERCMANAGER_TOKEN_UNCHANGED).code();
             }
         }
         if(_token != _newToken) {
@@ -203,35 +199,36 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         }
 
         if(changed) {
-            return true;
+            LogAddToken(_newToken, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
+            return Errors.E.OK.code();
         }
-        return false;
 
+        return _emitError(Errors.E.ERCMANAGER_TOKEN_UNCHANGED).code();
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
     /// @param _token Address of existing token.
-    function removeToken(address _token)
-    onlyAuthorized
-    tokenExists(_token) returns(bool)
-    {
+    function removeToken(address _token) onlyAuthorized returns (uint) {
+        if (!isTokenExists(_token)) {
+            return _emitError(Errors.E.ERCMANAGER_TOKEN_NOT_EXISTS).code();
+        }
+
         return removeTokenInt(_token);
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
     /// @param _symbol Symbol of existing token.
-    function removeTokenBySymbol(bytes32 _symbol)
-    onlyAuthorized
-    tokenSymbolExists(_symbol) returns(bool)
-    {
+    function removeTokenBySymbol(bytes32 _symbol) onlyAuthorized returns (uint) {
+        if (!isTokenSymbolExists(_symbol)) {
+            return _emitError(Errors.E.ERCMANAGER_TOKEN_SYMBOL_NOT_EXISTS).code();
+        }
+
         return removeTokenInt(store.get(tokenBySymbol,_symbol));
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
     /// @param _token Address of existing token.
-    function removeTokenInt(address _token)
-    internal returns(bool)
-    {
+    function removeTokenInt(address _token) internal returns (uint) {
         LogRemoveToken(
         _token,
         store.get(name,_token),
@@ -241,9 +238,10 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         store.get(ipfsHash,_token),
         store.get(swarmHash,_token)
         );
+
         store.set(tokenBySymbol,store.get(symbol,_token),address(0));
         store.remove(tokenAddresses,_token);
-        return true;
+        return Errors.E.OK.code();
     }
 
     /// @dev Provides a registered token's address when given the token symbol.
@@ -256,52 +254,49 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     /// @dev Provides a registered token's metadata, looked up by address.
     /// @param _token Address of registered token.
     /// @return Token metadata.
-    function getTokenMetaData(address _token)
-    constant
-    tokenExists(_token)
+    function getTokenMetaData(address _token) constant
     returns (
-    address _tokenAddress,
-    bytes32 _name,
-    bytes32 _symbol,
-    bytes32 _url,
-    uint8 _decimals,
-    bytes32 _ipfsHash,
-    bytes32 _swarmHash
+      address _tokenAddress,
+      bytes32 _name,
+      bytes32 _symbol,
+      bytes32 _url,
+      uint8 _decimals,
+      bytes32 _ipfsHash,
+      bytes32 _swarmHash
     )
     {
+        if (!isTokenExists(_token)) {
+            return;
+        }
+
         _name = store.get(name,_token);
         _symbol = store.get(symbol,_token);
         _url = store.get(url,_token);
         _decimals = uint8(store.get(decimals,_token));
         _ipfsHash = store.get(ipfsHash,_token);
         _swarmHash = store.get(swarmHash,_token);
-        return (
-        _token,
-        _name,
-        _symbol,
-        _url,
-        _decimals,
-        _ipfsHash,
-        _swarmHash
-        );
+
+        return (_token, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
     }
 
     /// @dev Provides a registered token's metadata, looked up by symbol.
     /// @param _symbol Symbol of registered token.
     /// @return Token metadata.
-    function getTokenBySymbol(bytes32 _symbol)
-    constant
-    tokenSymbolExists(_symbol)
+    function getTokenBySymbol(bytes32 _symbol) constant
     returns (
-    address tokenAddress,
-    bytes32 name,
-    bytes32 symbol,
-    bytes32 url,
-    uint8 decimals,
-    bytes32 ipfsHash,
-    bytes32 swarmHash
+      address tokenAddress,
+      bytes32 name,
+      bytes32 symbol,
+      bytes32 url,
+      uint8 decimals,
+      bytes32 ipfsHash,
+      bytes32 swarmHash
     )
     {
+        if (!isTokenSymbolExists(_symbol)) {
+          return;
+        }
+
         address _token = store.get(tokenBySymbol,_symbol);
         return getTokenMetaData(_token);
     }
@@ -312,7 +307,16 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         return store.get(tokenAddresses);
     }
 
-    function _emitError(bytes32 _message) {
-        ERC20Manager(getEventsHistory()).emitError(_message);
+    function _emitError(Errors.E e) private returns (Errors.E)  {
+        ERC20Manager(getEventsHistory()).emitError(e);
+        return e;
+    }
+
+    function isTokenExists(address _token) private constant returns (bool) {
+        return store.includes(tokenAddresses,_token);
+    }
+
+    function isTokenSymbolExists(bytes32 _symbol) private constant returns (bool) {
+        return (store.get(tokenBySymbol,_symbol) != address(0));
     }
 }

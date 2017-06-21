@@ -13,6 +13,8 @@ const ManagerMock = artifacts.require('./ManagerMock.sol');
 const Reverter = require('./helpers/reverter');
 const bytes32 = require('./helpers/bytes32');
 const eventsHelper = require('./helpers/eventsHelper');
+const ErrorsEnum = require("../common/errors");
+
 contract('Rewards', (accounts) => {
   let reverter = new Reverter(web3);
   afterEach('revert', reverter.revert);
@@ -157,7 +159,7 @@ contract('Rewards', (accounts) => {
   it('should return true if was called with 0 shares (copy from prev period)', () => {
     return defaultInit()
       .then(() => timeHolder.depositFor.call(accounts[0], 0))
-      .then((res) => assert.isTrue(res));
+      .then((res) => assert.equal(res, ErrorsEnum.OK));
   });
 
   it('should not deposit if sharesContract.transferFrom() failed', () => {
@@ -230,7 +232,7 @@ contract('Rewards', (accounts) => {
       .then(() => reward.setupEventsHistory(multiEventsHistory.address))
       .then(() => multiEventsHistory.authorize(reward.address))
       .then(() => reward.closePeriod.call())
-      .then((res) => assert.isFalse(res))
+      .then((res) => assert.notEqual(res, 1))
       .then(() => reward.closePeriod())
       // periods.length still 0
       .then(() => reward.lastPeriod())
@@ -283,7 +285,7 @@ contract('Rewards', (accounts) => {
       .then(() => reward.closePeriod([]))
       // 1st registration - true
       .then(() => reward.registerAsset.call(shares.address))
-      .then((res) => assert.isFalse(res))
+      .then((res) => assert.notEqual(res, 1))
       .then(() => reward.registerAsset(shares.address))
       .then(() => assertAssetBalanceInPeriod(shares.address, 0, 0))
       .then(() => assertRewardsLeft(shares.address, 0));
@@ -399,7 +401,7 @@ contract('Rewards', (accounts) => {
     return defaultInit()
       .then(() => timeHolder.deposit(100))
       .then(() => timeHolder.withdrawShares.call(200))
-      .then((res) => assert.isFalse(res))
+      .then((res) => assert.notEqual(res, ErrorsEnum.OK))
       .then(() => timeHolder.withdrawShares(200))
       .then(() => assertDepositBalance(accounts[0], 100))
       .then(() => assertTotalDepositInPeriod(0, 100))
@@ -436,7 +438,7 @@ contract('Rewards', (accounts) => {
   it('should return false if rewardsLeft == 0', () => {
     return defaultInit()
       .then(() => reward.withdrawRewardFor.call(asset1.address, accounts[0], 100))
-      .then((res) => assert.isFalse(res));
+      .then((res) => assert.notEqual(res, 1));
   });
 
   it('should withdraw reward', () => {

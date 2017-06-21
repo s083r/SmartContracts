@@ -7,6 +7,7 @@ const eventsHelper = require('./helpers/eventsHelper')
 const Setup = require('../setup/setup')
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const PendingManager = artifacts.require("./PendingManager.sol")
+const ErrorsEnum = require("../common/errors");
 
 contract('Vote', function(accounts) {
   const owner = accounts[0];
@@ -147,10 +148,10 @@ contract('Vote', function(accounts) {
 
     it("shouldn't be able to create Poll with votelimit exceeded", function() {
       return Setup.vote.getVoteLimit.call().then((r) => {
-        return Setup.vote.NewPoll([bytes32('1'), bytes32('2')],[bytes32('1'), bytes32('2')], bytes32('New Poll'), bytes32('New Description'), r + 1, unix + 10000, {
+        return Setup.vote.NewPoll.call([bytes32('1'), bytes32('2')],[bytes32('1'), bytes32('2')], bytes32('New Poll'), bytes32('New Description'), r + 1, unix + 10000, {
           from: owner,
           gas: 3000000
-        }).then(assert.fail, () => true)
+      }).then((r) => assert.equal(r, ErrorsEnum.VOTE_LIMIT_EXCEEDED))
       })
     })
 
@@ -158,7 +159,7 @@ contract('Vote', function(accounts) {
       return Setup.vote.activatePoll(0, {from: owner}).then(() => {
         return Setup.vote.getActivePollsCount.call().then((r) => {
           console.log(r);
-          assert.equal(r,1)
+          assert.equal(r, ErrorsEnum.OK)
         })
       })
     })
@@ -174,6 +175,7 @@ contract('Vote', function(accounts) {
         return Setup.vote.addIpfsHashToPoll(0, bytes32('1234567890'), {from: owner1}).then(() => {
           return Setup.vote.getIpfsHashesFromPoll.call(0, {from: owner1}).then((r2) => {
             console.log(r, r2)
+            assert.equal(r, ErrorsEnum.UNAUTHORIZED);
             assert.notEqual(r2[3], bytes32('1234567890'));
           });
         });
@@ -212,11 +214,8 @@ contract('Vote', function(accounts) {
     });
 
     it("owner shouldn't be able to vote Poll 0 twice", function() {
-      return Setup.vote.vote.call(0,1, {from: owner}).then((r) => {
-        return Setup.vote.vote.call(0,2, {from: owner}).then((r2) => {
-          assert.isNotOk(r);
-          assert.isNotOk(r2);
-        });
+      return Setup.vote.vote.call(0,2, {from: owner}).then((r) => {
+          assert.equal(r, ErrorsEnum.VOTE_POLL_ALREADY_VOTED);
       });
     });
 
@@ -281,7 +280,7 @@ contract('Vote', function(accounts) {
 
     it("owner1 shouldn't be able to vote Poll 0, Option 1", function() {
       return Setup.vote.vote.call(0,1, {from: owner1}).then((r) => {
-        assert.isNotOk(r)
+        assert.equal(r, ErrorsEnum.VOTE_POLL_NO_SHARES)
       })
     })
 
@@ -547,4 +546,3 @@ contract('Vote', function(accounts) {
   })
 
 })
-

@@ -5,6 +5,8 @@ var EventsHistory = artifacts.require("./EventsHistory.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
 var eventsHelper = require('./helpers/eventsHelper');
+const ErrorsEnum = require("../common/errors");
+
 contract('Exchange', (accounts) => {
   let reverter = new Reverter(web3);
   afterEach('revert', reverter.revert);
@@ -62,19 +64,22 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to set another contract after first init() call', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.init('0x1', coin2.address, delegate, Fee))
+      .then(() => exchange.init.call('0x1', coin2.address, delegate, Fee))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INVALID_INVOCATION))
       .then(() => exchange.asset())
       .then((asset) => assert.equal(asset, coin.address));
   });
 
   it('should not be possible to init by non-owner', () => {
-    return exchange.init(coin.address, coin2.address, delegate, Fee, {from: accounts[1]})
+    return exchange.init.call(coin.address, coin2.address, delegate, Fee, {from: accounts[1]})
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => exchange.asset())
       .then((asset) => assert.equal(asset, '0x0000000000000000000000000000000000000000'));
   });
 
   it('should not be possible to set prices by non-owner', () => {
-    return exchange.setPrices(10, 20, {from: accounts[1]})
+    return exchange.setPrices.call(10, 20, {from: accounts[1]})
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => exchange.buyPrice())
       .then((buyPrice) => assert.equal(buyPrice, BUY_PRICE))
       .then(() => exchange.sellPrice())
@@ -96,7 +101,8 @@ contract('Exchange', (accounts) => {
     let newBuyPrice = 20;
     let newSellPrice = 10;
 
-    return exchange.setPrices(newBuyPrice, newSellPrice)
+    return exchange.setPrices.call(newBuyPrice, newSellPrice)
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INVALID_PRICE))
       .then(() => exchange.buyPrice())
       .then((buyPrice) => assert.equal(buyPrice, BUY_PRICE))
       .then(() => exchange.sellPrice())
@@ -108,7 +114,8 @@ contract('Exchange', (accounts) => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
       .then(() => web3.eth.getBalance(accounts[0]))
       .then((result) => balance = result)
-      .then(() => exchange.sell(1, BUY_PRICE + 1))
+      .then(() => exchange.sell.call(1, BUY_PRICE + 1))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_TOO_HIGH_PRICE))
       //.then(getTransactionCost)
      // .then((txCost) => assertEthBalance(accounts[0], balance.sub(txCost).valueOf()))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH))
@@ -118,14 +125,16 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to sell more than you have', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.sell(BALANCE + 1, BUY_PRICE))
+      .then(() => exchange.sell.call(BALANCE + 1, BUY_PRICE))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_BALANCE))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE));
   });
 
   it('should not be possible to sell tokens if exchange eth balance is less than needed', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.sell(BALANCE_ETH + 1, BUY_PRICE))
+      .then(() => exchange.sell.call(BALANCE_ETH + 1, BUY_PRICE))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH));
@@ -148,36 +157,36 @@ contract('Exchange', (accounts) => {
   it('should not be possible to buy with price < sellPrice', () => {
     let balance;
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.buy(1, SELL_PRICE - 1, {value: SELL_PRICE})
-        .then(assert.fail, () => {})
+      .then(() => exchange.buy.call(1, SELL_PRICE - 1, {value: SELL_PRICE})
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_TOO_LOW_PRICE))
       );
   });
 
   it('should not be possible to buy if exchange token balance is less than needed', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.buy(BALANCE + 1, SELL_PRICE, {value: (BALANCE + 1) * SELL_PRICE})
-        .then(assert.fail, () => {})
+      .then(() => exchange.buy.call(BALANCE + 1, SELL_PRICE, {value: (BALANCE + 1) * SELL_PRICE})
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_BALANCE))
       );
   });
 
   it('should not be possible to buy if msg.value is less than _amount * _price', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.buy(1, SELL_PRICE, {value: SELL_PRICE - 1})
-        .then(assert.fail, () => {})
+      .then(() => exchange.buy.call(1, SELL_PRICE, {value: SELL_PRICE - 1})
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY))
       );
   });
 
   it('should not be possible to buy if msg.value is greater than _amount * _price', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.buy(1, SELL_PRICE, {value: SELL_PRICE + 1})
-        .then(assert.fail, () => {})
+      .then(() => exchange.buy.call(1, SELL_PRICE, {value: SELL_PRICE + 1})
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY))
       );
   });
 
   it('should not be possible to buy if _amount * _price overflows', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.buy(2, web3.toBigNumber(2).pow(255), {value: 0})
-        .then(assert.fail, () => {})
+      .then(() => exchange.buy.call(2, web3.toBigNumber(2).pow(255), {value: 0})
+      .then(assert.fail, () => true)
       );
   });
 
@@ -192,15 +201,17 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to withdraw tokens by non-owner', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawTokens(accounts[0], 10, {from: accounts[1]}))
+      .then(() => exchange.withdrawTokens.call(accounts[0], 10, {from: accounts[1]}))
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(accounts[1], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE));
   });
-  
+
   it('should not be possible to withdraw if exchange token balance is less than _amount', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawTokens(accounts[0], BALANCE + 1))
+      .then(() => exchange.withdrawTokens.call(accounts[0], BALANCE + 1))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_BALANCE))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE));
   });
@@ -228,7 +239,8 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to withdraw all tokens by non-owner', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawAllTokens(accounts[0], {from: accounts[1]}))
+      .then(() => exchange.withdrawAllTokens.call(accounts[0], {from: accounts[1]}))
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(accounts[1], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE));
@@ -236,13 +248,15 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to withdraw eth by non-owner', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawEth(accounts[0], 10, {from: accounts[1]}))
+      .then(() => exchange.withdrawEth.call(accounts[0], 10, {from: accounts[1]}))
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH));
   });
 
   it('should not be possible to withdraw if exchange eth balance is less than _amount', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawEth(accounts[0], BALANCE_ETH + 1))
+      .then(() => exchange.withdrawEth.call(accounts[0], BALANCE_ETH + 1))
+      .then((r) => assert.equal(r, ErrorsEnum.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH));
   });
 
@@ -269,13 +283,15 @@ contract('Exchange', (accounts) => {
 
   it('should not be possible to withdraw all eth by non-owner', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawAllEth(accounts[0], {from: accounts[1]}))
+      .then(() => exchange.withdrawAllEth.call(accounts[0], {from: accounts[1]}))
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH));
   });
 
   it('should not be possible to withdraw all by non-owner', () => {
     return exchange.init(coin.address, coin2.address, delegate, Fee)
-      .then(() => exchange.withdrawAll(accounts[0], {from: accounts[1]}))
+      .then(() => exchange.withdrawAll.call(accounts[0], {from: accounts[1]}))
+      .then((r) => assert.equal(r, ErrorsEnum.UNAUTHORIZED))
       .then(() => assertBalance(accounts[0], BALANCE))
       .then(() => assertBalance(exchange.address, BALANCE))
       .then(() => assertEthBalance(exchange.address, BALANCE_ETH));

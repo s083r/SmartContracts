@@ -1,13 +1,14 @@
 pragma solidity ^0.4.8;
 
 import './MultiEventsHistoryAdapter.sol';
+import "./Errors.sol";
 
 contract ERC20ManagerEmitter is MultiEventsHistoryAdapter {
+    using Errors for Errors.E;
+    event Error(address indexed self, uint errorCode);
 
-    event Error(address indexed self, bytes32 indexed error);
-
-    function emitError(bytes32 _message) {
-        Error(_self(),_message);
+    function emitError(Errors.E e) {
+        Error(_self(),e.code());
     }
 
 }

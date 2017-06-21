@@ -6,6 +6,7 @@ const bytes32fromBase58 = require('./helpers/bytes32fromBase58');
 const Require = require("truffle-require");
 const Config = require("truffle-config");
 const eventsHelper = require('./helpers/eventsHelper');
+const ErrorsEnum = require("../common/errors");
 
 contract('Assets Manager', function(accounts) {
   var owner = accounts[0];
@@ -84,16 +85,19 @@ contract('Assets Manager', function(accounts) {
   context("CRUD test", function(){
 
     it("can issue new Asset", function() {
-      return Setup.assetsManager.createAsset.call('TEST','TEST','TEST',1000000,2,true,false).then(function(r) {
-        console.log(r);
-        return Setup.assetsManager.createAsset('TEST','TEST','TEST',1000000,2,true,false,{
+        const supplyValue = 1000000;
+      return Setup.assetsManager.createAsset.call('TEST','TEST','TEST',supplyValue,2,true,false).then(function(r1) {
+        return Setup.assetsManager.createAsset('TEST','TEST','TEST',supplyValue,2,true,false,{
           from: accounts[0],
           gas: 3000000
-        }).then(function(tx) {
-          return ChronoBankAssetProxy.at(r).then(function(instance) {
-            return instance.totalSupply().then(function(r) {
-              console.log(r);
-              assert.equal(r,1000000);
+      }).then((tx) => {
+          const assetCreatedEvent = eventsHelper.extractEvent(tx, "AssetCreated")
+          assert.isDefined(assetCreatedEvent);
+            const tokenAddress = assetCreatedEvent.args.token;
+          return ChronoBankAssetProxy.at(tokenAddress).then(function(instance) {
+            return instance.totalSupply().then(function(r2) {
+              assert.equal(r1, ErrorsEnum.OK);
+              assert.equal(r2, supplyValue);
             });
           });
         });
@@ -107,7 +111,7 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-            assert.equal(r,true);
+            assert.equal(r,ErrorsEnum.OK);
             assert.equal(r2.length,2);
           });
         });
@@ -121,7 +125,8 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-            assert.equal(r,false);
+              console.log(r);
+            assert.equal(r,ErrorsEnum.ASSETS_NOT_A_PROXY);
             assert.equal(r2.length,2);
           });
         });
@@ -135,7 +140,8 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-            assert.equal(r,false);
+              console.log(r);
+            assert.equal(r,ErrorsEnum.ASSETS_EXISTS);
             assert.equal(r2.length,2);
           });
         });
@@ -149,7 +155,7 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-            assert.equal(r,true);
+            assert.equal(r,ErrorsEnum.OK);
             assert.equal(r2.length,3);
           });
         });

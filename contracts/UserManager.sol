@@ -20,41 +20,45 @@ contract UserManager is Managed, UserManagerEmitter {
     }
 
     function init(address _contractsManager) returns (uint) {
+        if (store.get(contractsManager) != 0x0) {
+            return Errors.E.USER_INVALID_STATE.code();
+        }
+
         Errors.E e;
 
         e = addMember(msg.sender, true);
         if (e != Errors.E.OK) {
-            return _emitError(e).code();
+            return e.code();
         }
 
-        if (store.get(contractsManager) != 0x0) {
-            return _emitError(Errors.E.USER_INVALID_STATE).code();
-        }
-
-        if (!ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.UserManager)) {
-            return _emitError(Errors.E.USER_INVALID_INVOCATION).code(); // TODO: use origin err code
+        e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.UserManager);
+        if (e != Errors.E.OK) {
+            return e.code();
         }
 
         store.set(contractsManager, _contractsManager);
-
         return e.code();
     }
 
     function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return _emitError(Errors.E.USER_INVALID_STATE).code();
+            return Errors.E.USER_INVALID_STATE.code();
         }
 
         _setEventsHistory(_eventsHistory);
         return Errors.E.OK.code();
     }
 
-    function addCBE(address _key, bytes32 _hash) multisig returns (uint) {
+    function addCBE(address _key, bytes32 _hash) returns (uint) {
+        Errors.E e = multisig();
+        if (Errors.E.OK != e) {
+            return _emitError(e).code();
+        }
+
         if (getCBE(_key)) {
             return _emitError(Errors.E.USER_ALREADY_CBE).code();
         }
 
-        Errors.E e;
         e = addMember(_key, true);
         if (e != Errors.E.OK) {
             return _emitError(e).code();
@@ -69,12 +73,16 @@ contract UserManager is Managed, UserManagerEmitter {
         return e.code();
     }
 
-    function revokeCBE(address _key) multisig returns (uint) {
+    function revokeCBE(address _key) returns (uint) {
+        Errors.E e = multisig();
+        if (Errors.E.OK != e) {
+            return _emitError(e).code();
+        }
+
         if (!getCBE(_key)) {
             return _emitError(Errors.E.USER_NOT_CBE).code();
         }
 
-        Errors.E e;
         e = setCBE(_key, false);
         if (e != Errors.E.OK) {
             return _emitError(e).code();
@@ -95,7 +103,12 @@ contract UserManager is Managed, UserManagerEmitter {
         return e.code();
     }
 
-    function setRequired(uint _required) multisig returns (uint) {
+    function setRequired(uint _required) returns (uint) {
+        Errors.E e = multisig();
+        if (Errors.E.OK != e) {
+            return _emitError(e).code();
+        }
+
         if (!(_required <= store.count(admins))) {
             return _emitError(Errors.E.USER_INVALID_REQURED).code();
         }

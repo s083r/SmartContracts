@@ -1,11 +1,14 @@
 pragma solidity ^0.4.8;
 
+import "./TimeHolderEmmiter.sol";
 import "./Owned.sol";
 import "./ListenerInterface.sol";
 import "./ContractsManagerInterface.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
+import "./Errors.sol";
 
-contract TimeHolder is Owned {
+contract TimeHolder is Owned, TimeHolderEmmiter {
+    using Errors for Errors.E;
 
     mapping(address => uint) public shares;
     mapping(uint => address)  public shareholders;
@@ -22,13 +25,6 @@ contract TimeHolder is Owned {
 
     address public contractsManager;
 
-    // User deposited into current period.
-    event Deposit(address indexed who, uint indexed amount);
-    // Shares withdrawn by a shareholder.
-    event WithdrawShares(address indexed who, uint amount);
-    // Something went wrong.
-    event Error(bytes32 message);
-
     /**
      * Init TimeHolder contract.
      *
@@ -38,27 +34,44 @@ contract TimeHolder is Owned {
      *
      * @return success.
      */
+    function init(address _contractsManager, Asset _sharesContract) returns (uint) {
+        if(contractsManager != 0x0) {
+            return Errors.E.TIMEHOLDER_INVALID_INVOCATION.code();
+        }
 
-    function init(address _contractsManager, Asset _sharesContract) returns(bool) {
-        if(contractsManager != 0x0)
-            return false;
-        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.TimeHolder))
-            return false;
+        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.TimeHolder);
+        if(Errors.E.OK != e) {
+            return e.code();
+        }
+
         contractsManager = _contractsManager;
         sharesContract = _sharesContract;
-        return true;
-    }
 
-    function addListener(address _listener) onlyContractOwner returns(bool) {
-        if(listenerIndex[_listener] == uint(0x0)) {
-            ListenerInterface(_listener).deposit(this,0,0);
-            ListenerInterface(_listener).withdrawn(this,0,0);
-            listeners[listenersCount] = _listener;
-            listenerIndex[_listener] = listenersCount;
-            listenersCount++;
-            return true;
+        return Errors.E.OK.code();
+    }
+/*
+    function setupEventsHistory(address _eventsHistory) onlyContractOwner returns (uint) {
+        if (getEventsHistory() != 0x0) {
+            return Errors.E.TIMEHOLDER_INVALID_INVOCATION.code();
         }
-        return false;
+
+        _setEventsHistory(_eventsHistory);
+        return Errors.E.OK.code();
+    }*/
+
+    function addListener(address _listener) onlyContractOwner returns (uint) {
+        if(listenerIndex[_listener] != uint(0x0)) {
+            return _emitError(Errors.E.TIMEHOLDER_INVALID_INVOCATION).code();
+        }
+
+        ListenerInterface(_listener).deposit(this,0,0);
+        ListenerInterface(_listener).withdrawn(this,0,0);
+        listeners[listenersCount] = _listener;
+        listenerIndex[_listener] = listenersCount;
+        listenersCount++;
+
+        _emitListenerAdded(_listener);
+        return Errors.E.OK.code();
     }
 
     /**
@@ -72,7 +85,7 @@ contract TimeHolder is Owned {
      *
      * @return success.
      */
-    function deposit(uint _amount) returns(bool) {
+    function deposit(uint _amount) returns (uint) {
         return depositFor(msg.sender, _amount);
     }
 
@@ -91,11 +104,11 @@ contract TimeHolder is Owned {
      *
      * @return success.
      */
-    function depositFor(address _address, uint _amount) returns(bool) {
+    function depositFor(address _address, uint _amount) returns (uint) {
         if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
-            Error("Shares transfer failed");
-            return false;
+            return _emitError(Errors.E.TIMEHOLDER_TRANSFER_FAILED).code();
         }
+
         if(shareholdersId[_address] == 0) {
             shareholders[shareholdersCount] = _address;
             shareholdersId[_address] = shareholdersCount++;
@@ -103,12 +116,16 @@ contract TimeHolder is Owned {
         shares[_address] += _amount;
         totalShares += _amount;
 
+        uint errorCode;
         for(uint i = 1; i < listenersCount; i++) {
-            ListenerInterface(listeners[i]).deposit(_address, _amount, shares[_address]);
+            errorCode = ListenerInterface(listeners[i]).deposit(_address, _amount, shares[_address]);
+            if (Errors.E.OK.code() != errorCode) {
+                _emitError(Errors.E.TIMEHOLDER_DEPOSIT_FAILED);
+            }
         }
 
-        Deposit(_address, _amount);
-        return true;
+        _emitDeposit(_address, _amount);
+        return Errors.E.OK.code();
     }
 
     /**
@@ -118,27 +135,30 @@ contract TimeHolder is Owned {
     *
     * @return success.
     */
-    function withdrawShares(uint _amount) returns(bool) {
+    function withdrawShares(uint _amount) returns (uint) {
         // Provide latest possesion proof.
         //deposit(0);
         if (_amount > shares[msg.sender]) {
-            Error("Insufficient balance");
-            return false;
+            return _emitError(Errors.E.TIMEHOLDER_INSUFFICIENT_BALANCE).code();
         }
 
         shares[msg.sender] -= _amount;
         totalShares -= _amount;
 
+        uint errorCode;
         for(uint i = 1; i < listenersCount; i++) {
-            ListenerInterface(listeners[i]).withdrawn(msg.sender, _amount, shares[msg.sender]);
+            errorCode = ListenerInterface(listeners[i]).withdrawn(msg.sender, _amount, shares[msg.sender]);
+            if (Errors.E.OK.code() != errorCode) {
+                _emitError(Errors.E.TIMEHOLDER_WITHDRAWN_FAILED);
+            }
         }
 
         if (!sharesContract.transfer(msg.sender, _amount)) {
             throw;
         }
 
-        WithdrawShares(msg.sender, _amount);
-        return true;
+        _emitWithdrawShares(msg.sender, _amount);
+        return Errors.E.OK.code();
     }
 
     /**
@@ -152,12 +172,32 @@ contract TimeHolder is Owned {
         return shares[_address];
     }
 
-    function totalSupply() constant returns(uint) {
+    function totalSupply() constant returns (uint) {
         return sharesContract.totalSupply();
     }
 
-    function()
-    {
+    function _emitDeposit(address who, uint amount) private {
+        //TimeHolder(getEventsHistory()).emitDeposit(who, amount);
+        emitDeposit(who, amount);
+    }
+
+    function _emitWithdrawShares(address who, uint amount) private {
+        //TimeHolder(getEventsHistory()).emitWithdrawShares(who, amount);
+        emitWithdrawShares(who, amount);
+    }
+
+    function _emitListenerAdded(address listener) private {
+        //TimeHolder(getEventsHistory()).emitListenerAdded(listener);
+        emitListenerAdded(listener);
+    }
+
+    function _emitError(Errors.E e) private returns (Errors.E){
+        //TimeHolder(getEventsHistory()).emitError(e);
+        emitError(e);
+        return e;
+    }
+
+    function() {
         throw;
     }
 }

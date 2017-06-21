@@ -1,6 +1,7 @@
 pragma solidity ^0.4.11;
 
 import "./ContractsManagerInterface.sol";
+import "./Errors.sol";
 
 contract AssetsManagerMock {
 
@@ -11,7 +12,8 @@ contract AssetsManagerMock {
     function init(address _contractsManager) returns(bool) {
         if(contractsManager != 0x0)
         return false;
-        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.AssetsManager))
+        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.AssetsManager);
+        if(Errors.E.OK != e)
         return false;
         contractsManager = _contractsManager;
         return true;

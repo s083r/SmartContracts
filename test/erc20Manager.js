@@ -8,6 +8,7 @@ const bytes32fromBase58 = require('./helpers/bytes32fromBase58')
 const Require = require("truffle-require")
 const Config = require("truffle-config")
 const eventsHelper = require('./helpers/eventsHelper')
+const ErrorsEnum = require("../common/errors")
 
 contract('ERC20 Manager', function(accounts) {
   const owner = accounts[0]
@@ -57,7 +58,7 @@ contract('ERC20 Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.erc20Manager.getTokenAddressBySymbol.call('TOKEN2').then(function(r2) {
-            assert.equal(r,false);
+            assert.equal(r, ErrorsEnum.ERCMANAGER_TOKEN_ALREADY_EXISTS);
             assert.notEqual(r2,Setup.chronoBankAssetProxy.address);
           });
         });
@@ -71,7 +72,7 @@ contract('ERC20 Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.erc20Manager.getTokenAddressBySymbol.call('TOKEN').then(function(r2) {
-            assert.equal(r,false);
+            assert.equal(r, ErrorsEnum.ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS);
             assert.notEqual(r2,Setup.chronoBankAssetWithFeeProxy.address);
           });
         });
@@ -176,7 +177,7 @@ contract('ERC20 Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.erc20Manager.getTokenAddressBySymbol.call('TOKEN').then(function(r2) {
-            assert.equal(r,false);
+            assert.equal(r, ErrorsEnum.ERCMANAGER_TOKEN_UNCHANGED);
             assert.notEqual(r2,Setup.chronoBankAssetWithFeeProxy.address);
           });
         });

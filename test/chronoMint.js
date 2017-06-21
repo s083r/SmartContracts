@@ -7,6 +7,7 @@ const eventsHelper = require('./helpers/eventsHelper')
 const Setup = require('../setup/setup')
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const PendingManager = artifacts.require("./PendingManager.sol")
+const ErrorsEnum = require("../common/errors")
 
 contract('LOC Manager', function(accounts) {
   let owner = accounts[0];
@@ -177,7 +178,8 @@ contract('LOC Manager', function(accounts) {
             gas: 3000000
           }
         ).then(function(){
-          assert.equal(r,0);
+          console.log(r);
+          assert.equal(r,ErrorsEnum.UNAUTHORIZED);
         });
       });
     });
@@ -204,7 +206,7 @@ contract('LOC Manager', function(accounts) {
         ).then(function(){
           return Setup.chronoMint.getLOCById.call(0).then(function(r2){
             console.log(r,r2);
-            assert.equal(r,1)
+            assert.equal(r, ErrorsEnum.OK)
             assert.equal(r2[6], Status.maintenance);
           });
         });
@@ -274,7 +276,7 @@ contract('LOC Manager', function(accounts) {
           bytes32("David's Hard Workers"),
           Status.active, {from:owner1}).then(function(){
           return Setup.chronoMint.getLOCById.call(0).then(function(r2){
-            assert.equal(r,false)
+            assert.notEqual(r, ErrorsEnum.UNAUTHORIZED);
             assert.equal(r2[6], Status.maintenance);
           });
         });

@@ -3,8 +3,11 @@ pragma solidity ^0.4.8;
 import "./UserManagerInterface.sol";
 import "./Managed.sol";
 import "./PendingManagerEmitter.sol";
+import "./Errors.sol";
 
 contract PendingManager is Managed, PendingManagerEmitter {
+    using Errors for Errors.E;
+
     // TYPES
     StorageInterface.Set txHashes;
     StorageInterface.Bytes32AddressMapping to;
@@ -21,7 +24,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
     // that later attempts can be realised as the same underlying operation and
     // thus count as confirmations
     modifier onlyManyOwners(bytes32 _hash, address _sender) {
-        if (confirmAndCheck(_hash, _sender)) {
+        if (confirmAndCheck(_hash, _sender) == Errors.E.OK) {
             _;
         }
     }
@@ -37,21 +40,28 @@ contract PendingManager is Managed, PendingManagerEmitter {
 
     // METHODS
 
-    function init(address _contractsManager) returns(bool) {
-        if(store.get(contractsManager) != 0x0)
-            return false;
-        if(!ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.PendingManager))
-            return false;
+    function init(address _contractsManager) returns (uint) {
+        if (store.get(contractsManager) != 0x0) {
+            return Errors.E.PENDING_INVALID_INVOCATION.code();
+        }
+
+        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.PendingManager);
+        if (Errors.E.OK != e) {
+            return e.code();
+        }
+
         store.set(contractsManager, _contractsManager);
-        return true;
+
+        return Errors.E.OK.code();
     }
 
-    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns(bool) {
+    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return false;
+            return Errors.E.PENDING_INVALID_INVOCATION.code();
         }
+
         _setEventsHistory(_eventsHistory);
-        return true;
+        return Errors.E.OK.code();
     }
 
     function pendingsCount() constant returns (uint) {
@@ -77,130 +87,153 @@ contract PendingManager is Managed, PendingManagerEmitter {
     }
 
     function pendingYetNeeded(bytes32 _hash) constant returns (uint) {
-        return store.get(yetNeeded,_hash);
+        return store.get(yetNeeded, _hash);
     }
 
     function getTxData(bytes32 _hash) constant returns (bytes) {
         return data[_hash];
     }
 
-    function getUserManager() constant returns(address) {
+    function getUserManager() constant returns (address) {
         return ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.UserManager);
     }
 
-    function addTx(bytes32 _hash, bytes _data, address _to, address _sender) {
-        if (store.includes(txHashes,_hash)) {
-            _emitError("duplicate");
-            return;
+    function addTx(bytes32 _hash, bytes _data, address _to, address _sender) onlyAuthorizedContract(_sender) returns (Errors.E) {
+        if (store.includes(txHashes, _hash)) {
+            return _emitError(Errors.E.PENDING_DUPLICATE_TX);
         }
-        if (isAuthorized(_sender)) {
-            store.add(txHashes,_hash);
-            data[_hash] = _data;
-            store.set(to,_hash,_to);
-            address userManager = getUserManager();
-            store.set(yetNeeded,_hash,UserManagerInterface(userManager).required());
-            store.set(timestamp,_hash,now);
-            conf(_hash, _sender);
-        }
+
+        store.add(txHashes, _hash);
+        data[_hash] = _data;
+        store.set(to, _hash, _to);
+        address userManager = getUserManager();
+        store.set(yetNeeded, _hash, UserManagerInterface(userManager).required());
+        store.set(timestamp, _hash, now);
+
+        Errors.E result = conf(_hash, _sender);
+        return _checkAndEmitError(result);
     }
 
-    function confirm(bytes32 _hash) external returns(bool) {
-        return conf(_hash, msg.sender);
+    function confirm(bytes32 _hash) external returns (uint errorCode) {
+        Errors.E result = conf(_hash, msg.sender);
+        errorCode = _checkAndEmitError(result).code();
     }
 
-    function conf(bytes32 _hash, address _sender) internal onlyManyOwners(_hash, _sender) returns (bool) {
-        if (store.get(to,_hash) != 0) {
-            if (!store.get(to,_hash).call(data[_hash])) {
-                return false;
-            }
-            deleteTx(_hash);
-            return true;
+    function conf(bytes32 _hash, address _sender) internal onlyManyOwners(_hash, _sender) returns (Errors.E) {
+        if (store.get(to, _hash) == 0) {
+            return Errors.E.PENDING_NOT_FOUND;
         }
+
+        if (!store.get(to, _hash).call(data[_hash])) {
+            return Errors.E.PENDING_CANNOT_CONFIRM;
+        }
+
+        deleteTx(_hash);
+        return Errors.E.OK;
     }
 
     // revokes a prior confirmation of the given operation
-    function revoke(bytes32 _hash) external onlyAuthorized returns(bool) {
-            address userManager = getUserManager();
-            uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(msg.sender);
-            if (store.get(ownersDone,_hash) & ownerIndexBit > 0) {
-                store.set(yetNeeded,_hash,store.get(yetNeeded,_hash)+1);
-                store.set(ownersDone,_hash,store.get(ownersDone,_hash)-ownerIndexBit);
-                _emitRevoke(msg.sender, _hash);
-                if (store.get(yetNeeded,_hash) == UserManagerInterface(userManager).required()) {
-                    deleteTx(_hash);
-                    _emitCancelled(_hash);
-                }
-            }
+    function revoke(bytes32 _hash) external onlyAuthorized returns (uint errorCode) {
+        address userManager = getUserManager();
+        uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(msg.sender);
+        if (store.get(ownersDone, _hash) & ownerIndexBit <= 0) {
+            errorCode = _emitError(Errors.E.PENDING_NOT_FOUND).code();
+            return errorCode;
+        }
+
+        store.set(yetNeeded, _hash, store.get(yetNeeded, _hash) + 1);
+        store.set(ownersDone, _hash, store.get(ownersDone, _hash) - ownerIndexBit);
+        _emitRevoke(msg.sender, _hash);
+        if (store.get(yetNeeded, _hash) == UserManagerInterface(userManager).required()) {
+            deleteTx(_hash);
+            _emitCancelled(_hash);
+        }
+
+        errorCode = Errors.E.OK.code();
     }
 
-    function hasConfirmed(bytes32 _hash, address _owner) constant returns (bool) {
-        if (isAuthorized(_owner)) {
-            // determine the bit to set for this owner
-            address userManager = getUserManager();
-            uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(_owner);
-            return !(store.get(ownersDone,_hash) & ownerIndexBit == 0);
-        }
+    function hasConfirmed(bytes32 _hash, address _owner) onlyAuthorizedContract(_owner) constant returns (bool) {
+        // determine the bit to set for this owner
+        address userManager = getUserManager();
+        uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(_owner);
+        return !(store.get(ownersDone, _hash) & ownerIndexBit == 0);
     }
 
 
     // INTERNAL METHODS
 
-    function confirmAndCheck(bytes32 _hash, address _sender) internal returns (bool) {
-        if (isAuthorized(_sender)) {
-            // determine the bit to set for this owner
-            address userManager = getUserManager();
-            uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(_sender);
-            // make sure we (the message sender) haven't confirmed this operation previously
-            if (store.get(ownersDone,_hash) & ownerIndexBit == 0) {
-                // ok - check if count is enough to go ahead
-                if (store.get(yetNeeded,_hash) <= 1) {
-                    // enough confirmations: reset and run interior
-                    _emitDone(_hash, data[_hash], now);
-                    return true;
-                } else {
-                    // not enough: record that this owner in particular confirmed
-                    store.set(yetNeeded,_hash,store.get(yetNeeded,_hash)-1);
-                    uint _ownersDone = store.get(ownersDone,_hash);
-                    _ownersDone |= ownerIndexBit;
-                    store.set(ownersDone,_hash,_ownersDone);
-                    _emitConfirmation(_sender, _hash);
-                    return false;
-                }
-            }
+    function confirmAndCheck(bytes32 _hash, address _sender) internal onlyAuthorizedContract(_sender) returns (Errors.E) {
+        // determine the bit to set for this owner
+        address userManager = getUserManager();
+        uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(_sender);
+        // make sure we (the message sender) haven't confirmed this operation previously
+        if (store.get(ownersDone, _hash) & ownerIndexBit != 0) {
+            return Errors.E.PENDING_PREVIOUSLY_CONFIRMED;
+        }
+
+        // ok - check if count is enough to go ahead
+        if (store.get(yetNeeded, _hash) <= 1) {
+            // enough confirmations: reset and run interior
+            _emitDone(_hash, data[_hash], now);
+            return Errors.E.OK;
+        } else {
+            // not enough: record that this owner in particular confirmed
+            store.set(yetNeeded, _hash, store.get(yetNeeded, _hash) - 1);
+            uint _ownersDone = store.get(ownersDone, _hash);
+            _ownersDone |= ownerIndexBit;
+            store.set(ownersDone, _hash, _ownersDone);
+            _emitConfirmation(_sender, _hash);
+            return Errors.E.PENDING_NOT_ENOUGH_CONFIRMED;
         }
     }
 
     function deleteTx(bytes32 _hash) internal {
-        uint txId = store.getIndex(txHashes,_hash);
+        uint txId = store.getIndex(txHashes, _hash);
         uint txCount = store.count(txHashes);
-        if(txId != txCount - 1)
-            updateTxId(txId,txCount-1);
-        store.remove(txHashes,_hash);
+        if (txId != txCount - 1) {
+            updateTxId(txId, txCount - 1);
+        }
+
+        store.remove(txHashes, _hash);
     }
 
     function updateTxId(uint _oldId, uint _newId) internal {
-        store.set(to,store.get(txHashes,_oldId),store.get(to,store.get(txHashes,_newId)));
-        store.set(value,store.get(txHashes,_oldId),store.get(value,store.get(txHashes,_newId)));
-        store.set(yetNeeded,store.get(txHashes,_oldId),store.get(yetNeeded,store.get(txHashes,_newId)));
-        store.set(ownersDone,store.get(txHashes,_oldId),store.get(ownersDone,store.get(txHashes,_newId)));
-        store.set(timestamp,store.get(txHashes,_oldId),store.get(timestamp,store.get(txHashes,_newId)));
-        data[store.get(txHashes,_oldId)] = data[store.get(txHashes,_newId)];
+        store.set(to, store.get(txHashes, _oldId), store.get(to, store.get(txHashes, _newId)));
+        store.set(value, store.get(txHashes, _oldId), store.get(value, store.get(txHashes, _newId)));
+        store.set(yetNeeded, store.get(txHashes, _oldId), store.get(yetNeeded, store.get(txHashes, _newId)));
+        store.set(ownersDone, store.get(txHashes, _oldId), store.get(ownersDone, store.get(txHashes, _newId)));
+        store.set(timestamp, store.get(txHashes, _oldId), store.get(timestamp, store.get(txHashes, _newId)));
+        data[store.get(txHashes, _oldId)] = data[store.get(txHashes, _newId)];
     }
 
-    function _emitConfirmation(address owner, bytes32 hash) {
-        PendingManager(getEventsHistory()).emitConfirmation(owner,hash);
+    function _emitConfirmation(address owner, bytes32 hash) internal {
+        PendingManager(getEventsHistory()).emitConfirmation(owner, hash);
     }
-    function _emitRevoke(address owner, bytes32 hash) {
-        PendingManager(getEventsHistory()).emitRevoke(owner,hash);
+
+    function _emitRevoke(address owner, bytes32 hash) internal {
+        PendingManager(getEventsHistory()).emitRevoke(owner, hash);
     }
-    function _emitCancelled(bytes32 hash) {
+
+    function _emitCancelled(bytes32 hash) internal {
         PendingManager(getEventsHistory()).emitCancelled(hash);
     }
-    function _emitDone(bytes32 hash, bytes data, uint timestamp) {
-        PendingManager(getEventsHistory()).emitDone(hash,data,timestamp);
+
+    function _emitDone(bytes32 hash, bytes data, uint timestamp) internal {
+        PendingManager(getEventsHistory()).emitDone(hash, data, timestamp);
     }
-    function _emitError(bytes32 _message) {
-        PendingManager(getEventsHistory()).emitError(_message);
+
+    function _emitError(Errors.E error) internal returns (Errors.E) {
+        PendingManager(getEventsHistory()).emitError(error.code());
+
+        return error;
+    }
+
+    function _checkAndEmitError(Errors.E error) internal returns (Errors.E)  {
+        if (error != Errors.E.OK) {
+            return _emitError(error);
+        }
+
+        return error;
     }
 
     function()
