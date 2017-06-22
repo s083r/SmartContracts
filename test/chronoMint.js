@@ -275,8 +275,8 @@ contract('LOC Manager', function(accounts) {
         return Setup.chronoMint.setStatus(
           bytes32("David's Hard Workers"),
           Status.active, {from:owner1}).then(function(){
-          return Setup.chronoMint.getLOCById.call(0).then(function(r2){
-            assert.notEqual(r, ErrorsEnum.UNAUTHORIZED);
+          return Setup.chronoMint.getLOCById.call(0).then(function(r2) {
+            assert.equal(r, ErrorsEnum.UNAUTHORIZED);
             assert.equal(r2[6], Status.maintenance);
           });
         });
