@@ -25,7 +25,8 @@ contract Managed is StorageAdapter {
     }
 
     modifier onlyAuthorizedContract(address key) {
-        if (isAuthorized(key)) {
+        address shareable = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.PendingManager);
+        if (msg.sender == shareable || isAuthorized(key)) {
             _;
         }
     }
