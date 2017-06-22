@@ -327,7 +327,7 @@ contract Vote is Managed, VoteEmitter {
     function setVotesPercent(uint _percent) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (_percent > 0 && _percent < 100) {
@@ -381,7 +381,7 @@ contract Vote is Managed, VoteEmitter {
     function activatePoll(uint _pollId) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         uint _activePollsCount = store.get(activePolls);
@@ -402,10 +402,10 @@ contract Vote is Managed, VoteEmitter {
     function adminEndPoll(uint _pollId) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
-        
-        errorCode = _checkAndEmitError(endPoll(_pollId)).code();
+
+        errorCode = _handleResult(endPoll(_pollId)).code();
     }
 
     //TimeHolder interface implementation
@@ -480,8 +480,8 @@ contract Vote is Managed, VoteEmitter {
         return error;
     }
 
-    function _checkAndEmitError(Errors.E error) internal returns (Errors.E) {
-        if (error != Errors.E.OK) {
+    function _handleResult(Errors.E error) internal returns (Errors.E) {
+        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
             return _emitError(error);
         }
         return error;

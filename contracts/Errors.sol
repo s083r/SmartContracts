@@ -48,7 +48,6 @@ library Errors {
     PENDING_DUPLICATE_TX,
     PENDING_CANNOT_CONFIRM,
     PENDING_PREVIOUSLY_CONFIRMED,
-    PENDING_NOT_ENOUGH_CONFIRMED,
 
     // Storage Manager errors
     STORAGE_INVALID_INVOCATION,
@@ -155,7 +154,7 @@ library Errors {
         else if (uint(error) >= uint(E.CROWDFUNDING_INVALID_INVOCATION) && uint(error) <= uint(E.CROWDFUNDING_NOT_ASSET_OWNER)) {
             return 3000 + uint(error) - uint(E.CROWDFUNDING_INVALID_INVOCATION);
         }
-        else if (uint(error) >= uint(E.PENDING_NOT_FOUND) && uint(error) <= uint(E.PENDING_NOT_ENOUGH_CONFIRMED)) {
+        else if (uint(error) >= uint(E.PENDING_NOT_FOUND) && uint(error) <= uint(E.PENDING_PREVIOUSLY_CONFIRMED)) {
             return 4000 + uint(error) - uint(E.PENDING_NOT_FOUND);
         }
         else if (uint(error) >= uint(E.STORAGE_INVALID_INVOCATION) && uint(error) <= uint(E.STORAGE_INVALID_INVOCATION)) {

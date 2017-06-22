@@ -340,7 +340,7 @@ contract('LOC Manager', function(accounts) {
     });
 
     it("allows one CBE key to add another CBE key.", function() {
-      return Setup.userManager.addCBE(owner1,0x0).then(function() {
+      return Setup.userManager.addCBE(owner1,0x2).then(function() {
         return Setup.userManager.isAuthorized.call(owner1).then(function(r){
           assert.isOk(r);
         });
@@ -393,7 +393,7 @@ contract('LOC Manager', function(accounts) {
     it("allows to propose pending operation", function() {
       eventsHelper.setupEvents(eventor);
       watcher = eventor.Confirmation();
-      return Setup.userManager.addCBE(owner2, 0x0, {from:owner}).then(function(txHash) {
+      return Setup.userManager.addCBE(owner2, 0x2, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
         console.log(events[0].args.hash);
@@ -413,7 +413,7 @@ contract('LOC Manager', function(accounts) {
     });
 
     it("allows one CBE key to add another CBE key", function() {
-      return Setup.userManager.addCBE(owner2, 0x0, {from:owner}).then(function(txHash) {
+      return Setup.userManager.addCBE(owner2, 0x1, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
         console.log(events[0].args.hash);
@@ -451,7 +451,7 @@ contract('LOC Manager', function(accounts) {
   context("with three CBE keys", function(){
 
     it("allows 2 votes for the new key to grant authorization.", function() {
-      return Setup.userManager.addCBE(owner3, 0x0, {from: owner2}).then(function(txHash) {
+      return Setup.userManager.addCBE(owner3, 0x1, {from: owner2}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
         console.log(events[0].args.hash);
@@ -493,7 +493,7 @@ contract('LOC Manager', function(accounts) {
   context("with four CBE keys", function(){
 
     it("allows 3 votes for the new key to grant authorization.", function() {
-      return Setup.userManager.addCBE(owner4, 0x0, {from: owner3}).then(function(txHash) {
+      return Setup.userManager.addCBE(owner4, 0x1, {from: owner3}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
         console.log(events[0].args.hash);
@@ -540,7 +540,7 @@ contract('LOC Manager', function(accounts) {
 
   context("with five CBE keys", function() {
     it("collects 4 vote to addCBE and granting auth.", function () {
-      return Setup.userManager.addCBE(owner5, 0x0, {from: owner4}).then(function (txHash) {
+      return Setup.userManager.addCBE(owner5, 0x1, {from: owner4}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
         console.log(events[0].args.hash);

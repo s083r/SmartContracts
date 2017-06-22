@@ -12,7 +12,7 @@ contract LOCManagerEmitter is MultiEventsHistoryAdapter {
     event UpdLOCStatus(address indexed self, bytes32 indexed locName, uint _oldStatus, uint newStatus);
     event Reissue(address indexed self, bytes32 indexed locName, uint value);
     event Revoke(address indexed self, bytes32 indexed locName, uint value);
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     function emitAssetSent(bytes32 symbol, address to, uint value) {
         AssetSent(_self(), symbol, to, value);

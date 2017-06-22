@@ -12,7 +12,7 @@ contract VoteEmitter is MultiEventsHistoryAdapter {
     event VoteCreated(uint choice, uint pollId);
     event SharesPercentUpdated(address indexed self);
     event IpfsHashToPollAdded(uint indexed id, bytes32 hash, uint count);
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     function emitError(uint errorCode) {
         Error(_self(), errorCode);

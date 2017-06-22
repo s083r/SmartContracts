@@ -70,7 +70,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     function sendAsset(bytes32 _symbol, address _to, uint _value) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!AssetsManagerInterface(ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.AssetsManager)).sendAsset(_symbol, _to, _value)) {
@@ -84,7 +84,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     function reissueAsset(uint _value, bytes32 _locName) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
           }
 
         if (!isLOCActive(_locName)) {
@@ -110,7 +110,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     function revokeAsset(uint _value, bytes32 _locName) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!isLOCActive(_locName)) {
@@ -136,7 +136,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     function removeLOC(bytes32 _name) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!isLOCExist(_name)) {
@@ -222,7 +222,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     function setStatus(bytes32 _name, Status _status) returns (uint errorCode){
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!isLOCExist(_name)) {
@@ -307,6 +307,13 @@ contract LOCManager is Managed, LOCManagerEmitter {
 
     function _emitRevoke(bytes32 _locName, uint _value) internal {
         LOCManager(getEventsHistory()).emitRevoke(_locName, _value);
+    }
+
+    function _handleResult(Errors.E error) internal returns (Errors.E) {
+        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
+            return _emitError(error);
+        }
+        return error;
     }
 
     function _emitError(Errors.E error) internal returns (Errors.E) {

@@ -25,7 +25,7 @@ contract ContractsManager is Managed, ContractsManagerInterface {
 
     event LogAddContract(address indexed contractAddress, ContractType t);
     event LogContractAddressChange(address indexed contractAddress, ContractType t);
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     /**
     *  @notice Constructor that sets `storage` and `crate` to given values.

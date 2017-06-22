@@ -9,7 +9,7 @@ contract UserManagerEmitter is MultiEventsHistoryAdapter {
     event CBEUpdate(address indexed self, address key);
     event SetRequired(address indexed self, uint required);
     event SetHash(address indexed self, address indexed key, bytes32 oldHash, bytes32 newHash);
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     function emitCBEUpdate(address key) {
         CBEUpdate(_self(), key);

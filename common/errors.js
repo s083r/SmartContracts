@@ -51,7 +51,6 @@ const errorsLibrary = {
     PENDING_DUPLICATE_TX: errorScope.pending + 3,
     PENDING_CANNOT_CONFIRM: errorScope.pending + 4,
     PENDING_PREVIOUSLY_CONFIRMED: errorScope.pending + 5,
-    PENDING_NOT_ENOUGH_CONFIRMED: errorScope.pending + 6,
 
     STORAGE_INVALID_INVOCATION: errorScope.storage + 0,
 

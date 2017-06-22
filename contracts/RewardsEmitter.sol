@@ -10,7 +10,7 @@ contract RewardsEmitter is MultiEventsHistoryAdapter {
     event WithdrawnRewardSuccess(address asset, address addr, uint amountReward);
     event DepositStored(uint _part);
     event AssetRegistered(address assetAddress);
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     function emitWithdrawnReward(address asset, address addr, uint amount) {
         WithdrawnRewardSuccess(asset, addr, amount);

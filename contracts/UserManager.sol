@@ -52,7 +52,7 @@ contract UserManager is Managed, UserManagerEmitter {
     function addCBE(address _key, bytes32 _hash) returns (uint) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (getCBE(_key)) {
@@ -76,7 +76,7 @@ contract UserManager is Managed, UserManagerEmitter {
     function revokeCBE(address _key) returns (uint) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!getCBE(_key)) {
@@ -95,18 +95,18 @@ contract UserManager is Managed, UserManagerEmitter {
     function setMemberHash(address key, bytes32 _hash) onlyAuthorized returns (uint) {
         createMemberIfNotExist(key);
         Errors.E e = setMemberHashInt(key, _hash);
-        return e.code();
+        return _handleResult(e).code();
     }
 
     function setOwnHash(bytes32 _hash) returns (uint) {
         Errors.E e = setMemberHashInt(msg.sender, _hash);
-        return e.code();
+        return _handleResult(e).code();
     }
 
     function setRequired(uint _required) returns (uint) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _handleResult(e).code();
         }
 
         if (!(_required <= store.count(admins))) {
@@ -131,12 +131,12 @@ contract UserManager is Managed, UserManagerEmitter {
     function setMemberHashInt(address key, bytes32 _hash) internal returns (Errors.E e) {
         bytes32 oldHash = getMemberHash(key);
         if (_hash == oldHash) {
-            return _emitError(Errors.E.USER_SAME_HASH);
+            return Errors.E.USER_SAME_HASH;
         }
 
         e = setHashes(key, _hash);
         if (e != Errors.E.OK) {
-            return _emitError(e);
+            return e;
         }
 
         _emitHashUpdate(key, oldHash, _hash);
@@ -206,6 +206,13 @@ contract UserManager is Managed, UserManagerEmitter {
     function _emitError(Errors.E e) internal returns (Errors.E) {
         UserManager(getEventsHistory()).emitError(e);
         return e;
+    }
+
+    function _handleResult(Errors.E error) internal returns (Errors.E) {
+        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
+            return _emitError(error);
+        }
+        return error;
     }
 
     function() {

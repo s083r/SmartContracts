@@ -24,7 +24,7 @@ contract TimeHolderEmmiter is MultiEventsHistoryAdapter {
     /**
     *  Something went wrong.
     */
-    event Error(address indexed self, uint indexed errorCode);
+    event Error(address indexed self, uint errorCode);
 
     function emitDeposit(address who, uint amount) {
         Deposit(who, amount);

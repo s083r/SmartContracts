@@ -18,17 +18,6 @@ contract PendingManager is Managed, PendingManagerEmitter {
 
     mapping (bytes32 => bytes) data;
 
-    /// MODIFIERS
-
-    // multi-sig function modifier: the operation must have an intrinsic hash in order
-    // that later attempts can be realised as the same underlying operation and
-    // thus count as confirmations
-    modifier onlyManyOwners(bytes32 _hash, address _sender) {
-        if (confirmAndCheck(_hash, _sender) == Errors.E.OK) {
-            _;
-        }
-    }
-
     function PendingManager(Storage _store, bytes32 _crate) StorageAdapter(_store, _crate) {
         txHashes.init('txHashesh');
         to.init('to');
@@ -119,7 +108,12 @@ contract PendingManager is Managed, PendingManagerEmitter {
         errorCode = _checkAndEmitError(result).code();
     }
 
-    function conf(bytes32 _hash, address _sender) internal onlyManyOwners(_hash, _sender) returns (Errors.E) {
+    function conf(bytes32 _hash, address _sender) internal returns (Errors.E) {
+        Errors.E e = confirmAndCheck(_hash, _sender);
+        if (Errors.E.OK != e) {
+            return e;
+        }
+
         if (store.get(to, _hash) == 0) {
             return Errors.E.PENDING_NOT_FOUND;
         }
@@ -183,7 +177,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
             _ownersDone |= ownerIndexBit;
             store.set(ownersDone, _hash, _ownersDone);
             _emitConfirmation(_sender, _hash);
-            return Errors.E.PENDING_NOT_ENOUGH_CONFIRMED;
+            return Errors.E.MULTISIG_ADDED;
         }
     }
 
@@ -229,7 +223,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
     }
 
     function _checkAndEmitError(Errors.E error) internal returns (Errors.E)  {
-        if (error != Errors.E.OK) {
+        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
             return _emitError(error);
         }
 
