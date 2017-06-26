@@ -279,6 +279,44 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         return (_token, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
     }
 
+    function tokensCount() constant returns (uint) {
+        return store.count(tokenAddresses);
+    }
+
+    function getTokens(address[] _addresses) constant
+    returns (
+      address[] _tokensAddresses,
+      bytes32[] _names,
+      bytes32[] _symbols,
+      bytes32[] _urls,
+      uint8[] _decimalsArr,
+      bytes32[] _ipfsHashes,
+      bytes32[] _swarmHashes
+    )
+    {
+        if (_addresses.length == 0) {
+            _addresses = getTokenAddresses();
+        }
+        _tokensAddresses = _addresses;
+        _names = new bytes32[](_addresses.length);
+        _symbols = new bytes32[](_addresses.length);
+        _urls = new bytes32[](_addresses.length);
+        _decimalsArr = new uint8[](_addresses.length);
+        _ipfsHashes = new bytes32[](_addresses.length);
+        _swarmHashes = new bytes32[](_addresses.length);
+
+        for (uint i = 0; i < _addresses.length; i++) {
+            _names[i] = store.get(name, _addresses[i]);
+            _symbols[i] = store.get(symbol, _addresses[i]);
+            _urls[i] = store.get(url, _addresses[i]);
+            _decimalsArr[i] = uint8(store.get(decimals, _addresses[i]));
+            _ipfsHashes[i] = store.get(ipfsHash, _addresses[i]);
+            _swarmHashes[i] = store.get(swarmHash, _addresses[i]);
+        }
+
+        return (_tokensAddresses, _names, _symbols, _urls, _decimalsArr, _ipfsHashes, _swarmHashes);
+    }
+
     /// @dev Provides a registered token's metadata, looked up by symbol.
     /// @param _symbol Symbol of registered token.
     /// @return Token metadata.
