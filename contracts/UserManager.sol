@@ -124,7 +124,11 @@ contract UserManager is Managed, UserManagerEmitter {
     }
 
     function addMember(address key, bool isCBE) internal returns (Errors.E e) {
-        store.add(members, key);
+        if (getMemberId(key) == 0x0) {
+            store.add(members, key);
+            _emitNewUserRegistered(key);
+        }
+
         return setCBE(key, isCBE);
     }
 
@@ -193,6 +197,13 @@ contract UserManager is Managed, UserManagerEmitter {
 
     function _emitCBEUpdate(address key) internal {
         UserManager(getEventsHistory()).emitCBEUpdate(key);
+    }
+
+    function _emitNewUserRegistered(address key) internal {
+        if (getEventsHistory() == 0x0) {
+            return;
+        }
+        UserManager(getEventsHistory()).emitNewUserRegistered(key);
     }
 
     function _emitSetRequired(uint required) internal {

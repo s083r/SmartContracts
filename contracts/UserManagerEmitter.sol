@@ -6,10 +6,15 @@ import './Errors.sol';
 contract UserManagerEmitter is MultiEventsHistoryAdapter {
     using Errors for Errors.E;
 
+    event NewUserRegistered(address indexed self, address key);
     event CBEUpdate(address indexed self, address key);
     event SetRequired(address indexed self, uint required);
     event SetHash(address indexed self, address indexed key, bytes32 oldHash, bytes32 newHash);
     event Error(address indexed self, uint errorCode);
+
+    function emitNewUserRegistered(address key) {
+        NewUserRegistered(_self(), key);
+    }
 
     function emitCBEUpdate(address key) {
         CBEUpdate(_self(), key);
