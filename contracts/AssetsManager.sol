@@ -98,17 +98,6 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
         return Errors.E.OK.code();
     }
 
-    // this method is implemented only for test purposes
-    // function sendTime() returns (bool) {
-    //     if(!timeHolder[msg.sender] && assets[bytes32('TIME')] != address(0)) {
-    //         timeHolder[msg.sender] = true;
-    //         return ERC20Interface(assets[bytes32('TIME')]).transfer(msg.sender, 1000000000);
-    //     }
-    //     else {
-    //         return false;
-    //     }
-    // }
-
     function claimPlatformOwnership() returns (uint errorCode) {
         if (OwnedInterface(store.get(platform)).claimContractOwnership()) {
             return Errors.E.OK.code();

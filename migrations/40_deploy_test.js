@@ -6,15 +6,21 @@ var AssetsManagerMock = artifacts.require("./AssetsManagerMock.sol");
 var Stub = artifacts.require("./helpers/Stub.sol");
 var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable.sol");
 var KrakenPriceTicker = artifacts.require("./KrakenPriceTicker.sol");
+var AssetDonator = artifacts.require("./helpers/AssetDonator.sol");
+const ContractsManager = artifacts.require("./ContractsManager.sol");
+
 module.exports = function(deployer,network) {
-if(network === 'development') {
- deployer.deploy(Stub)
- deployer.deploy(ChronoBankPlatformTestable)
- deployer.deploy(FakeCoin)
- deployer.deploy(FakeCoin2)
- deployer.deploy(FakeCoin3)
- deployer.deploy(ManagerMock)
- deployer.deploy(AssetsManagerMock)
- deployer.deploy(KrakenPriceTicker,true)
-}
+    if(network === 'development') {
+        deployer.deploy(Stub)
+            .then(() => deployer.deploy(ChronoBankPlatformTestable))
+            .then(() => deployer.deploy(FakeCoin))
+            .then(() => deployer.deploy(FakeCoin2))
+            .then(() => deployer.deploy(FakeCoin3))
+            .then(() => deployer.deploy(ManagerMock))
+            .then(() => deployer.deploy(AssetsManagerMock))
+            .then(() => deployer.deploy(KrakenPriceTicker,true))
+            .then(() => deployer.deploy(AssetDonator))
+            .then(() => AssetDonator.deployed())
+            .then(_assetDonator => _assetDonator.init(ContractsManager.address));
+    }
 }
