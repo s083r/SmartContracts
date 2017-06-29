@@ -6,8 +6,6 @@ var AssetsManagerMock = artifacts.require("./AssetsManagerMock.sol");
 var Stub = artifacts.require("./helpers/Stub.sol");
 var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable.sol");
 var KrakenPriceTicker = artifacts.require("./KrakenPriceTicker.sol");
-var AssetDonator = artifacts.require("./helpers/AssetDonator.sol");
-const ContractsManager = artifacts.require("./ContractsManager.sol");
 
 module.exports = function(deployer,network) {
     if(network === 'development') {
@@ -19,8 +17,5 @@ module.exports = function(deployer,network) {
             .then(() => deployer.deploy(ManagerMock))
             .then(() => deployer.deploy(AssetsManagerMock))
             .then(() => deployer.deploy(KrakenPriceTicker,true))
-            .then(() => deployer.deploy(AssetDonator))
-            .then(() => AssetDonator.deployed())
-            .then(_assetDonator => _assetDonator.init(ContractsManager.address));
     }
 }

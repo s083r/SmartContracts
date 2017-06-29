@@ -20,6 +20,7 @@ const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const ManagerMock = artifacts.require('./ManagerMock.sol')
 const ProxyFactory = artifacts.require("./ProxyFactory.sol")
 const Vote = artifacts.require('./Vote.sol')
+const AssetDonator = artifacts.require('./heplers/AssetDonator.sol')
 
 const TIME_SYMBOL = 'TIME'
 const TIME_NAME = 'Time Token'
@@ -277,6 +278,13 @@ var setup = function (callback) {
   }).then(() => {
     console.log('assetsManager.addAsset LHT')
     return assetsManager.addAsset(chronoBankAssetWithFeeProxy.address, LHT_SYMBOL, chronoMint.address, paramsGas)
+  }).then(() => {
+      if (AssetDonator.address) {
+        console.log('setup asset donator')
+        return assetsManager.addAssetOwner(TIME_SYMBOL, AssetDonator.address, paramsGas)
+      } else {
+        console.log('asset donator is not deployed')
+      }      
   }).then(() => {
     callback()
   }).catch(function (e) {
