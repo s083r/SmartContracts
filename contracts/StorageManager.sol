@@ -39,15 +39,22 @@ contract StorageManager is MultiEventsHistoryAdapter, Owned {
     }
 
     function _emitAccessGiven(address _user, bytes32 _role) internal {
-        StorageManager(getEventsHistory()).emitAccessGiven(_user, _role);
+        if (getEventsHistory() != 0x0) {
+            StorageManager(getEventsHistory()).emitAccessGiven(_user, _role);
+        }
     }
 
     function _emitAccessBlocked(address _user, bytes32 _role) internal {
-        StorageManager(getEventsHistory()).emitAccessBlocked(_user, _role);
+        if (getEventsHistory() != 0x0) {
+            StorageManager(getEventsHistory()).emitAccessBlocked(_user, _role);
+        }
     }
 
     function _emitError(Errors.E error) internal returns (Errors.E) {
-        StorageManager(getEventsHistory()).emitError(error.code());
+        if (getEventsHistory() != 0x0) {
+            StorageManager(getEventsHistory()).emitError(error.code());
+        }
+
         return error;
     }
 

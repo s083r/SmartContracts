@@ -34,8 +34,9 @@ contract('Rewards', (accounts) => {
   const ZERO_INTERVAL = 0;
   const SHARES_BALANCE = 1161;
 
-  let defaultInit = () => { return storage.setManager(ManagerMock.address)
-    .then(() => contractsManager.init())
+  let defaultInit = () => {
+    return storage.setManager(ManagerMock.address)
+    .then(() => contractsManager.init({from: accounts[0]}))
     .then(() => assetsManager.init(contractsManager.address))
     .then(() => reward.init(contractsManager.address, ZERO_INTERVAL))
     .then(() => userManager.init(contractsManager.address))
@@ -100,23 +101,29 @@ contract('Rewards', (accounts) => {
   };
 
   before('Setup', (done) => {
-    Rewards.deployed().then(function(instance) {
-      reward = instance});
-    AssetsManagerMock.deployed().then(function(instance) {
-      assetsManager = instance});
-    LOCManager.deployed().then(function(instance) {
-      chronoMint = instance});
-    TimeHolder.deployed().then(function(instance) {
-      timeHolder = instance});
-    ContractsManager.deployed().then(function(instance) {
-      contractsManager = instance});
-    Storage.deployed().then(function(instance) {
-      storage = instance});
-    UserManager.deployed().then(function(instance) {
-      userManager = instance});
-    MultiEventsHistory.deployed().then(function(instance) {
-      multiEventsHistory = instance;});
-    FakeCoin.deployed().then(function(instance) {
+
+    Storage.new()
+    .then((instance) => storage = instance)
+    .then(() => Rewards.new(storage.address, "Rewards"))
+    .then((instance) => reward = instance)
+    .then(() => AssetsManagerMock.deployed())
+    .then((instance) => assetsManager = instance)
+    .then(() => LOCManager.new(storage.address, 'LOCs Manager'))
+    .then((instance) => chronoMint = instance)
+    .then(() => TimeHolder.new())
+    .then((instance) => timeHolder = instance)
+    .then(() => ContractsManager.new(storage.address, 'Contracts Manager'))
+    .then((instance) => contractsManager = instance)
+    .then(() => UserManager.new(storage.address, 'User Manager'))
+    .then((instance) => userManager = instance)
+    .then(() => MultiEventsHistory.deployed())
+    .then((instance) => multiEventsHistory = instance)
+    .then(() => FakeCoin2.deployed())
+    .then((instance) => asset1 = instance)
+    .then(() => FakeCoin3.deployed())
+    .then((instance) => asset2 = instance)
+    .then(() => FakeCoin.deployed())
+    .then(function(instance) {
       shares = instance
   // init shares
       shares.mint(accounts[0], SHARES_BALANCE)
@@ -126,17 +133,13 @@ contract('Rewards', (accounts) => {
         .then(() => reverter.snapshot(done))
         .catch(done);
   });
-    FakeCoin2.deployed().then(function(instance) {
-    asset1 = instance;});
-    FakeCoin3.deployed().then(function(instance) {
-    asset2 = instance;});
 });
 
   // init(address _timeHolder, uint _closeIntervalDays) returns(bool)
   it('should receive the right ContractsManager contract address after init() call', () => {
     return defaultInit()
-      .then(reward.getContractsManager)
-      .then((address) => { console.log(address); assert.equal(address, contractsManager.address) });
+      .then(() => reward.getContractsManager.call())
+      .then((address) => assert.equal(address, contractsManager.address) );
   });
 
   it('should not be possible to call init twice', () => {

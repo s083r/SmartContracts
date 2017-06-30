@@ -27,11 +27,11 @@ contract('ChronoBankAssetWithFee', function(accounts) {
   before('setup others', function(done) {
     Stub.deployed().then(function(instance) {
     stub = instance;
-    ChronoBankAssetWithFee.deployed().then(function(instance) {
+    ChronoBankAssetWithFee.new().then(function(instance) {
     chronoBankAsset = instance;
-    ChronoBankAssetProxy.deployed().then(function(instance) {
+    ChronoBankAssetProxy.new().then(function(instance) {
     chronoBankAssetProxy = instance;
-    ChronoBankPlatformTestable.deployed().then(function(instance) {
+    ChronoBankPlatformTestable.new().then(function(instance) {
     chronoBankPlatform = instance;
     chronoBankPlatform.setupEventsHistory(stub.address).then(function() {
       return chronoBankPlatform.issueAsset(SYMBOL, VALUE, NAME, DESCRIPTION, BASE_UNIT, IS_REISSUABLE);

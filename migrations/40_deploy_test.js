@@ -8,14 +8,15 @@ var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable
 var KrakenPriceTicker = artifacts.require("./KrakenPriceTicker.sol");
 
 module.exports = function(deployer,network) {
-    if(network === 'development') {
-        deployer.deploy(Stub)
-            .then(() => deployer.deploy(ChronoBankPlatformTestable))
-            .then(() => deployer.deploy(FakeCoin))
-            .then(() => deployer.deploy(FakeCoin2))
-            .then(() => deployer.deploy(FakeCoin3))
-            .then(() => deployer.deploy(ManagerMock))
-            .then(() => deployer.deploy(AssetsManagerMock))
-            .then(() => deployer.deploy(KrakenPriceTicker,true))
+  if(network === 'development') {
+      deployer.deploy(Stub)
+        .then(() => deployer.deploy(ChronoBankPlatformTestable))
+        .then(() => deployer.deploy(FakeCoin))
+        .then(() => deployer.deploy(FakeCoin2))
+        .then(() => deployer.deploy(FakeCoin3))
+        .then(() => deployer.deploy(ManagerMock))
+        .then(() => deployer.deploy(AssetsManagerMock))
+        .then(() => deployer.deploy(KrakenPriceTicker, true))
+        .then(() => console.log("[MIGRATION] [40] Deploy Test contracts: #done"))
     }
 }

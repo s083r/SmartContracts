@@ -1,10 +1,12 @@
-var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable.sol");
-var EventsHistory = artifacts.require("./EventsHistory.sol");
-var ChronoBankPlatformEmitter = artifacts.require("./ChronoBankPlatformEmitter.sol");
+const EventsHistory = artifacts.require("./EventsHistory.sol");
+const ChronoBankPlatformEmitter = artifacts.require("./ChronoBankPlatformEmitter.sol");
+const ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable.sol");
+const Setup = require('../setup/setup')
 
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
 var eventsHelper = require('./helpers/eventsHelper');
+
 contract('ChronoBankPlatform', function(accounts) {
   var reverter = new Reverter(web3);
   afterEach('revert', reverter.revert);
@@ -31,39 +33,36 @@ contract('ChronoBankPlatform', function(accounts) {
   var eventsHistory;
 
   before('setup', function(done) {
-    ChronoBankPlatformTestable.deployed().then(function(instance) {
-    chronoBankPlatform = instance;
-    EventsHistory.deployed().then(function(instance) {
-    eventsHistory = instance;
-    ChronoBankPlatformEmitter.deployed().then(function(instance) {
-    var chronoBankPlatformEmitter = instance;
-    var chronoBankPlatformEmitterAbi = web3.eth.contract(chronoBankPlatformEmitter.abi).at('0x0');
-    var fakeArgs = [0,0,0,0,0,0,0,0];
-    chronoBankPlatform.setupEventsHistory(eventsHistory.address).then(function() {
-      return eventsHistory.addVersion(chronoBankPlatform.address, "Origin", "Initial version.");
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitTransfer.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitIssue.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitRevoke.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitOwnershipChange.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitRecovery.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitApprove.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      return eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitError.getData.apply(this, fakeArgs).slice(0, 10), chronoBankPlatformEmitter.address);
-    }).then(function() {
-      eventsHistory = ChronoBankPlatformEmitter.at(eventsHistory.address);
-      reverter.snapshot(done);
-    });
-   });
-   });
-   });
+    Setup.setup(function () {})
+    .then(() => ChronoBankPlatformTestable.deployed())
+    .then((instance) => chronoBankPlatform = instance)
+    .then(() => {
+      var chronoBankPlatformEmitterAbi = web3.eth.contract(ChronoBankPlatformEmitter.abi).at('0x0');
+      var fakeArgs = [0,0,0,0,0,0,0,0];
+      chronoBankPlatform.setupEventsHistory(Setup.eventsHistory.address).then(function() {
+        return Setup.eventsHistory.addVersion(chronoBankPlatform.address, "Origin", "Initial version.");
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitTransfer.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitIssue.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitRevoke.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitOwnershipChange.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitRecovery.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitApprove.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        return Setup.eventsHistory.addEmitter(chronoBankPlatformEmitterAbi.emitError.getData.apply(this, fakeArgs).slice(0, 10), Setup.chronoBankPlatformEmitter.address);
+      }).then(function() {
+        eventsHistory = ChronoBankPlatformEmitter.at(Setup.eventsHistory.address);
+        reverter.snapshot(done);
+      });
+     });
   });
 
+context("with one CBE key", function(){
   it('should not be possible to issue asset with existing symbol', function() {
     var symbol = SYMBOL;
     var value = 1001;
@@ -3078,3 +3077,5 @@ contract('ChronoBankPlatform', function(accounts) {
     });
   });
 });
+
+})

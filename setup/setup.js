@@ -16,24 +16,10 @@ const TimeHolder = artifacts.require('./TimeHolder.sol')
 const Rewards = artifacts.require('./Rewards.sol')
 const Storage = artifacts.require('./Storage.sol')
 const UserManager = artifacts.require("./UserManager.sol")
-const ManagerMock = artifacts.require('./ManagerMock.sol')
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const ProxyFactory = artifacts.require("./ProxyFactory.sol")
 const Vote = artifacts.require('./Vote.sol')
-
-const TIME_SYMBOL = 'TIME'
-const TIME_NAME = 'Time Token'
-const TIME_DESCRIPTION = 'ChronoBank Time Shares'
-
-const LHT_SYMBOL = 'LHT'
-const LHT_NAME = 'Labour-hour Token'
-const LHT_DESCRIPTION = 'ChronoBank Lht Assets'
-
-const BASE_UNIT = 8
-const IS_REISSUABLE = true
-const IS_NOT_REISSUABLE = false
-const fakeArgs = [0, 0, 0, 0, 0, 0, 0, 0]
-const BALANCE_ETH = 1000
+const StorageManager = artifacts.require('StorageManager.sol')
 
 const contractTypes = {
   LOCManager: 0, // LOCManager
@@ -67,6 +53,7 @@ let chronoBankAssetWithFee
 let chronoBankAssetWithFeeProxy
 let vote
 let multiEventsHistory
+let storageManager
 
 let accounts
 let params
@@ -93,7 +80,7 @@ var setup = function (callback) {
     paramsGas = {from: accounts[0], gas: 3000000}
     console.log('--done')
   }).then(() => {
-    console.log('deploy contracts')
+    console.log('Instantiate the deployed contracts.')
     return Promise.all([
       Storage.deployed(),
       UserManager.deployed(),
@@ -113,7 +100,8 @@ var setup = function (callback) {
       TimeHolder.deployed(),
       ChronoBankPlatformEmitter.deployed(),
       EventsHistory.deployed(),
-      MultiEventsHistory.deployed()
+      MultiEventsHistory.deployed(),
+      StorageManager.deployed()
     ])
   }).then((instances) => {
     [
@@ -135,9 +123,9 @@ var setup = function (callback) {
       timeHolder,
       chronoBankPlatformEmitter,
       eventsHistory,
-      multiEventsHistory
+      multiEventsHistory,
+      storageManager
     ] = instances
-
   }).then(() => {
     module.exports.storage = storage
     module.exports.accounts = accounts
@@ -159,153 +147,7 @@ var setup = function (callback) {
     module.exports.chronoBankAssetWithFeeProxy = chronoBankAssetWithFeeProxy
     module.exports.vote = vote
     module.exports.multiEventsHistory = multiEventsHistory
-  }).then(() => {
-    console.log('setup storage')
-    return storage.setManager(ManagerMock.address)
-  }).then(() => {
-    console.log('link addresses')
-    return   contractsManager.init()
-  }).then(() => {
-    return  userManager.init(ContractsManager.address)
-  }).then(() => {
-    return  shareable.init(ContractsManager.address)
-  }).then(() => {
-    return  chronoMint.init(ContractsManager.address)
-  }).then(() => {
-    return  assetsManager.init(chronoBankPlatform.address, contractsManager.address, ProxyFactory.address)
-  }).then(() => {
-    return  erc20Manager.init(ContractsManager.address)
-  }).then(() => {
-    return  exchangeManager.init(ContractsManager.address)
-  }).then(() => {
-    return  rewards.init(ContractsManager.address, 0)
-  }).then(() => {
-    return  vote.init(ContractsManager.address)
-  }).then(() => {
-    return  timeHolder.init(ContractsManager.address, ChronoBankAssetProxy.address)
-  }).then(() => {
-    return  chronoBankAsset.init(ChronoBankAssetProxy.address, params)
-  }).then(() => {
-    return  chronoBankAssetWithFee.init(ChronoBankAssetWithFeeProxy.address, params)
-  }).then(() => {
-    return  chronoBankAssetProxy.init(ChronoBankPlatform.address, TIME_SYMBOL, TIME_NAME, params)
-  }).then(() => {
-    return  chronoBankAssetWithFeeProxy.init(ChronoBankPlatform.address, LHT_SYMBOL, LHT_NAME, params)
-  }).then(() => {
-    console.log('setup timeHolder')
-    console.log('--add reward listener')
-    return timeHolder.addListener(rewards.address).then(() => {
-      console.log('--add vote listener')
-      return timeHolder.addListener(vote.address)
-    }).catch(e => console.error('timeHolder error', e))
-  }).then(() => {
-    console.log('setup event history')
-    console.log('--add to userManager')
-    userManager.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(userManager.address)
-  }).then(() => {
-    console.log('--add to shareable')
-    shareable.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(shareable.address)
-  }).then(() => {
-    console.log('--add to LOCManager')
-    chronoMint.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(chronoMint.address)
-  }).then(() => {
-    console.log('--add to erc20Manager')
-    erc20Manager.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(erc20Manager.address)
-  }).then(() => {
-    console.log('--add to assetsManager')
-    assetsManager.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(assetsManager.address)
-  }).then(() => {
-    console.log('--add to exchangeManager')
-    exchangeManager.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(exchangeManager.address)
-  }).then(() => {
-    console.log('--add to rewards')
-    rewards.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(rewards.address)
-  }).then(() => {
-    console.log('--add to vote')
-    vote.setupEventsHistory(multiEventsHistory.address)
-  }).then(() => {
-    multiEventsHistory.authorize(vote.address)
-  }).then(() => {
-    console.log('--add to chronoBankPlatform')
-    return chronoBankPlatform.setupEventsHistory(
-      EventsHistory.address,
-      paramsGas)
-    }).then(() => {
-      const platformEvent = [
-        'emitTransfer',
-        'emitIssue',
-        'emitRevoke',
-        'emitOwnershipChange',
-        'emitApprove',
-        'emitRecovery',
-        'emitError'
-      ]
-      return Promise.all(platformEvent.map(event => {
-        console.log(`--addEmitter chronoBankPlatformEmitter.${event}`)
-        return eventsHistory.addEmitter(chronoBankPlatformEmitter.contract[event].getData.apply(this, fakeArgs).slice(0, 10),
-          chronoBankPlatformEmitter.address,
-          paramsGas
-        )
-      })).catch(e => console.error('emitter error', e))
-    }).then(() => {
-      console.log('--update version in chronoBankPlatform')
-      return eventsHistory.addVersion(chronoBankPlatform.address, 'Origin', 'Initial version.')
-    }).catch(e => console.error(e => 'eventHistory error', e))
-    .then(() => {
-    console.log('chronoBankPlatform.issueAsset')
-    console.log('--issue TIME')
-    return chronoBankPlatform.issueAsset(TIME_SYMBOL, 1000000000000, TIME_NAME, TIME_DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE, paramsGas
-    ).then(() => {
-      console.log('--issue LHT')
-      return chronoBankPlatform.issueAsset(LHT_SYMBOL, 0, LHT_NAME, LHT_DESCRIPTION, BASE_UNIT, IS_REISSUABLE, paramsGas)
-    }).then(() => {
-      console.log('--issue LHT')
-      return chronoBankPlatform.issueAsset(LHT_SYMBOL, 0, LHT_NAME, LHT_DESCRIPTION, BASE_UNIT, IS_REISSUABLE, paramsGas)
-    })
-  }).then(() => {
-    console.log('chronoBankPlatform.setProxy')
-    return chronoBankPlatform.setProxy(ChronoBankAssetProxy.address, TIME_SYMBOL, params)
-  }).then(() => {
-    console.log('chronoBankAssetProxy.proposeUpgrade')
-    return chronoBankAssetProxy.proposeUpgrade(ChronoBankAsset.address, params)
-  }).then(() => {
-    console.log('chronoBankAssetProxy.transfer')
-    return chronoBankAssetProxy.transfer(assetsManager.address, 1000000000000, params)
-  }).then(() => {
-    console.log('chronoBankPlatform.changeOwnership')
-    return chronoBankPlatform.changeOwnership(TIME_SYMBOL, assetsManager.address, params)
-  }).then(() => {
-    console.log('chronoBankPlatform.setProxy')
-    return chronoBankPlatform.setProxy(ChronoBankAssetWithFeeProxy.address, LHT_SYMBOL, params)
-  }).then(() => {
-    console.log('chronoBankAssetWithFeeProxy.proposeUpgrade')
-    return chronoBankAssetWithFeeProxy.proposeUpgrade(ChronoBankAssetWithFee.address, params)
-  }).then(() => {
-    console.log('chronoBankAssetWithFee.setupFee')
-    return chronoBankAssetWithFee.setupFee(Rewards.address, 100, {from: accounts[0]})
-  }).then(() => {
-    console.log('chronoBankPlatform.changeOwnership')
-    return chronoBankPlatform.changeOwnership(LHT_SYMBOL, assetsManager.address, params)
-  }).then(() => {
-    console.log('chronoBankPlatform.changeContractOwnership')
-    return chronoBankPlatform.changeContractOwnership(assetsManager.address, {from: accounts[0]})
-  }).then(() => {
-    console.log('assetsManager.claimPlatformOwnership')
-    return assetsManager.claimPlatformOwnership({from: accounts[0]})
+    module.exports.storageManager = storageManager
   }).then(() => {
     callback()
   }).catch(function (e) {
