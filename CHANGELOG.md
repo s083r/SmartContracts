@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.28"></a>
+## 1.1.28 (2017-07-01)
+
+
+
 <a name="1.1.25"></a>
 ## [1.1.25](https://github.com/Mikefluff/SmartContracts/compare/v1.1.24...v1.1.25) (2017-05-19)
 
