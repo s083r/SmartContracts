@@ -205,7 +205,12 @@ contract Rewards is Managed, RewardsEmitter {
             }
         }
 
-        return storeDeposits(0);
+        uint resultCode = storeDeposits(0);
+        if (resultCode == Errors.E.OK.code()) {
+            _emitPeriodClosed();
+        }
+
+        return resultCode;
     }
 
     function getPartsCount() constant returns(uint) {
@@ -219,6 +224,10 @@ contract Rewards is Managed, RewardsEmitter {
                 return _shareholdersCount / _maxSharesTransfer + 1;
         }
         return 0;
+    }
+
+    function getPeriodStartDate(uint _period) constant returns (uint) {
+        return store.get(startDate, _period);
     }
 
     function storeDeposits(uint _part) returns (uint) {
@@ -603,6 +612,10 @@ contract Rewards is Managed, RewardsEmitter {
 
     function _emitAssetRegistered(address assetAddress) {
         Rewards(getEventsHistory()).emitAssetRegistered(assetAddress);
+    }
+
+    function _emitPeriodClosed() {
+        Rewards(getEventsHistory()).emitPeriodClosed();
     }
 
     function _emitError(Errors.E e) returns (Errors.E) {

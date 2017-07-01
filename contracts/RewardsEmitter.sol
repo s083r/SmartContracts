@@ -10,6 +10,7 @@ contract RewardsEmitter is MultiEventsHistoryAdapter {
     event WithdrawnRewardSuccess(address asset, address addr, uint amountReward);
     event DepositStored(uint _part);
     event AssetRegistered(address assetAddress);
+    event PeriodClosed();
     event Error(address indexed self, uint errorCode);
 
     function emitWithdrawnReward(address asset, address addr, uint amount) {
@@ -18,6 +19,10 @@ contract RewardsEmitter is MultiEventsHistoryAdapter {
 
     function emitWithdrawn(address addr, uint amount, uint total) {
         WithdrawnSuccess(addr, amount, total);
+    }
+
+    function emitPeriodClosed() {
+        PeriodClosed();
     }
 
     function emitDepositStored(uint _part) {

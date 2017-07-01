@@ -47,7 +47,6 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
     StorageInterface.AddressAddressUIntMapping owners;
     StorageInterface.AddressesSet allOwners;
 
-    event Test(address test);
     //mapping (address => bool) timeHolder;
 
     modifier onlyAssetOwner(bytes32 _symbol) {
@@ -159,7 +158,6 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
         uint8 decimals = ChronoBankPlatformInterface(_platform).baseUnit(_symbol);
         address erc20Manager = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.ERC20Manager);
         if (!ERC20Manager(erc20Manager).addToken(asset, _symbol, _symbol, bytes32(0), decimals, bytes32(0), bytes32(0))) {
-            Test(erc20Manager);
             return _emitError(Errors.E.ASSETS_CANNOT_ADD_TO_REGISTRY).code();
         }
 
