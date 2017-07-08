@@ -19,8 +19,10 @@ const UserManager = artifacts.require("./UserManager.sol")
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const ManagerMock = artifacts.require('./ManagerMock.sol')
 const ProxyFactory = artifacts.require("./ProxyFactory.sol")
-const Vote = artifacts.require('./Vote.sol')
 const AssetDonator = artifacts.require('./heplers/AssetDonator.sol')
+const VoteActor = artifacts.require("./VoteActor.sol");
+const PollManager = artifacts.require("./PollManager.sol");
+const PollDetails = artifacts.require("./PollDetails.sol");
 
 const TIME_SYMBOL = 'TIME'
 const LHT_SYMBOL = 'LHT'
@@ -33,9 +35,10 @@ const contractTypes = {
   ExchangeManager: 4, // ExchangeManager
   TrackersManager: 5, // TrackersManager
   Voting: 6, // Voting
-  Rewards: 7, // Rewards
-  AssetsManager: 8, // AssetsManager
-  TimeHolder: 9 //TimeHolder
+  VotingActor: 7 // Voting Actor
+  Rewards: 8, // Rewards
+  AssetsManager: 9, // AssetsManager
+  TimeHolder: 10 //TimeHolder
 }
 
 let storage
@@ -55,7 +58,9 @@ let chronoBankAsset
 let chronoBankAssetProxy
 let chronoBankAssetWithFee
 let chronoBankAssetWithFeeProxy
-let vote
+let voteActor
+let pollManager
+let pollDetails
 let multiEventsHistory
 
 let accounts
@@ -99,7 +104,9 @@ var setup = function (callback) {
       ERC20Manager.deployed(),
       ExchangeManager.deployed(),
       Rewards.deployed(),
-      Vote.deployed(),
+      VoteActor.deployed(),
+      PollManager.deployed(),
+      PollDetails.deployed(),
       TimeHolder.deployed(),
       ChronoBankPlatformEmitter.deployed(),
       EventsHistory.deployed(),
@@ -121,7 +128,9 @@ var setup = function (callback) {
       erc20Manager,
       exchangeManager,
       rewards,
-      vote,
+      voteActor,
+      pollManager,
+      pollDetails,
       timeHolder,
       chronoBankPlatformEmitter,
       eventsHistory,
