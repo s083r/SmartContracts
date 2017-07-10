@@ -82,7 +82,7 @@ contract PollManager is Vote, PollEmitter {
     function setVotesPercent(uint _percent) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _checkAndEmitError(e).code();
         }
 
         if (_percent > 0 && _percent < 100) {
@@ -126,28 +126,28 @@ contract PollManager is Vote, PollEmitter {
     function activatePoll(uint _pollId) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _checkAndEmitError(e).code();
         }
 
         uint _activePollsCount = store.get(activePollsCount);
-        if (_activePollsCount > ACTIVE_POLLS_MAX) {
+        if (_activePollsCount + 1 > ACTIVE_POLLS_MAX) {
             return _emitError(Errors.E.VOTE_ACTIVE_POLL_LIMIT_REACHED).code();
         }
-        if (store.get(status, _pollId)) {
-            store.set(active, _pollId, true);
-            store.set(activePollsCount, _activePollsCount + 1);
-            _emitPollActivated(_pollId);
-            errorCode = Errors.E.OK.code();
+
+        if (!store.get(status, _pollId)) {
+            return _emitError(Errors.E.VOTE_UNABLE_TO_ACTIVATE_POLL).code();
         }
-        else {
-            errorCode = _emitError(Errors.E.VOTE_UNABLE_TO_ACTIVATE_POLL).code();
-        }
+
+        store.set(active, _pollId, true);
+        store.set(activePollsCount, _activePollsCount + 1);
+        _emitPollActivated(_pollId);
+        return Errors.E.OK.code();
     }
 
     function adminEndPoll(uint _pollId) returns (uint errorCode) {
         Errors.E e = multisig();
         if (Errors.E.OK != e) {
-            return _emitError(e).code();
+            return _checkAndEmitError(e).code();
         }
 
         Errors.E result = endPoll(_pollId);
@@ -160,9 +160,10 @@ contract PollManager is Vote, PollEmitter {
     }
 
     function _checkAndEmitError(Errors.E error) internal returns (Errors.E) {
-        if (error != Errors.E.OK) {
+        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
             return _emitError(error);
         }
+
         return error;
     }
 

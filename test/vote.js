@@ -3,11 +3,13 @@ const bytes32 = require('./helpers/bytes32')
 const bytes32fromBase58 = require('./helpers/bytes32fromBase58')
 const Require = require("truffle-require")
 const Config = require("truffle-config")
+const Q = require("q");
 const eventsHelper = require('./helpers/eventsHelper')
 const Setup = require('../setup/setup')
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const PendingManager = artifacts.require("./PendingManager.sol")
 const ErrorsEnum = require("../common/errors");
+
 
 contract('Vote', function(accounts) {
   const owner = accounts[0];
@@ -21,37 +23,40 @@ contract('Vote', function(accounts) {
   let unix = Math.round(+new Date()/1000);
 
   let createPolls = (count) => {
-    let data = [];
-    for(let i = 0; i < count; i++) {
-      data.push(Setup.vote.manager.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')], bytes32('New Poll1'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000}).then(() => {
-        return Setup.vote.manager.activatePoll(i)
-      }))
+    var chain = Q.when();
+    for(var i = 0; i < count; i++) {
+	       chain = chain.then(function() {
+           return Setup.vote.manager.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')], bytes32('New Poll'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000})
+           .then((r) => r.logs[0] ? r.logs[0].args.pollId : 0)
+           .then((createdPollId) => Setup.vote.manager.activatePoll(createdPollId, {from: owner}))
+	       });
     }
-    return Promise.all(data)
+
+    return Q.all(chain);
   }
 
-  let endPolls = (count) => {
-    let data = [];
-    for(let i = 0; i < count; i++) {
-      data.push(Setup.vote.manager.adminEndPoll(i))
-    }
-    return Promise.all(data)
-  }
-
-  let createPollWithActivePolls = (count, active_count) => {
-    let data = [];
-    for(let i = 0; i < count; i++) {
-      data.push(Setup.vote.manager.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')],bytes32('New Poll1'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000}).then(() => {
-        return Setup.vote.manager.activatePoll(i).then(() => {
-          return Setup.vote.manager.adminEndPoll(i)
-        })
-      }))
-    }
-    for(let i =0; i < active_count; i++) {
-      data.push(Setup.vote.manager.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')],bytes32('New Poll1'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000}));
-    }
-    return Promise.all(data)
-  }
+  // let endPolls = (count) => {
+  //   let data = [];
+  //   for(let i = 0; i < count; i++) {
+  //     data.push(Setup.vote.adminEndPoll(i))
+  //   }
+  //   return Promise.all(data)
+  // }
+  //
+  // let createPollWithActivePolls = (count, active_count) => {
+  //   let data = [];
+  //   for(let i = 0; i < count; i++) {
+  //     data.push(Setup.vote.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')],bytes32('New Poll'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000}).then(() => {
+  //       return Setup.vote.activatePoll(i).then(() => {
+  //         return Setup.vote.adminEndPoll(i)
+  //       })
+  //     }))
+  //   }
+  //   for(let i =0; i < active_count; i++) {
+  //     data.push(Setup.vote.NewPoll([bytes32('1'),bytes32('2')],[bytes32('1'), bytes32('2')],bytes32('New Poll'),bytes32('New Description'),150, unix + 10000, {from: owner, gas:3000000}));
+  //   }
+  //   return Promise.all(data)
+  // }
 
   before('setup', function(done) {
     PendingManager.at(MultiEventsHistory.address).then((instance) => {
@@ -157,7 +162,7 @@ contract('Vote', function(accounts) {
     it("should be able to activate Poll 1", function() {
       return Setup.vote.manager.activatePoll(1, {from: owner}).then(() => {
         return Setup.vote.details.getActivePollsCount.call().then((r) => {
-          assert.equal(r, ErrorsEnum.OK)
+          assert.equal(r, 1)
         })
       })
     })
@@ -330,6 +335,19 @@ contract('Vote', function(accounts) {
       })
     })
 
+    it("Polls count should be equal to active + inactive polls", function() {
+        return Setup.vote.details.getActivePollsCount.call().then((activePollsCount) => {
+          return Setup.vote.details.getInactivePollsCount.call().then((inactivePollsCount) => {
+            return Setup.vote.details.pollsCount.call().then((pollsCount) => {
+              console.log("Active polls count:", activePollsCount);
+              console.log("Inactive polls count:", inactivePollsCount);
+              console.log("Polls count:", pollsCount);
+              assert.isTrue(pollsCount.cmp(activePollsCount.add(inactivePollsCount)) == 0)
+            })
+          })
+        })
+    })
+
     it("shouldn't show Poll 2 as finished", function() {
       return Setup.vote.details.getPoll.call(2).then((r) => {
         console.log(r)
@@ -370,13 +388,14 @@ contract('Vote', function(accounts) {
         assert.equal(r.length,2);
       })
     })
-    
+
     it("shouldn't be able to create more then 20 active Polls", function() {
-      return createPolls(300).then(() => {
+      this.timeout(1000000);
+      return createPolls(199).then(() => {
         return Setup.vote.details.getActivePollsCount.call().then((r) => {
           return Setup.vote.details.getInactivePollsCount.call().then((r2) => {
             assert.equal(r, 20)
-            assert.equal(r2, 281)
+            assert.equal(r2, 181)
           })
         })
       })
@@ -387,7 +406,7 @@ contract('Vote', function(accounts) {
         return Setup.vote.details.getActivePollsCount.call().then((r) => {
           return Setup.vote.details.getInactivePollsCount.call().then((r2) => {
             assert.equal(r, 20)
-            assert.equal(r2, 280)
+            assert.equal(r2, 180)
           })
         })
       })
@@ -398,7 +417,7 @@ contract('Vote', function(accounts) {
         return Setup.vote.details.getActivePollsCount.call().then((r) => {
           return Setup.vote.details.getInactivePollsCount.call().then((r2) => {
             assert.equal(r, 20)
-            assert.equal(r2, 280)
+            assert.equal(r2, 180)
           })
         })
       })
@@ -411,7 +430,7 @@ contract('Vote', function(accounts) {
             return Setup.vote.details.getInactivePollsCount.call().then((r3) => {
               assert.isOk(r)
               assert.equal(r2, 20)
-              assert.equal(r3, 280)
+              assert.equal(r3, 180)
             })
           })
         })
