@@ -18,8 +18,10 @@ const Storage = artifacts.require('./Storage.sol')
 const UserManager = artifacts.require("./UserManager.sol")
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
 const ProxyFactory = artifacts.require("./ProxyFactory.sol")
-const Vote = artifacts.require('./Vote.sol')
 const StorageManager = artifacts.require('StorageManager.sol')
+const VoteActor = artifacts.require("./VoteActor.sol");
+const PollManager = artifacts.require("./PollManager.sol");
+const PollDetails = artifacts.require("./PollDetails.sol");
 
 const contractTypes = {
   LOCManager: 0, // LOCManager
@@ -29,9 +31,10 @@ const contractTypes = {
   ExchangeManager: 4, // ExchangeManager
   TrackersManager: 5, // TrackersManager
   Voting: 6, // Voting
-  Rewards: 7, // Rewards
-  AssetsManager: 8, // AssetsManager
-  TimeHolder: 9 //TimeHolder
+  VotingActor: 7,
+  Rewards: 8, // Rewards
+  AssetsManager: 9, // AssetsManager
+  TimeHolder: 10 //TimeHolder
 }
 
 let storage
@@ -45,13 +48,15 @@ let eventsHistory
 let erc20Manager
 let chronoBankPlatformEmitter
 let rewards
+let voteActor
+let pollManager
+let pollDetails
 let userManager
 let exchangeManager
 let chronoBankAsset
 let chronoBankAssetProxy
 let chronoBankAssetWithFee
 let chronoBankAssetWithFeeProxy
-let vote
 let multiEventsHistory
 let storageManager
 
@@ -96,7 +101,9 @@ var setup = function (callback) {
       ERC20Manager.deployed(),
       ExchangeManager.deployed(),
       Rewards.deployed(),
-      Vote.deployed(),
+      VoteActor.deployed(),
+      PollManager.deployed(),
+      PollDetails.deployed(),
       TimeHolder.deployed(),
       ChronoBankPlatformEmitter.deployed(),
       EventsHistory.deployed(),
@@ -119,7 +126,9 @@ var setup = function (callback) {
       erc20Manager,
       exchangeManager,
       rewards,
-      vote,
+      voteActor,
+      pollManager,
+      pollDetails,
       timeHolder,
       chronoBankPlatformEmitter,
       eventsHistory,
@@ -145,7 +154,7 @@ var setup = function (callback) {
     module.exports.chronoBankAssetProxy = chronoBankAssetProxy
     module.exports.chronoBankAssetWithFee = chronoBankAssetWithFee
     module.exports.chronoBankAssetWithFeeProxy = chronoBankAssetWithFeeProxy
-    module.exports.vote = vote
+    module.exports.vote = { manager: pollManager, details: pollDetails, actor: voteActor }
     module.exports.multiEventsHistory = multiEventsHistory
     module.exports.storageManager = storageManager
   }).then(() => {

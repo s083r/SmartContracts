@@ -11,6 +11,7 @@ contract ContractsManagerInterface {
       ExchangeManager,
       TrackersManager,
       Voting,
+      VotingActor,
       Rewards,
       AssetsManager,
       TimeHolder,

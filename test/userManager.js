@@ -137,6 +137,14 @@ contract('User Manager', function(accounts) {
       });
     });
 
+    it("allows to set own hash", function() {
+      return Setup.userManager.setOwnHash(bytes32("test_hash"), {from:owner}).then(function() {
+        return Setup.userManager.getMemberHash.call(owner).then(function (r) {
+            assert.equal(r, bytes32("test_hash"));
+        })
+      })
+    })
+
     it("pending operation counter should be 0", function() {
       return Setup.shareable.pendingsCount.call({from: owner}).then(function(r) {
         assert.equal(r, 0);

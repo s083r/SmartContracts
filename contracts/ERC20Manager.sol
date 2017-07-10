@@ -350,11 +350,11 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         return e;
     }
 
-    function isTokenExists(address _token) private constant returns (bool) {
-        return store.includes(tokenAddresses,_token);
+    function isTokenExists(address _token) constant returns (bool) {
+        return store.includes(tokenAddresses, _token);
     }
 
     function isTokenSymbolExists(bytes32 _symbol) private constant returns (bool) {
-        return (store.get(tokenBySymbol,_symbol) != address(0));
+        return (store.get(tokenBySymbol, _symbol) != address(0));
     }
 }
