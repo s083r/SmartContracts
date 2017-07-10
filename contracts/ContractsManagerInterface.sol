@@ -11,11 +11,11 @@ contract ContractsManagerInterface {
       ExchangeManager,
       TrackersManager,
       Voting,
-      VotingActor,
       Rewards,
       AssetsManager,
       TimeHolder,
-      CrowdsaleManager
+      CrowdsaleManager,
+      VotingActor
     }
 
     function getContractAddressByType(ContractType _type) constant returns (address contractAddress);
