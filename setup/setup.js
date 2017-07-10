@@ -31,10 +31,11 @@ const contractTypes = {
   ExchangeManager: 4, // ExchangeManager
   TrackersManager: 5, // TrackersManager
   Voting: 6, // Voting
-  VotingActor: 7,
-  Rewards: 8, // Rewards
-  AssetsManager: 9, // AssetsManager
-  TimeHolder: 10 //TimeHolder
+  Rewards: 7, // Rewards
+  AssetsManager: 8, // AssetsManager
+  TimeHolder: 9, //TimeHolder
+  CrowdsaleManager: 10,
+  VotingActor: 11
 }
 
 let storage

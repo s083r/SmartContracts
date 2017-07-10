@@ -261,5 +261,10 @@ contract('ERC20 Manager', function(accounts) {
       });
     });
 
+    it("able to check token existence via public method `isTokenExists`", function() {
+      return Setup.erc20Manager.isTokenExists.call(Setup.erc20Manager.address).then(function(r) {
+        assert.isFalse(r);
+      });
+    });
   });
 });
