@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.29"></a>
+## [1.1.29](https://github.com/ChronoBank/SmartContracts/compare/v1.1.28...v1.1.29) (2017-07-11)
+
+
+
 <a name="1.1.28"></a>
 ## 1.1.28 (2017-07-01)
 
