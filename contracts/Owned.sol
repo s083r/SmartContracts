@@ -10,6 +10,8 @@ contract Owned {
     address public contractOwner;
     address public pendingContractOwner;
 
+    uint constant OK = 1;
+
     function Owned() {
         contractOwner = msg.sender;
     }

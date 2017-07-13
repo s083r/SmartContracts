@@ -3,10 +3,15 @@ pragma solidity ^0.4.8;
 import "./UserManagerInterface.sol";
 import "./Managed.sol";
 import "./PendingManagerEmitter.sol";
-import "./Errors.sol";
 
 contract PendingManager is Managed, PendingManagerEmitter {
-    using Errors for Errors.E;
+
+    uint constant ERROR_PENDING_NOT_FOUND = 4000;
+    uint constant ERROR_PENDING_INVALID_INVOCATION = 4001;
+    uint constant ERROR_PENDING_ADD_CONTRACT = 4002;
+    uint constant ERROR_PENDING_DUPLICATE_TX = 4003;
+    uint constant ERROR_PENDING_CANNOT_CONFIRM = 4004;
+    uint constant ERROR_PENDING_PREVIOUSLY_CONFIRMED = 4005;
 
     // TYPES
     StorageInterface.Set txHashes;
@@ -29,28 +34,28 @@ contract PendingManager is Managed, PendingManagerEmitter {
 
     // METHODS
 
-    function init(address _contractsManager) returns (uint) {
+    function init(address _contractsManager) returns (uint errorCode) {
         if (store.get(contractsManager) != 0x0) {
-            return Errors.E.PENDING_INVALID_INVOCATION.code();
+            return ERROR_PENDING_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.PendingManager);
-        if (Errors.E.OK != e) {
-            return e.code();
+        errorCode = ContractsManagerInterface(_contractsManager).addContract(this, bytes32("PendingManager"));
+        if (OK != errorCode) {
+            return errorCode;
         }
 
         store.set(contractsManager, _contractsManager);
 
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return Errors.E.PENDING_INVALID_INVOCATION.code();
+            return ERROR_PENDING_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function pendingsCount() constant returns (uint) {
@@ -84,12 +89,12 @@ contract PendingManager is Managed, PendingManagerEmitter {
     }
 
     function getUserManager() constant returns (address) {
-        return ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.UserManager);
+        return ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("UserManager"));
     }
 
-    function addTx(bytes32 _hash, bytes _data, address _to, address _sender) onlyAuthorizedContract(_sender) returns (Errors.E) {
+    function addTx(bytes32 _hash, bytes _data, address _to, address _sender) onlyAuthorizedContract(_sender) returns (uint errorCode) {
         if (store.includes(txHashes, _hash)) {
-            return _emitError(Errors.E.PENDING_DUPLICATE_TX);
+            return _emitError(ERROR_PENDING_DUPLICATE_TX);
         }
 
         store.add(txHashes, _hash);
@@ -99,31 +104,31 @@ contract PendingManager is Managed, PendingManagerEmitter {
         store.set(yetNeeded, _hash, UserManagerInterface(userManager).required());
         store.set(timestamp, _hash, now);
 
-        Errors.E result = conf(_hash, _sender);
-        return _checkAndEmitError(result);
+        errorCode = conf(_hash, _sender);
+        return _checkAndEmitError(errorCode);
     }
 
-    function confirm(bytes32 _hash) external returns (uint errorCode) {
-        Errors.E result = conf(_hash, msg.sender);
-        errorCode = _checkAndEmitError(result).code();
+    function confirm(bytes32 _hash) external returns (uint) {
+        uint errorCode = conf(_hash, msg.sender);
+        return _checkAndEmitError(errorCode);
     }
 
-    function conf(bytes32 _hash, address _sender) internal returns (Errors.E) {
-        Errors.E e = confirmAndCheck(_hash, _sender);
-        if (Errors.E.OK != e) {
-            return e;
+    function conf(bytes32 _hash, address _sender) internal returns (uint errorCode) {
+        errorCode = confirmAndCheck(_hash, _sender);
+        if (OK != errorCode) {
+            return errorCode;
         }
 
         if (store.get(to, _hash) == 0) {
-            return Errors.E.PENDING_NOT_FOUND;
+            return ERROR_PENDING_NOT_FOUND;
         }
 
         if (!store.get(to, _hash).call(data[_hash])) {
-            return Errors.E.PENDING_CANNOT_CONFIRM;
+            return ERROR_PENDING_CANNOT_CONFIRM;
         }
 
         deleteTx(_hash);
-        return Errors.E.OK;
+        return OK;
     }
 
     // revokes a prior confirmation of the given operation
@@ -131,7 +136,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
         address userManager = getUserManager();
         uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(msg.sender);
         if (store.get(ownersDone, _hash) & ownerIndexBit <= 0) {
-            errorCode = _emitError(Errors.E.PENDING_NOT_FOUND).code();
+            errorCode = _emitError(ERROR_PENDING_NOT_FOUND);
             return errorCode;
         }
 
@@ -143,7 +148,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
             _emitCancelled(_hash);
         }
 
-        errorCode = Errors.E.OK.code();
+        errorCode = OK;
     }
 
     function hasConfirmed(bytes32 _hash, address _owner) onlyAuthorizedContract(_owner) constant returns (bool) {
@@ -156,20 +161,20 @@ contract PendingManager is Managed, PendingManagerEmitter {
 
     // INTERNAL METHODS
 
-    function confirmAndCheck(bytes32 _hash, address _sender) internal onlyAuthorizedContract(_sender) returns (Errors.E) {
+    function confirmAndCheck(bytes32 _hash, address _sender) internal onlyAuthorizedContract(_sender) returns (uint) {
         // determine the bit to set for this owner
         address userManager = getUserManager();
         uint ownerIndexBit = 2 ** UserManagerInterface(userManager).getMemberId(_sender);
         // make sure we (the message sender) haven't confirmed this operation previously
         if (store.get(ownersDone, _hash) & ownerIndexBit != 0) {
-            return Errors.E.PENDING_PREVIOUSLY_CONFIRMED;
+            return ERROR_PENDING_PREVIOUSLY_CONFIRMED;
         }
 
         // ok - check if count is enough to go ahead
         if (store.get(yetNeeded, _hash) <= 1) {
             // enough confirmations: reset and run interior
             _emitDone(_hash, data[_hash], now);
-            return Errors.E.OK;
+            return OK;
         } else {
             // not enough: record that this owner in particular confirmed
             store.set(yetNeeded, _hash, store.get(yetNeeded, _hash) - 1);
@@ -177,7 +182,7 @@ contract PendingManager is Managed, PendingManagerEmitter {
             _ownersDone |= ownerIndexBit;
             store.set(ownersDone, _hash, _ownersDone);
             _emitConfirmation(_sender, _hash);
-            return Errors.E.MULTISIG_ADDED;
+            return MULTISIG_ADDED;
         }
     }
 
@@ -216,22 +221,21 @@ contract PendingManager is Managed, PendingManagerEmitter {
         PendingManager(getEventsHistory()).emitDone(hash, data, timestamp);
     }
 
-    function _emitError(Errors.E error) internal returns (Errors.E) {
-        PendingManager(getEventsHistory()).emitError(error.code());
+    function _emitError(uint error) internal returns (uint) {
+        PendingManager(getEventsHistory()).emitError(error);
 
         return error;
     }
 
-    function _checkAndEmitError(Errors.E error) internal returns (Errors.E)  {
-        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
+    function _checkAndEmitError(uint error) internal returns (uint)  {
+        if (error != OK && error != MULTISIG_ADDED) {
             return _emitError(error);
         }
 
         return error;
     }
 
-    function()
-    {
+    function() {
         throw;
     }
 }

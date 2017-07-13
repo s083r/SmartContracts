@@ -1,10 +1,8 @@
 pragma solidity ^0.4.8;
 
 import './MultiEventsHistoryAdapter.sol';
-import "./Errors.sol";
 
 contract RewardsEmitter is MultiEventsHistoryAdapter {
-    using Errors for Errors.E;
 
     event WithdrawnSuccess(address addr, uint amount, uint total);
     event WithdrawnRewardSuccess(address asset, address addr, uint amountReward);
@@ -33,7 +31,7 @@ contract RewardsEmitter is MultiEventsHistoryAdapter {
         AssetRegistered(assetAddress);
     }
 
-    function emitError(Errors.E e) {
-        Error(_self(), e.code());
+    function emitError(uint error) {
+        Error(_self(), error);
     }
 }

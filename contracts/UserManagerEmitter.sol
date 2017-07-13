@@ -1,10 +1,8 @@
 pragma solidity ^0.4.8;
 
 import './MultiEventsHistoryAdapter.sol';
-import './Errors.sol';
 
 contract UserManagerEmitter is MultiEventsHistoryAdapter {
-    using Errors for Errors.E;
 
     event NewUserRegistered(address indexed self, address key);
     event CBEUpdate(address indexed self, address key);
@@ -28,7 +26,7 @@ contract UserManagerEmitter is MultiEventsHistoryAdapter {
         SetHash(_self(), key, oldHash, newHash);
     }
 
-    function emitError(Errors.E e) {
-        Error(_self(), e.code());
+    function emitError(uint error) {
+        Error(_self(), error);
     }
 }

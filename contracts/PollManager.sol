@@ -2,7 +2,6 @@ pragma solidity ^0.4.11;
 
 import "./Vote.sol";
 import "./PollEmitter.sol";
-import "./Errors.sol";
 import {TimeHolderInterface as TimeHolder} from "./TimeHolderInterface.sol";
 
 contract PollManager is Vote, PollEmitter {
@@ -18,28 +17,28 @@ contract PollManager is Vote, PollEmitter {
     function init(address _contractsManager) returns (uint) {
         address contractsManagerAddress = store.get(contractsManager);
         if (contractsManagerAddress != 0x0 && contractsManagerAddress != _contractsManager) {
-            return Errors.E.VOTE_INVALID_INVOCATION.code();
+            return ERROR_VOTE_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.Voting);
-        if (Errors.E.OK != e) {
-            return e.code();
+        uint e = ContractsManagerInterface(_contractsManager).addContract(this, bytes32("Voting"));
+        if (OK != e) {
+            return e;
         }
 
         store.set(contractsManager, _contractsManager);
         store.set(sharesPercent, DEFAULT_SHARES_PERCENT);
 
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function getVoteLimit() constant returns (uint) {
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
         return TimeHolder(timeHolder).totalSupply() / 10000 * store.get(sharesPercent);
     }
 
     function NewPoll(bytes32[16] _options, bytes32[4] _ipfsHashes, bytes32 _title, bytes32 _description, uint _votelimit, uint _deadline) returns (uint errorCode) {
         if (_votelimit > getVoteLimit()) {
-            return _emitError(Errors.E.VOTE_LIMIT_EXCEEDED).code();
+            return _emitError(ERROR_VOTE_LIMIT_EXCEEDED);
         }
 
         uint prevId = store.get(pollsIdCounter);
@@ -66,41 +65,41 @@ contract PollManager is Vote, PollEmitter {
         }
         store.add(polls, id);
         _emitPollCreated(id);
-        errorCode = Errors.E.OK.code();
+        errorCode = OK;
     }
 
     function addIpfsHashToPoll(uint _id, bytes32 _hash) onlyCreator(_id) returns (uint errorCode) {
         if (store.count(ipfsHashes, bytes32(_id)) >= IPFS_HASH_POLLS_MAX) {
-            return _emitError(Errors.E.VOTE_POLL_LIMIT_REACHED).code();
+            return _emitError(ERROR_VOTE_POLL_LIMIT_REACHED);
         }
 
         store.add(ipfsHashes, bytes32(_id), _hash);
         _emitIpfsHashToPollAdded(_id, _hash, store.count(ipfsHashes, bytes32(_id)));
-        errorCode = Errors.E.OK.code();
+        errorCode = OK;
     }
 
     function setVotesPercent(uint _percent) returns (uint errorCode) {
-        Errors.E e = multisig();
-        if (Errors.E.OK != e) {
-            return _checkAndEmitError(e).code();
+        uint e = multisig();
+        if (OK != e) {
+            return _checkAndEmitError(e);
         }
 
         if (_percent > 0 && _percent < 100) {
             store.set(sharesPercent, _percent);
             _emitSharesPercentUpdated();
-            errorCode = Errors.E.OK.code();
+            errorCode = OK;
         }
         else {
-            errorCode = _emitError(Errors.E.VOTE_INVALID_PARAMETER).code();
+            errorCode = _emitError(ERROR_VOTE_INVALID_PARAMETER);
         }
     }
 
     function removePoll(uint _pollId) onlyAuthorized returns (uint errorCode) {
         if (!store.get(active, _pollId) && store.get(status, _pollId) && store.includes(polls, _pollId)) {
-            errorCode = deletePoll(_pollId).code();
+            errorCode = deletePoll(_pollId);
         }
         else {
-            errorCode = _emitError(Errors.E.VOTE_INVALID_PARAMETER).code();
+            errorCode = _emitError(ERROR_VOTE_INVALID_PARAMETER);
         }
     }
 
@@ -113,54 +112,54 @@ contract PollManager is Vote, PollEmitter {
                 deletePoll(pollId);
             }
         }
-        return Errors.E.OK.code();
+        return OK;
     }
 
-    function deletePoll(uint _pollId) internal returns (Errors.E) {
+    function deletePoll(uint _pollId) internal returns (uint) {
         store.remove(polls, _pollId);
         // TODO: how to deal with hashes
         _emitPollDeleted(_pollId);
-        return Errors.E.OK;
+        return OK;
     }
 
     function activatePoll(uint _pollId) returns (uint errorCode) {
-        Errors.E e = multisig();
-        if (Errors.E.OK != e) {
-            return _checkAndEmitError(e).code();
+        uint e = multisig();
+        if (OK != e) {
+            return _checkAndEmitError(e);
         }
 
         uint _activePollsCount = store.get(activePollsCount);
         if (_activePollsCount + 1 > ACTIVE_POLLS_MAX) {
-            return _emitError(Errors.E.VOTE_ACTIVE_POLL_LIMIT_REACHED).code();
+            return _emitError(ERROR_VOTE_ACTIVE_POLL_LIMIT_REACHED);
         }
 
         if (!store.get(status, _pollId)) {
-            return _emitError(Errors.E.VOTE_UNABLE_TO_ACTIVATE_POLL).code();
+            return _emitError(ERROR_VOTE_UNABLE_TO_ACTIVATE_POLL);
         }
 
         store.set(active, _pollId, true);
         store.set(activePollsCount, _activePollsCount + 1);
         _emitPollActivated(_pollId);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function adminEndPoll(uint _pollId) returns (uint errorCode) {
-        Errors.E e = multisig();
-        if (Errors.E.OK != e) {
-            return _checkAndEmitError(e).code();
+        uint e = multisig();
+        if (OK != e) {
+            return _checkAndEmitError(e);
         }
 
-        Errors.E result = endPoll(_pollId);
-        errorCode = _checkAndEmitError(result).code();
+        uint result = endPoll(_pollId);
+        errorCode = _checkAndEmitError(result);
     }
 
-    function _emitError(Errors.E error) internal returns (Errors.E) {
-        PollManager(getEventsHistory()).emitError(error.code());
+    function _emitError(uint error) internal returns (uint) {
+        PollManager(getEventsHistory()).emitError(error );
         return error;
     }
 
-    function _checkAndEmitError(Errors.E error) internal returns (Errors.E) {
-        if (error != Errors.E.OK && error != Errors.E.MULTISIG_ADDED) {
+    function _checkAndEmitError(uint error) internal returns (uint) {
+        if (error != OK && error != MULTISIG_ADDED) {
             return _emitError(error);
         }
 

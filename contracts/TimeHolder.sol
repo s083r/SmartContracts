@@ -5,10 +5,16 @@ import "./Owned.sol";
 import "./ListenerInterface.sol";
 import "./ContractsManagerInterface.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
-import "./Errors.sol";
 
 contract TimeHolder is Owned, TimeHolderEmmiter {
-    using Errors for Errors.E;
+
+    uint constant ERROR_TIMEHOLDER_ALREADY_ADDED = 12000;
+    uint constant ERROR_TIMEHOLDER_INVALID_INVOCATION = 12001;
+    uint constant ERROR_TIMEHOLDER_INVALID_STATE = 12002;
+    uint constant ERROR_TIMEHOLDER_TRANSFER_FAILED = 12003;
+    uint constant ERROR_TIMEHOLDER_WITHDRAWN_FAILED = 12004;
+    uint constant ERROR_TIMEHOLDER_DEPOSIT_FAILED = 12005;
+    uint constant ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE = 12006;
 
     mapping(address => uint) public shares;
     mapping(uint => address)  public shareholders;
@@ -36,32 +42,32 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
      */
     function init(address _contractsManager, Asset _sharesContract) returns (uint) {
         if(contractsManager != 0x0) {
-            return Errors.E.TIMEHOLDER_INVALID_INVOCATION.code();
+            return ERROR_TIMEHOLDER_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this,ContractsManagerInterface.ContractType.TimeHolder);
-        if(Errors.E.OK != e) {
-            return e.code();
+        uint e = ContractsManagerInterface(_contractsManager).addContract(this,bytes32("TimeHolder"));
+        if(OK != e) {
+            return e;
         }
 
         contractsManager = _contractsManager;
         sharesContract = _sharesContract;
 
-        return Errors.E.OK.code();
+        return OK;
     }
 /*
     function setupEventsHistory(address _eventsHistory) onlyContractOwner returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return Errors.E.TIMEHOLDER_INVALID_INVOCATION.code();
+            return ERROR_TIMEHOLDER_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
-        return Errors.E.OK.code();
+        return OK;
     }*/
 
     function addListener(address _listener) onlyContractOwner returns (uint) {
         if(listenerIndex[_listener] != uint(0x0)) {
-            return _emitError(Errors.E.TIMEHOLDER_INVALID_INVOCATION).code();
+            return _emitError(ERROR_TIMEHOLDER_INVALID_INVOCATION);
         }
 
         ListenerInterface(_listener).deposit(this,0,0);
@@ -71,7 +77,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         listenersCount++;
 
         _emitListenerAdded(_listener);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -106,7 +112,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
      */
     function depositFor(address _address, uint _amount) returns (uint) {
         if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
-            return _emitError(Errors.E.TIMEHOLDER_TRANSFER_FAILED).code();
+            return _emitError(ERROR_TIMEHOLDER_TRANSFER_FAILED);
         }
 
         if(shareholdersId[_address] == 0) {
@@ -119,13 +125,13 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         uint errorCode;
         for(uint i = 1; i < listenersCount; i++) {
             errorCode = ListenerInterface(listeners[i]).deposit(_address, _amount, shares[_address]);
-            if (Errors.E.OK.code() != errorCode) {
-                _emitError(Errors.E.TIMEHOLDER_DEPOSIT_FAILED);
+            if (OK != errorCode) {
+                _emitError(ERROR_TIMEHOLDER_DEPOSIT_FAILED);
             }
         }
 
         _emitDeposit(_address, _amount);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -139,7 +145,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         // Provide latest possesion proof.
         //deposit(0);
         if (_amount > shares[msg.sender]) {
-            return _emitError(Errors.E.TIMEHOLDER_INSUFFICIENT_BALANCE).code();
+            return _emitError(ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE);
         }
 
         shares[msg.sender] -= _amount;
@@ -148,8 +154,8 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         uint errorCode;
         for(uint i = 1; i < listenersCount; i++) {
             errorCode = ListenerInterface(listeners[i]).withdrawn(msg.sender, _amount, shares[msg.sender]);
-            if (Errors.E.OK.code() != errorCode) {
-                _emitError(Errors.E.TIMEHOLDER_WITHDRAWN_FAILED);
+            if (OK != errorCode) {
+                _emitError(ERROR_TIMEHOLDER_WITHDRAWN_FAILED);
             }
         }
 
@@ -158,7 +164,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         }
 
         _emitWithdrawShares(msg.sender, _amount);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -191,7 +197,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         emitListenerAdded(listener);
     }
 
-    function _emitError(Errors.E e) private returns (Errors.E){
+    function _emitError(uint e) private returns (uint) {
         //TimeHolder(getEventsHistory()).emitError(e);
         emitError(e);
         return e;

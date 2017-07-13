@@ -1,23 +1,6 @@
 pragma solidity ^0.4.11;
 
-import "./Errors.sol";
-
 contract ContractsManagerInterface {
-    enum ContractType {
-      LOCManager,
-      PendingManager,
-      UserManager,
-      ERC20Manager,
-      ExchangeManager,
-      TrackersManager,
-      Voting,
-      Rewards,
-      AssetsManager,
-      TimeHolder,
-      CrowdsaleManager,
-      VotingActor
-    }
-
-    function getContractAddressByType(ContractType _type) constant returns (address contractAddress);
-    function addContract(address _contractAddr, ContractType _type) returns (Errors.E);
+    function getContractAddressByType(bytes32 _type) constant returns (address contractAddress);
+    function addContract(address _contractAddr, bytes32 _type) returns (uint);
 }

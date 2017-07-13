@@ -3,10 +3,8 @@ pragma solidity ^0.4.11;
 import "./Managed.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 import "./ERC20ManagerEmitter.sol";
-import "./Errors.sol";
 
 contract ERC20Manager is Managed, ERC20ManagerEmitter {
-    using Errors for Errors.E;
 
     event LogAddToken(
     address token,
@@ -44,6 +42,14 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     event LogTokenIpfsHashChange(address token, bytes32 oldIpfsHash, bytes32 newIpfsHash);
     event LogTokenSwarmHashChange(address token, bytes32 oldSwarmHash, bytes32 newSwarmHash);
 
+    uint constant ERROR_ERCMANAGER_INVALID_INVOCATION = 13000;
+    uint constant ERROR_ERCMANAGER_INVALID_STATE = 13001;
+    uint constant ERROR_ERCMANAGER_TOKEN_SYMBOL_NOT_EXISTS = 13002;
+    uint constant ERROR_ERCMANAGER_TOKEN_NOT_EXISTS = 13003;
+    uint constant ERROR_ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS = 13004;
+    uint constant ERROR_ERCMANAGER_TOKEN_ALREADY_EXISTS = 13005;
+    uint constant ERROR_ERCMANAGER_TOKEN_UNCHANGED = 13006;
+
     StorageInterface.AddressesSet tokenAddresses;
     StorageInterface.Bytes32AddressMapping tokenBySymbol;
     StorageInterface.AddressBytes32Mapping name;
@@ -66,26 +72,26 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
 
     function init(address _contractsManager) returns (uint) {
         if(store.get(contractsManager) != 0x0) {
-            return Errors.E.ERCMANAGER_INVALID_INVOCATION.code();
+            return ERROR_ERCMANAGER_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager)
-                .addContract(this,ContractsManagerInterface.ContractType.ERC20Manager);
-        if(Errors.E.OK != e) {
-            return e.code();
+        uint e = ContractsManagerInterface(_contractsManager)
+                .addContract(this, bytes32("ERC20Manager"));
+        if(OK != e) {
+            return e;
         }
 
         store.set(contractsManager,_contractsManager);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return Errors.E.ERCMANAGER_INVALID_INVOCATION.code();
+            return ERROR_ERCMANAGER_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /// @dev Allows owner to add a new token to the registry.
@@ -106,11 +112,11 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         bytes32 _swarmHash)
     returns (uint) {
         if (isTokenExists(_token)) {
-            return _emitError(Errors.E.ERCMANAGER_TOKEN_ALREADY_EXISTS).code();
+            return _emitError(ERROR_ERCMANAGER_TOKEN_ALREADY_EXISTS);
         }
 
         if (isTokenSymbolExists(_symbol)) {
-            return _emitError(Errors.E.ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS).code();
+            return _emitError(ERROR_ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS);
         }
 
         Asset(_token).totalSupply();
@@ -124,7 +130,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         store.set(swarmHash,_token,_swarmHash);
 
         LogAddToken(_token, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function setToken(
@@ -141,7 +147,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     returns (uint)
     {
         if (!isTokenExists(_token)) {
-            return _emitError(Errors.E.ERCMANAGER_TOKEN_NOT_EXISTS).code();
+            return _emitError(ERROR_ERCMANAGER_TOKEN_NOT_EXISTS);
         }
 
         bool changed;
@@ -157,7 +163,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
                 }
                 changed = true;
             } else {
-                return _emitError(Errors.E.ERCMANAGER_TOKEN_UNCHANGED).code();
+                return _emitError(ERROR_ERCMANAGER_TOKEN_UNCHANGED);
             }
         }
         if(_token != _newToken) {
@@ -200,17 +206,17 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
 
         if(changed) {
             LogAddToken(_newToken, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
-            return Errors.E.OK.code();
+            return OK;
         }
 
-        return _emitError(Errors.E.ERCMANAGER_TOKEN_UNCHANGED).code();
+        return _emitError(ERROR_ERCMANAGER_TOKEN_UNCHANGED);
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
     /// @param _token Address of existing token.
     function removeToken(address _token) onlyAuthorized returns (uint) {
         if (!isTokenExists(_token)) {
-            return _emitError(Errors.E.ERCMANAGER_TOKEN_NOT_EXISTS).code();
+            return _emitError(ERROR_ERCMANAGER_TOKEN_NOT_EXISTS);
         }
 
         return removeTokenInt(_token);
@@ -220,7 +226,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     /// @param _symbol Symbol of existing token.
     function removeTokenBySymbol(bytes32 _symbol) onlyAuthorized returns (uint) {
         if (!isTokenSymbolExists(_symbol)) {
-            return _emitError(Errors.E.ERCMANAGER_TOKEN_SYMBOL_NOT_EXISTS).code();
+            return _emitError(ERROR_ERCMANAGER_TOKEN_SYMBOL_NOT_EXISTS);
         }
 
         return removeTokenInt(store.get(tokenBySymbol,_symbol));
@@ -241,7 +247,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
 
         store.set(tokenBySymbol,store.get(symbol,_token),address(0));
         store.remove(tokenAddresses,_token);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /// @dev Provides a registered token's address when given the token symbol.
@@ -345,7 +351,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         return store.get(tokenAddresses);
     }
 
-    function _emitError(Errors.E e) private returns (Errors.E)  {
+    function _emitError(uint e) private returns (uint)   {
         ERC20Manager(getEventsHistory()).emitError(e);
         return e;
     }

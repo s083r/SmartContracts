@@ -4,27 +4,27 @@ import "./Managed.sol";
 import "./ExchangeInterface.sol";
 import "./OwnedInterface.sol";
 import "./ContractsManagerInterface.sol";
-import "./Errors.sol";
 
 /**
 *  @title ContractsManager
 */
 contract ContractsManager is Managed, ContractsManagerInterface {
-    using Errors for Errors.E;
+    uint constant ERROR_CONTRACT_EXISTS = 10000;
+    uint constant ERROR_CONTRACT_NOT_EXISTS = 10001;
 
     StorageInterface.AddressesSet contractsAddresses;
-    StorageInterface.UIntAddressMapping contractsTypes;
+    StorageInterface.Bytes32AddressMapping contractsTypes;
 
     /**
     *  @dev Contract metadata struct
     */
     struct ContractMetadata {
         address contractAddr;
-        ContractType tp;
+        bytes32 tp;
     }
 
-    event LogAddContract(address indexed contractAddress, ContractType t);
-    event LogContractAddressChange(address indexed contractAddress, ContractType t);
+    event LogAddContract(address indexed contractAddress, bytes32 t);
+    event LogContractAddressChange(address indexed contractAddress, bytes32 t);
     event Error(address indexed self, uint errorCode);
 
     /**
@@ -43,7 +43,7 @@ contract ContractsManager is Managed, ContractsManagerInterface {
     */
     function init() returns (uint) {
         store.set(contractsManager,this);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -58,8 +58,8 @@ contract ContractsManager is Managed, ContractsManagerInterface {
     *   @dev Returns a contracts address by given type.
     *   @return contractAddress
     */
-    function getContractAddressByType(ContractType _type) constant returns (address contractAddress) {
-        return store.get(contractsTypes,uint(_type));
+    function getContractAddressByType(bytes32 _type) constant returns (address contractAddress) {
+        return store.get(contractsTypes, _type);
     }
 
     /**
@@ -71,16 +71,16 @@ contract ContractsManager is Managed, ContractsManagerInterface {
     *  @return result code, 1 if success, otherwise error code
     *  TODO: AG UNAUTHORIZED ACCESS
     */
-    function addContract(address _contract, ContractType _type) returns (Errors.E) {
+    function addContract(address _contract, bytes32 _type) returns (uint) {
         if (isExists(_contract)) {
-            return emitError(Errors.E.CONTRACT_EXISTS);
+            return emitError(ERROR_CONTRACT_EXISTS);
         }
 
         store.add(contractsAddresses, _contract);
-        store.set(contractsTypes,uint(_type), _contract);
+        store.set(contractsTypes, _type, _contract);
 
         LogAddContract(_contract, _type);
-        return Errors.E.OK;
+        return OK;
     }
 
     /**
@@ -90,16 +90,16 @@ contract ContractsManager is Managed, ContractsManagerInterface {
     *
     *  @return result code, 1 if success, otherwise error code
     */
-    function setContractAddress(address _newAddr, ContractType _type) onlyAuthorized() returns (uint) {
+    function setContractAddress(address _newAddr, bytes32 _type) onlyAuthorized() returns (uint) {
         if (isExists(_newAddr)) {
-            return emitError(Errors.E.CONTRACT_EXISTS).code();
+            return emitError(ERROR_CONTRACT_EXISTS);
         }
 
-        store.set(contractsTypes, uint(_type), _newAddr);
-        store.set(contractsAddresses, store.get(contractsTypes, uint(_type)), _newAddr);
+        store.set(contractsTypes, _type, _newAddr);
+        store.set(contractsAddresses, store.get(contractsTypes, _type), _newAddr);
 
         LogContractAddressChange(_newAddr, _type);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -114,8 +114,8 @@ contract ContractsManager is Managed, ContractsManagerInterface {
     /**
     *  @dev Util function which throws error event with a given error
     */
-    function emitError(Errors.E e) private returns (Errors.E) {
-        Error(msg.sender, e.code());
+    function emitError(uint e) private returns (uint)  {
+        Error(msg.sender, e);
         return e;
     }
 

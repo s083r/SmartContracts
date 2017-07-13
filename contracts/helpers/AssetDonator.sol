@@ -34,7 +34,7 @@ contract AssetDonator {
         }
 
         address assetManager = ContractsManagerInterface(contractManager)
-              .getContractAddressByType(ContractsManagerInterface.ContractType.AssetsManager);
+              .getContractAddressByType(bytes32("AssetsManager"));
 
         if (!AssetsManager(assetManager).sendAsset(bytes32("TIME"), msg.sender, 1000000000)) {
             return false;

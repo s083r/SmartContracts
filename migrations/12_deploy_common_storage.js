@@ -1,6 +1,7 @@
 const Storage = artifacts.require('./Storage.sol');
 const StorageInterface = artifacts.require('./StorageInterface.sol');
 const StorageManager = artifacts.require('./StorageManager.sol');
+const MultiEventsHistory = artifacts.require("./MultiEventsHistory.sol");
 
 module.exports = function(deployer, network) {
     deployer.deploy(Storage)
@@ -8,5 +9,10 @@ module.exports = function(deployer, network) {
       .then(() => deployer.deploy(StorageManager))
       .then(() => Storage.deployed())
       .then((_storage) => _storage.setManager(StorageManager.address))
+      .then(() => StorageManager.deployed())
+      .then((_storageManager) => storageManager = _storageManager)
+      .then(() => storageManager.setupEventsHistory(MultiEventsHistory.address))
+      .then(() => MultiEventsHistory.deployed())
+      .then(_history => _history.authorize(storageManager.address))
       .then(() => console.log("[MIGRATION] [12] Storage Contracts: #done"))
 }

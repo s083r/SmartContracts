@@ -7,10 +7,14 @@ import {ERC20ManagerInterface as ERC20Manager} from "./ERC20ManagerInterface.sol
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 import {ContractsManagerInterface as ContractsManager} from "./ContractsManagerInterface.sol";
 import "./ExchangeManagerEmitter.sol";
-import "./Errors.sol";
 
 contract ExchangeManager is Managed, ExchangeManagerEmitter {
-    using Errors for Errors.E;
+  // Exchange Manager errors
+    uint constant ERROR_EXCHANGE_STOCK_NOT_FOUND = 7000;
+    uint constant ERROR_EXCHANGE_STOCK_INVALID_PARAMETER = 7001;
+    uint constant ERROR_EXCHANGE_STOCK_INVALID_INVOCATION = 7002;
+    uint constant ERROR_EXCHANGE_STOCK_ADD_CONTRACT = 7003;
+    uint constant ERROR_EXCHANGE_STOCK_UNABLE_CREATE_EXCHANGE = 7004;
 
     address[] public exchanges;
     mapping (address => address[]) owners;
@@ -38,26 +42,27 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
 
     function init(address _contractsManager) returns (uint) {
         if (store.get(contractsManager) != 0x0) {
-            return Errors.E.EXCHANGE_STOCK_INVALID_INVOCATION.code();
+            return ERROR_EXCHANGE_STOCK_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.ExchangeManager);
-        if (Errors.E.OK != e) {
-            return Errors.E.EXCHANGE_STOCK_ADD_CONTRACT.code();
+        uint e = ContractsManagerInterface(_contractsManager)
+                  .addContract(this, bytes32("ExchangeManager"));
+        if (OK != e) {
+            return ERROR_EXCHANGE_STOCK_ADD_CONTRACT;
         }
 
         store.set(contractsManager, _contractsManager);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return Errors.E.EXCHANGE_STOCK_INVALID_INVOCATION.code();
+            return ERROR_EXCHANGE_STOCK_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
 
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function forward(address _exchange, bytes data) onlyExchangeOwner(_exchange) returns (uint errorCode) {
@@ -65,7 +70,7 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
             throw;
         }
 
-        errorCode = Errors.E.OK.code();
+        errorCode = OK;
     }
 
     function addExchange(address _exchange) returns (uint errorCode) {
@@ -75,9 +80,9 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
             exchanges.push(_exchange);
             owners[_exchange].push(msg.sender);
             _emitExchangeAdded(msg.sender, _exchange, exchanges.length);
-            errorCode = Errors.E.OK.code();
+            errorCode = OK;
         } else {
-            errorCode = _emitError(Errors.E.EXCHANGE_STOCK_INVALID_PARAMETER).code();
+            errorCode = _emitError(ERROR_EXCHANGE_STOCK_INVALID_PARAMETER);
         }
     }
 
@@ -87,11 +92,11 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
                 exchanges[i] = _exchangeNew;
                 exchanges.length -= 1;
                 _emitExchangeEdited(msg.sender, _exchangeOld, _exchangeNew);
-                return Errors.E.OK.code();
+                return OK;
             }
         }
 
-        errorCode = _emitError(Errors.E.EXCHANGE_STOCK_NOT_FOUND).code();
+        errorCode = _emitError(ERROR_EXCHANGE_STOCK_NOT_FOUND);
     }
 
     function removeExchange(address _exchange) onlyExchangeOwner(_exchange) returns (uint errorCode) {
@@ -104,17 +109,17 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
         }
         delete owners[_exchange];
         _emitExchangeRemoved(msg.sender, _exchange);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function createExchange(bytes32 _symbol, bool _useTicker) returns (uint errorCode) {
         address _contractsManager = store.get(contractsManager);
-        address _erc20Manager = ContractsManager(_contractsManager).getContractAddressByType(ContractsManager.ContractType.ERC20Manager);
+        address _erc20Manager = ContractsManager(_contractsManager).getContractAddressByType(bytes32("ERC20Manager"));
         address tokenAddr = ERC20Manager(_erc20Manager).getTokenAddressBySymbol(_symbol);
-        address rewards = ContractsManager(_contractsManager).getContractAddressByType(ContractsManager.ContractType.Rewards);
+        address rewards = ContractsManager(_contractsManager).getContractAddressByType(bytes32("Rewards"));
 
         if (tokenAddr == 0x0 || rewards == 0x0) {
-            return _emitError(Errors.E.EXCHANGE_STOCK_UNABLE_CREATE_EXCHANGE).code();
+            return _emitError(ERROR_EXCHANGE_STOCK_UNABLE_CREATE_EXCHANGE);
         }
 
         address exchangeAddr = new Exchange();
@@ -128,23 +133,23 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
         owners[exchangeAddr].push(msg.sender);
 
         _emitExchangeCreated(msg.sender, exchangeAddr, exchanges.length);
-        errorCode = Errors.E.OK.code();
+        errorCode = OK;
     }
 
     function addExchangeOwner(address _exchange, address _owner) onlyExchangeOwner(_exchange) returns (uint errorCode) {
         for (uint i = 0; i < owners[_exchange].length; i++) {
             if (owners[_exchange][i] == _owner) {
-                return _emitError(Errors.E.EXCHANGE_STOCK_INVALID_PARAMETER).code();
+                return _emitError(ERROR_EXCHANGE_STOCK_INVALID_PARAMETER);
             }
         }
         owners[_exchange].push(_owner);
         _emitExchangeOwnerAdded(msg.sender, _owner, _exchange);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function removeExchangeOwner(address _exchange, address _owner) onlyExchangeOwner(_exchange) returns (uint errorCode) {
         if (_owner == msg.sender) {
-            return _emitError(Errors.E.EXCHANGE_STOCK_INVALID_PARAMETER).code();
+            return _emitError(ERROR_EXCHANGE_STOCK_INVALID_PARAMETER);
         }
 
         for (uint i = 0; i < owners[_exchange].length; i++) {
@@ -152,11 +157,11 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
                 owners[_exchange][i] = owners[_exchange][owners[_exchange].length - 1];
                 owners[_exchange].length--;
                 _emitExchangeOwnerRemoved(msg.sender, _owner, _exchange);
-                return Errors.E.OK.code();
+                return OK;
             }
         }
 
-        errorCode = _emitError(Errors.E.EXCHANGE_STOCK_NOT_FOUND).code();
+        errorCode = _emitError(ERROR_EXCHANGE_STOCK_NOT_FOUND);
     }
 
     function getExchangeOwners(address _exchange) constant returns (address[]) {
@@ -205,8 +210,8 @@ contract ExchangeManager is Managed, ExchangeManagerEmitter {
         ExchangeManager(getEventsHistory()).emitExchangeOwnerRemoved(user, owner, exchange);
     }
 
-    function _emitError(Errors.E error) internal returns (Errors.E) {
-        ExchangeManager(getEventsHistory()).emitError(error.code());
+    function _emitError(uint error) internal returns (uint) {
+        ExchangeManager(getEventsHistory()).emitError(error);
         return error;
     }
 }

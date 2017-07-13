@@ -2,8 +2,6 @@ const Setup = require('../setup/setup');
 const Reverter = require('./helpers/reverter');
 const bytes32 = require('./helpers/bytes32');
 const bytes32fromBase58 = require('./helpers/bytes32fromBase58');
-const Require = require("truffle-require");
-const Config = require("truffle-config");
 const eventsHelper = require('./helpers/eventsHelper');
 
 contract('Contracts Manager', function(accounts) {

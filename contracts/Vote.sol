@@ -1,11 +1,21 @@
 pragma solidity ^0.4.8;
 
 import "./Managed.sol";
-import "./Errors.sol";
 import "./VoteEmitter.sol";
 
 contract Vote is Managed, VoteEmitter {
-    using Errors for Errors.E;
+  // Vote errors
+    uint constant ERROR_VOTE_INVALID_PARAMETER = 8000;
+    uint constant ERROR_VOTE_INVALID_INVOCATION = 8001;
+    uint constant ERROR_VOTE_ADD_CONTRACT = 8002;
+    uint constant ERROR_VOTE_LIMIT_EXCEEDED = 8003;
+    uint constant ERROR_VOTE_POLL_LIMIT_REACHED = 8004;
+    uint constant ERROR_VOTE_POLL_WRONG_STATUS = 8005;
+    uint constant ERROR_VOTE_POLL_INACTIVE = 8006;
+    uint constant ERROR_VOTE_POLL_NO_SHARES = 8007;
+    uint constant ERROR_VOTE_POLL_ALREADY_VOTED = 8008;
+    uint constant ERROR_VOTE_ACTIVE_POLL_LIMIT_REACHED = 8009;
+    uint constant ERROR_VOTE_UNABLE_TO_ACTIVATE_POLL = 8010;
 
     StorageInterface.UInt pollsIdCounter;
     StorageInterface.UInt activePollsCount;
@@ -58,11 +68,11 @@ contract Vote is Managed, VoteEmitter {
 
     function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
-            return Errors.E.VOTE_INVALID_INVOCATION.code();
+            return ERROR_VOTE_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function checkPollIsActive(uint _pollId) constant returns (bool) {
@@ -80,9 +90,9 @@ contract Vote is Managed, VoteEmitter {
     }
 
     //when time or vote limit is reached, set the poll status to false
-    function endPoll(uint _pollId) internal returns (Errors.E) {
+    function endPoll(uint _pollId) internal returns (uint) {
         if (!store.get(status, _pollId))  {
-            return Errors.E.VOTE_INVALID_PARAMETER;
+            return ERROR_VOTE_INVALID_PARAMETER;
         }
 
         store.set(status, _pollId, false);
@@ -90,7 +100,7 @@ contract Vote is Managed, VoteEmitter {
         store.set(activePollsCount, store.get(activePollsCount) - 1);
 
         _emitPollEnded(_pollId);
-        return Errors.E.OK;
+        return OK;
     }
 
     function isPollOwner(uint _id) constant returns (bool) {

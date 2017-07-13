@@ -2,12 +2,10 @@ pragma solidity ^0.4.11;
 
 import "./Vote.sol";
 import "./VoteActorEmitter.sol";
-import "./Errors.sol";
 import {TimeHolderInterface as TimeHolder} from "./TimeHolderInterface.sol";
 import "./ListenerInterface.sol";
 
 contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
-    using Errors for Errors.E;
 
     function VoteActor(Storage _store, bytes32 _crate) StorageAdapter(_store, _crate) {
         _init();
@@ -16,36 +14,36 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
     function init(address _contractsManager) returns (uint) {
         address contractsManagerAddress = store.get(contractsManager);
         if (contractsManagerAddress != 0x0 && contractsManagerAddress != _contractsManager) {
-            return Errors.E.VOTE_INVALID_INVOCATION.code();
+            return ERROR_VOTE_INVALID_INVOCATION;
         }
 
-        Errors.E e = ContractsManagerInterface(_contractsManager).addContract(this, ContractsManagerInterface.ContractType.VotingActor);
-        if (Errors.E.OK != e) {
-            return e.code();
+        uint e = ContractsManagerInterface(_contractsManager).addContract(this, bytes32("VotingActor"));
+        if (OK != e) {
+            return e;
         }
 
         store.set(contractsManager, _contractsManager);
 
-        return Errors.E.OK.code();
+        return OK;
     }
 
     //function for user vote. input is a string choice
     function vote(uint _pollId, uint _choice) returns (uint errorCode) {
         if (!store.get(status, _pollId)) {
-            return _emitError(Errors.E.VOTE_POLL_WRONG_STATUS).code();
+            return _emitError(ERROR_VOTE_POLL_WRONG_STATUS);
         }
 
         if (!store.get(active, _pollId)) {
-            return _emitError(Errors.E.VOTE_POLL_INACTIVE).code();
+            return _emitError(ERROR_VOTE_POLL_INACTIVE);
         }
 
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
         if (TimeHolder(timeHolder).shares(msg.sender) == 0) {
-            return _emitError(Errors.E.VOTE_POLL_NO_SHARES).code();
+            return _emitError(ERROR_VOTE_POLL_NO_SHARES);
         }
 
         if (store.get(memberOption, _pollId, msg.sender) != 0) {
-            return _emitError(Errors.E.VOTE_POLL_ALREADY_VOTED).code();
+            return _emitError(ERROR_VOTE_POLL_ALREADY_VOTED);
         }
 
         uint optionsValue = store.get(options, _pollId, _choice) + TimeHolder(timeHolder).shares(msg.sender);
@@ -60,12 +58,12 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
         if (optionsValue >= voteLimitNumber && (voteLimitNumber > 0 || store.get(deadline, _pollId) <= now)) {
             endPoll(_pollId);
         }
-        return Errors.E.OK.code();
+        return OK;
     }
 
     //TimeHolder interface implementation
     modifier onlyTimeHolder() {
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.TimeHolder);
+        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
         if (msg.sender == timeHolder) {
             _;
         }
@@ -87,7 +85,7 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
                 endPoll(pollId);
             }
         }
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function withdrawn(address _address, uint _amount, uint _total) onlyTimeHolder returns (uint) {
@@ -106,7 +104,7 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
                 }
             }
         }
-        return Errors.E.OK.code();
+        return OK;
     }
 
     function removeMember(uint _pollId, address _address) {
@@ -116,8 +114,8 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
         store.remove(members, bytes32(_pollId), _address);
     }
 
-    function _emitError(Errors.E error) internal returns (Errors.E) {
-        VoteActor(getEventsHistory()).emitError(error.code());
+    function _emitError(uint error) internal returns (uint) {
+        VoteActor(getEventsHistory()).emitError(error );
         return error;
     }
 

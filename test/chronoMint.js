@@ -1,8 +1,6 @@
 const Reverter = require('./helpers/reverter')
 const bytes32 = require('./helpers/bytes32')
 const bytes32fromBase58 = require('./helpers/bytes32fromBase58')
-const Require = require("truffle-require")
-const Config = require("truffle-config")
 const eventsHelper = require('./helpers/eventsHelper')
 const Setup = require('../setup/setup')
 const MultiEventsHistory = artifacts.require('./MultiEventsHistory.sol')
@@ -883,9 +881,9 @@ contract('LOC Manager', function(accounts) {
         return Setup.chronoBankAssetProxy.approve(Setup.timeHolder.address, 100, {from: owner}).then(() => {
           assert.isOk(r);
         })
-          ;
+         ;
       })
-        ;
+       ;
     });
 
     it("should be able to deposit 100 TIME from owner", function () {

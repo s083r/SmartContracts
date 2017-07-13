@@ -4,11 +4,13 @@ import {PendingManagerInterface as Shareable} from "./PendingManagerInterface.so
 import "./UserManagerInterface.sol";
 import "./ContractsManagerInterface.sol";
 import "./StorageAdapter.sol";
-import "./Errors.sol";
 
 contract Managed is StorageAdapter {
 
     StorageInterface.Address contractsManager;
+
+    uint constant OK = 1;
+    uint constant MULTISIG_ADDED = 3;
 
     function Managed() {
         contractsManager.init('contractsManager');
@@ -25,27 +27,26 @@ contract Managed is StorageAdapter {
     }
 
     modifier onlyAuthorizedContract(address key) {
-        address shareable = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.PendingManager);
+        address shareable = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("PendingManager"));
         if (msg.sender == shareable || isAuthorized(key)) {
             _;
         }
     }
 
-    function multisig() internal returns (Errors.E e) {
-        address shareable = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.PendingManager);
+    function multisig() internal returns (uint errorCode) {
+        address shareable = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("PendingManager"));
         if (msg.sender != shareable) {
             bytes32 _r = sha3(msg.data);
-            e = Shareable(shareable).addTx(_r, msg.data, this, msg.sender);
+            errorCode = Shareable(shareable).addTx(_r, msg.data, this, msg.sender);
 
-            return (e == Errors.E.OK) ? Errors.E.MULTISIG_ADDED : e;
+            return (errorCode == OK) ? MULTISIG_ADDED : errorCode;
         }
 
-        return Errors.E.OK;
+        return OK;
     }
 
     function isAuthorized(address key) constant returns (bool) {
-        address userManager = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(ContractsManagerInterface.ContractType.UserManager);
+        address userManager = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("UserManager"));
         return UserManagerInterface(userManager).getCBE(key);
     }
-
 }

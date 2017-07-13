@@ -2,7 +2,6 @@ pragma solidity ^0.4.8;
 
 import "./Owned.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
-import "./Errors.sol";
 
 contract ExchangeEmitter {
     function emitError(uint errorCode);
@@ -26,7 +25,19 @@ contract ExchangeEmitter {
  * didn't happen yet.
  */
 contract Exchange is Owned {
-    using Errors for Errors.E;
+
+    uint constant ERROR_EXCHANGE_INVALID_PARAMETER = 6000;
+    uint constant ERROR_EXCHANGE_INVALID_INVOCATION = 6001;
+    uint constant ERROR_EXCHANGE_INVALID_FEE_PERCENT = 6002;
+    uint constant ERROR_EXCHANGE_INVALID_PRICE = 6003;
+    uint constant ERROR_EXCHANGE_MAINTENANCE_MODE = 6004;
+    uint constant ERROR_EXCHANGE_TOO_HIGH_PRICE = 6005;
+    uint constant ERROR_EXCHANGE_TOO_LOW_PRICE = 6006;
+    uint constant ERROR_EXCHANGE_INSUFFICIENT_BALANCE = 6007;
+    uint constant ERROR_EXCHANGE_INSUFFICIENT_ETHER_SUPPLY = 6008;
+    uint constant ERROR_EXCHANGE_PAYMENT_FAILED = 6009;
+    uint constant ERROR_EXCHANGE_TRANSFER_FAILED = 6010;
+    uint constant ERROR_EXCHANGE_FEE_TRANSFER_FAILED = 6011;
 
     // Assigned ERC20 token.
     Asset public asset;
@@ -70,8 +81,8 @@ contract Exchange is Owned {
      *
      * @param error error from Errors library.
      */
-    function _error(Errors.E error) internal returns (Errors.E) {
-        eventsHistory.emitError(error.code());
+    function _error(uint error) internal returns (uint) {
+        eventsHistory.emitError(error);
         return error;
     }
 
@@ -96,14 +107,13 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function setupEventsHistory(address _eventsHistory) onlyContractOwner returns (uint errorCode) {
+    function setupEventsHistory(address _eventsHistory) onlyContractOwner returns (uint) {
         if (address(eventsHistory) != 0x0) {
-            errorCode = _error(Errors.E.EXCHANGE_INVALID_INVOCATION).code();
+            return _error(ERROR_EXCHANGE_INVALID_INVOCATION);
         }
-        else {
-            eventsHistory = ExchangeEmitter(_eventsHistory);
-            errorCode = Errors.E.OK.code();
-        }
+
+        eventsHistory = ExchangeEmitter(_eventsHistory);
+        return OK;
     }
 
     /**
@@ -117,35 +127,36 @@ contract Exchange is Owned {
      */
     function init(Asset _asset, address _rewards, address _delegate, uint _fee) onlyContractOwner returns (uint errorCode) {
         if (address(asset) != 0x0 || rewards != 0x0) {
-            return _error(Errors.E.EXCHANGE_INVALID_INVOCATION).code();
+            return _error(ERROR_EXCHANGE_INVALID_INVOCATION);
         }
 
         asset = _asset;
         rewards = _rewards;
         delegate = _delegate;
-        Errors.E feeResult = setFee(_fee);
-        errorCode = feeResult.code();
-        if (feeResult == Errors.E.OK) {
+        uint feeResult = setFee(_fee);
+        errorCode = feeResult;
+        if (feeResult == OK) {
             isActive = true;
         }
     }
 
-    function setFee(uint _feePercent) internal returns (Errors.E) {
+    function setFee(uint _feePercent) internal returns (uint) {
         if (feePercent < 1 || feePercent > 10000) {
-            return _error(Errors.E.EXCHANGE_INVALID_FEE_PERCENT);
+            return _error(ERROR_EXCHANGE_INVALID_FEE_PERCENT);
         }
 
         feePercent = _feePercent;
         _emitFeeUpdated(feePercent);
-        return Errors.E.OK;
+        return OK;
     }
 
-    function setActive(bool _active) onlyContractOwner returns (uint errorCode) {
+    function setActive(bool _active) onlyContractOwner returns (uint) {
         if (isActive != _active) {
             _emitActiveChanged(_active);
         }
+
         isActive = _active;
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -159,16 +170,16 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function setPrices(uint _buyPrice, uint _sellPrice) onlyContractOwner returns (uint errorCode) {
+    function setPrices(uint _buyPrice, uint _sellPrice) onlyContractOwner returns (uint) {
         if (_sellPrice < _buyPrice) {
-            return _error(Errors.E.EXCHANGE_INVALID_PRICE).code();
+            return _error(ERROR_EXCHANGE_INVALID_PRICE);
         }
 
         buyPrice = _buyPrice;
         sellPrice = _sellPrice;
         _emitPricesUpdated(_buyPrice, _sellPrice);
 
-        return Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -193,26 +204,26 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function sell(uint _amount, uint _price) returns (uint errorCode) {
+    function sell(uint _amount, uint _price) returns (uint) {
         if (!isActive) {
-            return _error(Errors.E.EXCHANGE_MAINTENANCE_MODE).code();
+            return _error(ERROR_EXCHANGE_MAINTENANCE_MODE);
         }
 
         if (_price > buyPrice) {
-            return _error(Errors.E.EXCHANGE_TOO_HIGH_PRICE).code();
+            return _error(ERROR_EXCHANGE_TOO_HIGH_PRICE);
         }
 
         if (_balanceOf(msg.sender) < _amount) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_BALANCE).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_BALANCE);
         }
 
         uint total = _mul(_amount, _price);
         if (this.balance < total) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_ETHER_SUPPLY);
         }
 
         if (!asset.transferFrom(msg.sender, this, _amount)) {
-            return _error(Errors.E.EXCHANGE_PAYMENT_FAILED).code();
+            return _error(ERROR_EXCHANGE_PAYMENT_FAILED);
         }
 
         if (!msg.sender.send(total)) {
@@ -221,7 +232,7 @@ contract Exchange is Owned {
 
         Sell(msg.sender, _amount, total);
 
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -234,31 +245,31 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function buy(uint _amount, uint _price) payable returns (uint errorCode) {
+    function buy(uint _amount, uint _price) payable returns (uint) {
         if (!isActive) {
-            return _error(Errors.E.EXCHANGE_MAINTENANCE_MODE).code();
+            return _error(ERROR_EXCHANGE_MAINTENANCE_MODE);
         }
 
         if (_price < sellPrice) {
-            return _error(Errors.E.EXCHANGE_TOO_LOW_PRICE).code();
+            return _error(ERROR_EXCHANGE_TOO_LOW_PRICE);
         }
 
         if (_balanceOf(this) < _amount) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_BALANCE).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_BALANCE);
         }
 
         uint total = _mul(_amount, _price);
         if (msg.value != total) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_ETHER_SUPPLY);
         }
 
         if (!asset.transfer(msg.sender, _amount)) {
-            return _error(Errors.E.EXCHANGE_TRANSFER_FAILED).code();
+            return _error(ERROR_EXCHANGE_TRANSFER_FAILED);
         }
 
         Buy(msg.sender, _amount, total);
 
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -271,23 +282,23 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function withdrawTokens(address _recipient, uint _amount) onlyContractOwner returns (uint errorCode) {
+    function withdrawTokens(address _recipient, uint _amount) onlyContractOwner returns (uint) {
         if (_balanceOf(this) < _amount) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_BALANCE).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_BALANCE);
         }
 
         uint amount = (_amount * 10000) / (10000 + feePercent);
         if (!asset.transfer(_recipient, amount)) {
-            return _error(Errors.E.EXCHANGE_TRANSFER_FAILED).code();
+            return _error(ERROR_EXCHANGE_TRANSFER_FAILED);
         }
 
         WithdrawTokens(_recipient, amount);
 
         if (!asset.transfer(rewards, _amount - amount)) {
-            _error(Errors.E.EXCHANGE_FEE_TRANSFER_FAILED);
+            _error(ERROR_EXCHANGE_FEE_TRANSFER_FAILED);
         }
 
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -299,8 +310,8 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function withdrawAllTokens(address _recipient) onlyContractOwner returns (uint errorCode) {
-        errorCode = withdrawTokens(_recipient, _balanceOf(this));
+    function withdrawAllTokens(address _recipient) onlyContractOwner returns (uint) {
+        return withdrawTokens(_recipient, _balanceOf(this));
     }
 
     /**
@@ -313,24 +324,24 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function withdrawEth(address _recipient, uint _amount) onlyContractOwner returns (uint errorCode) {
+    function withdrawEth(address _recipient, uint _amount) onlyContractOwner returns (uint) {
         if (this.balance < _amount) {
-            return _error(Errors.E.EXCHANGE_INSUFFICIENT_ETHER_SUPPLY).code();
+            return _error(ERROR_EXCHANGE_INSUFFICIENT_ETHER_SUPPLY);
         }
 
         uint amount = (_amount * 10000) / (10000 + feePercent);
 
         if (!_recipient.send(amount)) {
-            return _error(Errors.E.EXCHANGE_TRANSFER_FAILED).code();
+            return _error(ERROR_EXCHANGE_TRANSFER_FAILED);
         }
 
         WithdrawEth(_recipient, amount);
 
         if (!rewards.send(_amount - amount)) {
-            _error(Errors.E.EXCHANGE_FEE_TRANSFER_FAILED);
+            return _error(ERROR_EXCHANGE_FEE_TRANSFER_FAILED);
         }
 
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     /**
@@ -342,8 +353,8 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function withdrawAllEth(address _recipient) onlyContractOwner() returns (uint errorCode) {
-        errorCode = withdrawEth(_recipient, this.balance);
+    function withdrawAllEth(address _recipient) onlyContractOwner() returns (uint) {
+        return withdrawEth(_recipient, this.balance);
     }
 
     /**
@@ -355,18 +366,18 @@ contract Exchange is Owned {
      *
      * @return success.
      */
-    function withdrawAll(address _recipient) onlyContractOwner returns (uint errorCode) {
+    function withdrawAll(address _recipient) onlyContractOwner returns (uint) {
         uint withdrawAllTokensResult = withdrawAllTokens(_recipient);
-        if (withdrawAllTokensResult != Errors.E.OK.code()) {
+        if (withdrawAllTokensResult != OK) {
             return withdrawAllTokensResult;
         }
 
         uint withdrawAllEthResult = withdrawAllEth(_recipient);
-        if (withdrawAllEthResult != Errors.E.OK.code()) {
+        if (withdrawAllEthResult != OK) {
             return withdrawAllEthResult;
         }
 
-        errorCode = Errors.E.OK.code();
+        return OK;
     }
 
     function emitError(uint errorCode) {

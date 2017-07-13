@@ -1,11 +1,8 @@
 pragma solidity ^0.4.8;
 
 import './MultiEventsHistoryAdapter.sol';
-import './Errors.sol';
 
 contract TimeHolderEmmiter is MultiEventsHistoryAdapter {
-    using Errors for Errors.E;
-
     /**
     *  User deposited into current period.
     */
@@ -38,7 +35,7 @@ contract TimeHolderEmmiter is MultiEventsHistoryAdapter {
         ListenerAdded(listener);
     }
 
-    function emitError(Errors.E e) {
-        Error(_self(), e.code());
+    function emitError(uint error) {
+        Error(_self(), error);
     }
 }
