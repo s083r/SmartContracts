@@ -43,6 +43,7 @@ contract('Rewards', (accounts) => {
     .then(() => timeHolder.init(contractsManager.address, shares.address))
     .then(() => timeHolder.addListener(reward.address))
     .then(() => assetsManager.addAsset(asset1.address, 'LHT', chronoMint.address))
+    .then(() => assetsManager.addAsset(asset2.address, 'LHT-2', chronoMint.address))
     .then(() => reward.setupEventsHistory(multiEventsHistory.address))
     .then(() => multiEventsHistory.authorize(reward.address))
   };
@@ -54,6 +55,11 @@ contract('Rewards', (accounts) => {
 
   let assertAsset1Balance = (address, expectedBalance) => {
     return asset1.balanceOf(address)
+      .then((balance) => assert.equal(balance.toString(), '' + expectedBalance));
+  };
+
+  let assertAsset2Balance = (address, expectedBalance) => {
+    return asset2.balanceOf(address)
       .then((balance) => assert.equal(balance.toString(), '' + expectedBalance));
   };
 
@@ -457,6 +463,24 @@ contract('Rewards', (accounts) => {
       .then(() => assertAsset1Balance(accounts[0], 100))
       .then(() => assertRewardsLeft(asset1.address, 0))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 0));
+  });
+
+  it('should withdraw all rewards', () => {
+    return defaultInit()
+      .then(() => asset1.mint(reward.address, 555))
+      .then(() => asset2.mint(reward.address, 777))
+      .then(() => timeHolder.depositFor(accounts[0], 555))
+      .then(() => timeHolder.depositFor(accounts[0], 777))
+      .then(() => reward.closePeriod())
+      .then(() => assertRewardsFor(accounts[0], asset1.address, 555))
+      .then(() => assertRewardsFor(accounts[0], asset2.address, 777))
+      .then(() => reward.withdrawAllRewardsTotal({from: accounts[0]}))
+      .then(() => assertAsset1Balance(accounts[0], 555))
+      .then(() => assertAsset2Balance(accounts[0], 777))
+      .then(() => assertRewardsLeft(asset1.address, 0))
+      .then(() => assertRewardsLeft(asset2.address, 0))
+      .then(() => assertRewardsFor(accounts[0], asset1.address, 0))
+      .then(() => assertRewardsFor(accounts[0], asset2.address, 0));
   });
 
   it('should withdraw reward by different shareholders', () => {

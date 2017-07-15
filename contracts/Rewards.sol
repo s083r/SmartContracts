@@ -418,6 +418,29 @@ contract Rewards is Managed, RewardsEmitter {
     }
 
     /**
+     * Withdraw all accumulated rewards.
+     *
+     * Withdrawals are made for caller and total amount.
+     *
+     * @return result code.
+     */
+    function withdrawAllRewardsTotal() returns (uint) {
+        address[] memory assets = getAssets();
+        for (uint i=0; i < assets.length; i++) {
+            Asset asset = Asset(assets[i]);
+            uint rewards = rewardsFor(asset, msg.sender);
+            if (rewards > 0) {
+                uint result = withdrawRewardFor(asset, msg.sender, rewards);
+                if (OK != result) {
+                    return result;
+                }
+            }
+        }
+
+        return OK;
+    }
+
+    /**
      * Withdraw accumulated reward of a specified rewards asset.
      *
      * Withdrawal is made for specified shareholder and total amount.
