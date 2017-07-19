@@ -1,0 +1,145 @@
+{
+  "contract_name": "TimeHolderEmmiter",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitWithdrawShares",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitDeposit",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "e",
+          "type": "uint8"
+        }
+      ],
+      "name": "emitError",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "listener",
+          "type": "address"
+        }
+      ],
+      "name": "emitListenerAdded",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawShares",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "listener",
+          "type": "address"
+        }
+      ],
+      "name": "ListenerAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "Error",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b61067c8061001c6000396000f300606060405263ffffffff60e060020a6000350416630561de9b811461004d57806328ba84ca1461006e578063342bc0b21461008f5780633864a9a9146100a7578063fff10aba146100c5575bfe5b341561005557fe5b61006c600160a060020a03600435166024356100f1565b005b341561007657fe5b61006c600160a060020a0360043516602435610135565b005b341561009757fe5b61006c60ff60043516610170565b005b34156100af57fe5b61006c600160a060020a03600435166101cb565b005b34156100cd57fe5b6100d5610203565b60408051600160a060020a039092168252519081900360200190f35b604080518281529051600160a060020a038416917f65acde034bd1126095b070c3dab2499d374f97ad47387adfb86ba47b0240a24f919081900360200190a25b5050565b6040518190600160a060020a038416907fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c90600090a35b5050565b610178610213565b600160a060020a03167f9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c6101b683605e8111156101b157fe5b610218565b60408051918252519081900360200190a25b50565b604051600160a060020a038216907ff4b5d7970f8d26d7e8c6b74e8ffad0e1b0f67bc7f92238bd7efd485731eceafa90600090a25b50565b600054600160a060020a03165b90565b335b90565b600060015b82605e81111561022957fe5b14156102375750600161063b565b60005b82605e81111561024657fe5b14156102545750600061063b565b60025b82605e81111561026357fe5b14156102715750600361063b565b60035b82605e81111561028057fe5b1015801561029b5750600e5b82605e81111561029857fe5b11155b156102bb5760035b82605e8111156102af57fe5b6103e80103905061063b565b600f5b82605e8111156102ca57fe5b101580156102e5575060145b82605e8111156102e257fe5b11155b1561030557600f5b82605e8111156102f957fe5b6107d00103905061063b565b60165b82605e81111561031457fe5b1015801561032f575060185b82605e81111561032c57fe5b11155b1561034f5760165b82605e81111561034357fe5b610bb80103905061063b565b60195b82605e81111561035e57fe5b101580156103795750601e5b82605e81111561037657fe5b11155b156103995760195b82605e81111561038d57fe5b610fa00103905061063b565b601f5b82605e8111156103a857fe5b101580156103c35750601f5b82605e8111156103c057fe5b11155b156103e357601f5b82605e8111156103d757fe5b6113880103905061063b565b60205b82605e8111156103f257fe5b1015801561040d5750602b5b82605e81111561040a57fe5b11155b1561042d5760205b82605e81111561042157fe5b6117700103905061063b565b602c5b82605e81111561043c57fe5b10158015610457575060305b82605e81111561045457fe5b11155b1561047757602c5b82605e81111561046b57fe5b611b580103905061063b565b60315b82605e81111561048657fe5b101580156104a15750603b5b82605e81111561049e57fe5b11155b156104c15760315b82605e8111156104b557fe5b611f400103905061063b565b603c5b82605e8111156104d057fe5b101580156104eb575060465b82605e8111156104e857fe5b11155b1561050b57603c5b82605e8111156104ff57fe5b6123280103905061063b565b60475b82605e81111561051a57fe5b10158015610535575060485b82605e81111561053257fe5b11155b156105555760475b82605e81111561054957fe5b6127100103905061063b565b60575b82605e81111561056457fe5b1015801561057f5750605e5b82605e81111561057c57fe5b11155b1561059f5760575b82605e81111561059357fe5b612af80103905061063b565b60495b82605e8111156105ae57fe5b101580156105c95750604f5b82605e8111156105c657fe5b11155b156105e95760495b82605e8111156105dd57fe5b612ee00103905061063b565b60505b82605e8111156105f857fe5b10158015610613575060565b82605e81111561061057fe5b11155b156106335760505b82605e81111561062757fe5b6132c80103905061063b565b50640defdefdef5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b9190505600a165627a7a723058205600a0506aa6c2d6be5bd03c91561c611f79092592ae5eed0944665acb6867df0029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1498944136320
+}

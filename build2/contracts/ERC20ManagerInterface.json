@@ -1,0 +1,69 @@
+{
+  "contract_name": "ERC20ManagerInterface",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
+          "name": "_symbol",
+          "type": "bytes32"
+        },
+        {
+          "name": "_url",
+          "type": "bytes32"
+        },
+        {
+          "name": "_decimals",
+          "type": "uint8"
+        },
+        {
+          "name": "_ipfsHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_swarmHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "addToken",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_symbol",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getTokenAddressBySymbol",
+      "outputs": [
+        {
+          "name": "tokenAddress",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1498944136316
+}

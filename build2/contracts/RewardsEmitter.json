@@ -1,0 +1,202 @@
+{
+  "contract_name": "RewardsEmitter",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "total",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitWithdrawn",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_part",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitDepositStored",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "e",
+          "type": "uint8"
+        }
+      ],
+      "name": "emitError",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitWithdrawnReward",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "assetAddress",
+          "type": "address"
+        }
+      ],
+      "name": "emitAssetRegistered",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "emitPeriodClosed",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "total",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawnSuccess",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amountReward",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawnRewardSuccess",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_part",
+          "type": "uint256"
+        }
+      ],
+      "name": "DepositStored",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "assetAddress",
+          "type": "address"
+        }
+      ],
+      "name": "AssetRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "PeriodClosed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "Error",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b6107538061001c6000396000f300606060405236156100675763ffffffff60e060020a6000350416631bbf65ef81146100695780631bc240831461008d578063342bc0b2146100a25780633752f49a146100ba578063b1a97052146100e1578063e29065d6146100ff578063fff10aba14610111575bfe5b341561007157fe5b61008b600160a060020a036004351660243560443561013d565b005b341561009557fe5b61008b60043561018c565b005b34156100aa57fe5b61008b60ff600435166101c3565b005b34156100c257fe5b61008b600160a060020a036004358116906024351660443561021e565b005b34156100e957fe5b61008b600160a060020a036004351661026e565b005b341561010757fe5b61008b6102ae565b005b341561011957fe5b6101216102da565b60408051600160a060020a039092168252519081900360200190f35b60408051600160a060020a03851681526020810184905280820183905290517f9733cd8dacd543098fb51634f576590185a97c05da7322f63548f68af37aa01c9181900360600190a15b505050565b6040805182815290517f8df23d404ca3f2bdd82171b596b4670e76c1657cda0edcde1e8f2e0b5acac6cd9181900360200190a15b50565b6101cb6102ea565b600160a060020a03167f9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c61020983605e81111561020457fe5b6102ef565b60408051918252519081900360200190a25b50565b60408051600160a060020a0380861682528416602082015280820183905290517f9e059fe0bc0d282ae325ba68777c9617b5c01b3a517ddb819f5e2c0de8e7a78a9181900360600190a15b505050565b60408051600160a060020a038316815290517f0700b0f4c19e631ed321192cfc0b71a83caa514675497afc74fe817d5f839dd59181900360200190a15b50565b6040517f3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa6390600090a15b565b600054600160a060020a03165b90565b335b90565b600060015b82605e81111561030057fe5b141561030e57506001610712565b60005b82605e81111561031d57fe5b141561032b57506000610712565b60025b82605e81111561033a57fe5b141561034857506003610712565b60035b82605e81111561035757fe5b101580156103725750600e5b82605e81111561036f57fe5b11155b156103925760035b82605e81111561038657fe5b6103e801039050610712565b600f5b82605e8111156103a157fe5b101580156103bc575060145b82605e8111156103b957fe5b11155b156103dc57600f5b82605e8111156103d057fe5b6107d001039050610712565b60165b82605e8111156103eb57fe5b10158015610406575060185b82605e81111561040357fe5b11155b156104265760165b82605e81111561041a57fe5b610bb801039050610712565b60195b82605e81111561043557fe5b101580156104505750601e5b82605e81111561044d57fe5b11155b156104705760195b82605e81111561046457fe5b610fa001039050610712565b601f5b82605e81111561047f57fe5b1015801561049a5750601f5b82605e81111561049757fe5b11155b156104ba57601f5b82605e8111156104ae57fe5b61138801039050610712565b60205b82605e8111156104c957fe5b101580156104e45750602b5b82605e8111156104e157fe5b11155b156105045760205b82605e8111156104f857fe5b61177001039050610712565b602c5b82605e81111561051357fe5b1015801561052e575060305b82605e81111561052b57fe5b11155b1561054e57602c5b82605e81111561054257fe5b611b5801039050610712565b60315b82605e81111561055d57fe5b101580156105785750603b5b82605e81111561057557fe5b11155b156105985760315b82605e81111561058c57fe5b611f4001039050610712565b603c5b82605e8111156105a757fe5b101580156105c2575060465b82605e8111156105bf57fe5b11155b156105e257603c5b82605e8111156105d657fe5b61232801039050610712565b60475b82605e8111156105f157fe5b1015801561060c575060485b82605e81111561060957fe5b11155b1561062c5760475b82605e81111561062057fe5b61271001039050610712565b60575b82605e81111561063b57fe5b101580156106565750605e5b82605e81111561065357fe5b11155b156106765760575b82605e81111561066a57fe5b612af801039050610712565b60495b82605e81111561068557fe5b101580156106a05750604f5b82605e81111561069d57fe5b11155b156106c05760495b82605e8111156106b457fe5b612ee001039050610712565b60505b82605e8111156106cf57fe5b101580156106ea575060565b82605e8111156106e757fe5b11155b1561070a5760505b82605e8111156106fe57fe5b6132c801039050610712565b50640defdefdef5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b9190505600a165627a7a72305820875d98a0b6225ecde0e9d4b8ac87ca1edea75a05cc88020ea60f17a3573b5c370029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1498944136319
+}

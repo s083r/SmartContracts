@@ -1,0 +1,421 @@
+{
+  "contract_name": "LOCManagerEmitter",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitNewLOC",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "_oldStatus",
+          "type": "uint256"
+        },
+        {
+          "name": "_newStatus",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitUpdLOCStatus",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitRevoke",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "_newName",
+          "type": "bytes32"
+        }
+      ],
+      "name": "emitUpdLOCName",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        }
+      ],
+      "name": "emitRemLOC",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "symbol",
+          "type": "bytes32"
+        },
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitAssetSent",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitReissue",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "oldHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "newHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "emitHashUpdate",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "name": "_issued",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitUpdLOCIssued",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitError",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "symbol",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "AssetSent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "oldHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "newHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "HashUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewLOC",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "issued",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdLOCIssued",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "name": "newName",
+          "type": "bytes32"
+        }
+      ],
+      "name": "UpdLOCName",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RemLOC",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "_oldStatus",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "newStatus",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdLOCStatus",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Reissue",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "locName",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Revoke",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "Error",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b6104cf8061001c6000396000f300606060405236156100935763ffffffff60e060020a60003504166341f70189811461009557806362823486146100ad578063823ad10d146100c857806383f7c252146100e05780638e784379146100f85780639e17a7531461010d578063a2f11a8514610131578063b357f0da14610149578063b5b916d214610164578063df26ca081461017c578063fff10aba14610191575bfe5b341561009d57fe5b6100ab6004356024356101bd565b005b34156100b557fe5b6100ab60043560243560443561020b565b005b34156100d057fe5b6100ab600435602435610262565b005b34156100e857fe5b6100ab6004356024356102b0565b005b341561010057fe5b6100ab6004356102f5565b005b341561011557fe5b6100ab600435600160a060020a0360243516604435610338565b005b341561013957fe5b6100ab600435602435610398565b005b341561015157fe5b6100ab6004356024356044356103e6565b005b341561016c57fe5b6100ab600435602435610207565b005b341561018457fe5b6100ab600435610442565b005b341561019957fe5b6101a161048e565b60408051600160a060020a039092168252519081900360200190f35b816101c661049e565b600160a060020a03167fc145a293b84bfd203f83a51c887e4a7cfd69e94d97175a0cfedee731ac42874c836040518082815260200191505060405180910390a35b5050565b8261021461049e565b600160a060020a03167f53b00f41cbc4b7de5706fcbc6263bf35511abd6d9de1bc5e53383a48c586261a8484604051808381526020018281526020019250505060405180910390a35b505050565b8161026b61049e565b600160a060020a03167f596e6e7149b1bee6fbb4600421c0c1dbb6d8c930942e88d976ff16c5a4c36de4836040518082815260200191505060405180910390a35b5050565b80826102ba61049e565b604051600160a060020a0391909116907f572c7cd1132b86e4df172eec34de2e5a0d155d3f677a431d09fbe41aeab174e990600090a45b5050565b806102fe61049e565b604051600160a060020a0391909116907fee5ac2c3b886aafee842da34458ece5978e6a2f25bd4cf416cb6de15e9123b8090600090a35b50565b81600160a060020a031661034a61049e565b60408051868152602081018590528151600160a060020a0393909316927f5a76ac301d83fd69e9182d51f4d166a232e361578fba9b67612ba18cb577ebd6929181900390910190a35b505050565b816103a161049e565b600160a060020a03167f8d1562f2eb2dacf77bc2222979221684eacec5d02a20eb16e309c346964cc49e836040518082815260200191505060405180910390a35b5050565b826103ef61049e565b60408051858152602081018590528151600160a060020a0393909316927f0feb0875de2ce4b1f14a44a2a6e2e4a610cb2d8741bb0944bf6b7b7bb74f7d83929181900390910190a35b505050565b5b5050565b61044a61049e565b600160a060020a03167f9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c826040518082815260200191505060405180910390a25b50565b600054600160a060020a03165b90565b335b905600a165627a7a723058202675ebc0300092b295572ed80f4d5cdd01d8455a805ffe5982e73383985d3c360029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1498944136317
+}

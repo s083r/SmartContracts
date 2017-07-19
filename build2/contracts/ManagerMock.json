@@ -1,0 +1,50 @@
+{
+  "contract_name": "ManagerMock",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_actor",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isAllowed",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "deny",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b60c98061001b6000396000f300606060405263ffffffff60e060020a6000350416635cb8dd098114602a578063a3fdfee314605a575bfe5b3415603157fe5b6046600160a060020a03600435166024356069565b604080519115158252519081900360200190f35b3415606157fe5b6067608d565b005b6000805460ff1615608357506000805460ff191681556087565b5060015b92915050565b6000805460ff191660011790555b5600a165627a7a72305820706b339ef7c28979f5cf5b96b7e0af20a61424330fe2c28bee04bed940d2aecb0029",
+  "networks": {
+    "4": {
+      "links": {},
+      "events": {},
+      "updated_at": 1498949685386
+    },
+    "42": {
+      "links": {},
+      "events": {},
+      "updated_at": 1498945289731
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1498949685386
+}

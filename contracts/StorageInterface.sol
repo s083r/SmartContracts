@@ -854,8 +854,8 @@ library StorageInterface {
         return uint(getNextValue(self, item.innerSet, bytes32(_value)));
     }
 
-    function getNextValue(Config storage self, OrderedAddressesSet storage item, address _value) internal constant returns(address) {
-        return address(getNextValue(self, item.innerSet, bytes32(_value)));
+    function getNextValue(Config storage self, OrderedAddressesSet storage item, bytes32 _value) internal constant returns(address) {
+        return address(getNextValue(self, item.innerSet, _value));
     }
 
     function getPreviousValue(Config storage self, OrderedSet storage item, bytes32 _value) internal constant returns(bytes32) {
@@ -870,8 +870,8 @@ library StorageInterface {
         return uint(getPreviousValue(self, item.innerSet, bytes32(_value)));
     }
 
-    function getPreviousValue(Config storage self, OrderedAddressesSet storage item, address _value) internal constant returns(address) {
-        return address(getPreviousValue(self, item.innerSet, bytes32(_value)));
+    function getPreviousValue(Config storage self, OrderedAddressesSet storage item, bytes32 _value) internal constant returns(address) {
+        return address(getPreviousValue(self, item.innerSet, _value));
     }
 
     function toBool(bytes32 self) constant returns(bool) {
