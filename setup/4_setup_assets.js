@@ -23,25 +23,9 @@ const AssetDonator = artifacts.require('./heplers/AssetDonator.sol')
 const VoteActor = artifacts.require("./VoteActor.sol");
 const PollManager = artifacts.require("./PollManager.sol");
 const PollDetails = artifacts.require("./PollDetails.sol");
-const bytes32 = require('../test/helpers/bytes32');
 
 const TIME_SYMBOL = 'TIME'
 const LHT_SYMBOL = 'LHT'
-
-const contractTypes = {
-  LOCManager: bytes32("LOCManager"), // LOCManager
-  PendingManager: bytes32("PendingManager"), // PendingManager
-  UserManager: bytes32("UserManager"), // UserManager
-  ERC20Manager: bytes32("ERC20Manager"), // ERC20Manager
-  ExchangeManager: bytes32("ExchangeManager"), // ExchangeManager
-  TrackersManager: bytes32("TrackersManager"), // TrackersManager
-  Voting: bytes32("Voting"), // Voting
-  Rewards: bytes32("Rewards"), // Rewards
-  AssetsManager: bytes32("AssetsManager"), // AssetsManager
-  TimeHolder: bytes32("TimeHolder"), //TimeHolder
-  CrowdsaleManager: bytes32("CrowdsaleManager"),
-  VotingActor: bytes32("VotingActor")
-}
 
 let storage
 let assetsManager
@@ -159,7 +143,6 @@ var setup = function (callback) {
 }
 
 module.exports.setup = setup
-module.exports.contractTypes = contractTypes
 
 module.exports = (callback) => {
   return setup(callback)
