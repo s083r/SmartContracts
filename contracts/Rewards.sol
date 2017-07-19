@@ -154,17 +154,14 @@ contract Rewards is Managed, RewardsEmitter {
 
     function periodUnique(uint _period) constant returns(uint) {
         if(_period == lastPeriod()) {
-            address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-            return TimeHolder(timeHolder).shareholdersCount() - 1;
-        }
-        else {
+            return getTimeHolder().shareholdersCount() - 1;
+        } else {
             return store.get(shareholdersCount,_period) - 1;
         }
     }
 
     modifier onlyTimeHolder() {
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-        if (msg.sender == timeHolder) {
+        if (msg.sender == getTimeHolderAddress()) {
             _;
         }
     }
@@ -203,20 +200,25 @@ contract Rewards is Managed, RewardsEmitter {
             return _emitError(ERROR_REWARD_CANNOT_CLOSE_PERIOD);
         }
 
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
         // Add new period.
         store.set(periods,store.get(periods)+1);
         store.set(startDate,lastPeriod(),now);
-        store.set(shareholdersCount,lastClosedPeriod(),TimeHolder(timeHolder).shareholdersCount());
+        store.set(shareholdersCount, lastClosedPeriod(), getTimeHolder().shareholdersCount());
         address[] memory assets = getAssets();
         if(assets.length != 0) {
-            for(uint i = 0;i<assets.length;i++) {
-                registerAsset(Asset(assets[i]));
+            for(uint i = 0; i<assets.length; i++) {
+                uint result = registerAsset(Asset(assets[i]));
+                if (OK != result) {
+                    // do not interrupt, just emit an Event
+                    emitError(result);
+                }
             }
         }
 
-        uint resultCode = storeDeposits(0);
-        if (resultCode == OK) {
+        uint resultCode;
+        uint sharesLeft;
+        (resultCode, sharesLeft) = storeDeposits(0);
+        if (resultCode == OK && sharesLeft == 0) {
             _emitPeriodClosed();
         }
 
@@ -228,10 +230,11 @@ contract Rewards is Managed, RewardsEmitter {
         uint _shareholdersCount = store.get(shareholdersCount,period);
         uint _maxSharesTransfer = store.get(maxSharesTransfer);
         if(!store.get(closed,period) && _shareholdersCount > _maxSharesTransfer) {
-            if(_shareholdersCount % _maxSharesTransfer == 0)
+            if(_shareholdersCount % _maxSharesTransfer == 0) {
                 return _shareholdersCount / _maxSharesTransfer;
-            else
+            } else {
                 return _shareholdersCount / _maxSharesTransfer + 1;
+            }
         }
         return 0;
     }
@@ -240,13 +243,17 @@ contract Rewards is Managed, RewardsEmitter {
         return store.get(startDate, _period);
     }
 
-    function storeDeposits(uint _part) returns (uint) {
+    /**
+    *  @return error code and still left shares. `sharesLeft` is actual only
+    *  if `errorCode` == OK, otherwise `sharesLeft` must be ignored.
+    */
+    function storeDeposits(uint _part) returns (uint result, uint sharesLeft) {
         uint period = lastClosedPeriod();
         uint _maxSharesTransfer = store.get(maxSharesTransfer);
-        uint _shareholdersCount = store.get(shareholdersCount,period);
+        uint _shareholdersCount = store.get(shareholdersCount, period);
         uint first = _part * _maxSharesTransfer + 1;
         if(first > _shareholdersCount) {
-            return ERROR_REWARD_INVALID_INVOCATION;
+            return (ERROR_REWARD_INVALID_INVOCATION, 0);
         }
 
         uint last = first + _maxSharesTransfer;
@@ -254,41 +261,42 @@ contract Rewards is Managed, RewardsEmitter {
             last = _shareholdersCount;
         }
 
+        TimeHolder timeHolder = getTimeHolder();
+
         address holder;
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
         for(;first < last;first++) {
-            holder = TimeHolder(timeHolder).shareholders(first);
+            holder = timeHolder.shareholders(first);
             if(store.get(shares,period,holder) == 0) {
-                uint holderShares = TimeHolder(timeHolder).shares(holder);
+                uint holderShares = timeHolder.shares(holder);
                 store.set(shares,period,holder,holderShares);
                 store.set(totalShares,period,store.get(totalShares,period)+holderShares);
             }
         }
+
         first = _part * _maxSharesTransfer + 1;
         address[] memory assets = getAssets();
         for(;first < last;first++) {
-            holder = TimeHolder(timeHolder).shareholders(first);
-            for(uint i = 0;i<assets.length;i++) {
-                if(OK != calculateRewardFor(Asset(assets[i]),holder)) {
-                    // TODO: AG (16-06-2017) cant use origin error code due to
-                    // "Stack too deep, try removing local variables"
-                    // Refatoring needed
-                    _emitError(ERROR_REWARD_CALCULATION_FAILED);
+            holder = timeHolder.shareholders(first);
+            for(uint i = 0; i < assets.length; i++) {
+                result = calculateRewardFor(Asset(assets[i]),holder);
+                if(OK != result) {
+                    return (_emitError(result), 0);
                 }
             }
         }
-        if(store.get(totalShares,period) != TimeHolder(timeHolder).totalShares()) {
-            return _emitError(ERROR_REWARD_INVALID_STATE);
+
+        _emitDepositStored(_part);
+
+        sharesLeft = timeHolder.totalShares() - store.get(totalShares, period);
+        if(sharesLeft == 0) {
+            store.set(closed, period, true);
         }
 
-        store.set(closed,period,true);
-        _emitDepositStored(_part);
-        return OK;
+        return (OK, sharesLeft);
     }
 
     function registerAsset(Asset _asset) returns (uint) {
-        address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-        if (TimeHolder(timeHolder).sharesContract() == _asset) {
+        if (getTimeHolder().sharesContract() == _asset) {
             return _emitError(ERROR_REWARD_ASSET_ALREADY_REGISTERED);
         }
 
@@ -306,18 +314,21 @@ contract Rewards is Managed, RewardsEmitter {
 
     function deposit(address _address, uint _amount, uint _total) onlyTimeHolder returns(uint) {
         if (store.get(periods) == 1) {
-            return ERROR_REWARD_INVALID_PERIOD;
+            // it is a special case, do nothing if no closed periods yet
+            return OK;
         }
 
         uint period = lastClosedPeriod();
-        if(!store.get(closed,period)) {
-            store.set(totalShares,period,store.get(totalShares,period) + _amount);
-            if(store.get(shareholdersId,period,_address) > 0) {
-                store.set(shares,period,_address,_total);
-            }
-            return OK;
+        if(store.get(closed,period)) {
+            return ERROR_REWARD_INVALID_PERIOD;
         }
-        return ERROR_REWARD_INVALID_PERIOD;
+
+        store.set(totalShares,period,store.get(totalShares,period) + _amount);
+        if(store.get(shareholdersId,period,_address) > 0) {
+            store.set(shares,period,_address,_total);
+        }
+
+        return OK;
     }
 
     /**
@@ -510,7 +521,8 @@ contract Rewards is Managed, RewardsEmitter {
 
     function withdrawn(address _address, uint _amount, uint _total)  returns (uint) {
         if (store.get(periods) == 1) {
-            return ERROR_REWARD_INVALID_PERIOD;
+            // it is a special case, do nothing if no closed periods yet
+            return OK;
         }
 
         uint period = lastClosedPeriod();
@@ -536,8 +548,7 @@ contract Rewards is Managed, RewardsEmitter {
      */
     function depositBalanceInPeriod(address _address, uint _period) constant returns (uint) {
         if(_period == lastPeriod()) {
-            address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-            return TimeHolder(timeHolder).shares(_address);
+            return getTimeHolder().shares(_address);
         }
         return store.get(shares,_period,_address);
     }
@@ -551,8 +562,7 @@ contract Rewards is Managed, RewardsEmitter {
      */
     function totalDepositInPeriod(uint _period) constant returns(uint) {
         if(_period == lastPeriod()) {
-            address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-            return TimeHolder(timeHolder).totalShares();
+            return getTimeHolder().totalShares();
         }
         return store.get(totalShares,_period);
     }
@@ -654,6 +664,14 @@ contract Rewards is Managed, RewardsEmitter {
     function _emitError(uint e) returns (uint) {
         Rewards(getEventsHistory()).emitError(e);
         return e;
+    }
+
+    function getTimeHolderAddress() private constant returns (address) {
+       return ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
+    }
+
+    function getTimeHolder() private constant returns (TimeHolder) {
+        return TimeHolder(getTimeHolderAddress());
     }
 
     function() {

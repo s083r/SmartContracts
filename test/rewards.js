@@ -43,7 +43,6 @@ contract('Rewards', (accounts) => {
     .then(() => timeHolder.init(contractsManager.address, shares.address))
     .then(() => timeHolder.addListener(reward.address))
     .then(() => assetsManager.addAsset(asset1.address, 'LHT', chronoMint.address))
-    .then(() => assetsManager.addAsset(asset2.address, 'LHT-2', chronoMint.address))
     .then(() => reward.setupEventsHistory(multiEventsHistory.address))
     .then(() => multiEventsHistory.authorize(reward.address))
   };
@@ -467,6 +466,7 @@ contract('Rewards', (accounts) => {
 
   it('should withdraw all rewards', () => {
     return defaultInit()
+      .then(() => assetsManager.addAsset(asset2.address, 'LHT-2', chronoMint.address))
       .then(() => asset1.mint(reward.address, 555))
       .then(() => asset2.mint(reward.address, 777))
       .then(() => timeHolder.depositFor(accounts[0], 555))

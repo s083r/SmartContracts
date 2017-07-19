@@ -126,7 +126,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         for(uint i = 1; i < listenersCount; i++) {
             errorCode = ListenerInterface(listeners[i]).deposit(_address, _amount, shares[_address]);
             if (OK != errorCode) {
-                _emitError(ERROR_TIMEHOLDER_DEPOSIT_FAILED);
+                _emitError(errorCode);
             }
         }
 
@@ -155,7 +155,7 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
         for(uint i = 1; i < listenersCount; i++) {
             errorCode = ListenerInterface(listeners[i]).withdrawn(msg.sender, _amount, shares[msg.sender]);
             if (OK != errorCode) {
-                _emitError(ERROR_TIMEHOLDER_WITHDRAWN_FAILED);
+                _emitError(errorCode);
             }
         }
 
