@@ -12,7 +12,7 @@ import "../AssetsManager.sol";
 */
 contract AssetDonator {
     address contractManager;
-    mapping (address => bool) timeDonations;
+    mapping (address => bool) public timeDonations;
 
     function init(address _contractManager) {
         if (_contractManager == 0x0) {

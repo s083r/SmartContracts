@@ -54,8 +54,6 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
     StorageInterface.AddressAddressUIntMapping owners;
     StorageInterface.AddressesSet allOwners;
 
-    //mapping (address => bool) timeHolder;
-
     modifier onlyAssetOwner(bytes32 _symbol) {
         if (isAssetOwner(_symbol, msg.sender)) {
             _;

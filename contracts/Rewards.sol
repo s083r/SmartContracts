@@ -187,6 +187,7 @@ contract Rewards is Managed, RewardsEmitter {
         }
         return result;
     }
+
     /**
      * Close current active period and start the new period.
      *

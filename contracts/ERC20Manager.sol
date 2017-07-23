@@ -250,6 +250,10 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         return OK;
     }
 
+    function getAddressById(uint _id) constant returns (address) {
+        return store.get(tokenAddresses, _id);
+    }
+
     /// @dev Provides a registered token's address when given the token symbol.
     /// @param _symbol Symbol of registered token.
     /// @return Token's address.

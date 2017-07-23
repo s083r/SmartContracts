@@ -7,6 +7,7 @@ import "./ERC20ManagerInterface.sol";
 import "./FeeInterface.sol";
 import "./ChronoBankAssetProxyInterface.sol";
 import "./LOCManagerEmitter.sol";
+import "./ERC20Interface.sol";
 
 contract LOCManager is Managed, LOCManagerEmitter {
 
@@ -58,6 +59,12 @@ contract LOCManager is Managed, LOCManagerEmitter {
         }
 
         store.set(contractsManager, _contractsManager);
+        return OK;
+    }
+
+    function kill(address[] tokens) onlyAuthorized returns (uint) {
+        withdrawnTokens(tokens);
+        selfdestruct(msg.sender);
         return OK;
     }
 
@@ -199,7 +206,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
         if (_newname == bytes32(0)) {
             return _emitError(ERROR_LOC_INVALID_PARAMETER);
         }
-
+        _emitUpdateLOC(_name, _newname);
         if (!(_newname == _name)) {
             store.set(offeringCompaniesNames, _name, _newname);
             store.set(website, _newname, store.get(website, _name));
@@ -208,7 +215,6 @@ contract LOCManager is Managed, LOCManagerEmitter {
             store.set(expDate, _newname, store.get(expDate, _name));
             store.set(currency, _newname, store.get(currency, _name));
             store.set(createDate, _newname, store.get(createDate, _name));
-            _emitUpdLOCName(_name, _newname);
             _name = _newname;
         }
         if (!(_website == store.get(website, _name))) {
@@ -218,7 +224,6 @@ contract LOCManager is Managed, LOCManagerEmitter {
             store.set(issueLimit, _name, _issueLimit);
         }
         if (!(_publishedHash == store.get(publishedHash, _name))) {
-            _emitHashUpdate(_name, store.get(publishedHash, _name), _publishedHash);
             store.set(publishedHash, _name, _publishedHash);
         }
         if (!(_expDate == store.get(expDate, _name))) {
@@ -297,8 +302,8 @@ contract LOCManager is Managed, LOCManagerEmitter {
         LOCManager(getEventsHistory()).emitRemLOC(_locName);
     }
 
-    function _emitUpdLOCName(bytes32 _locName, bytes32 _newName) internal {
-        LOCManager(getEventsHistory()).emitUpdLOCName(_locName, _newName);
+    function _emitUpdateLOC(bytes32 _locName, bytes32 _newName) internal {
+        LOCManager(getEventsHistory()).emitUpdateLOC(_locName, _newName);
     }
 
     function _emitUpdLOCStatus(bytes32 _locName, uint _oldStatus, uint _newStatus) internal {

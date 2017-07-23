@@ -1,0 +1,476 @@
+{
+  "contract_name": "StorageManager",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_eventsHistory",
+          "type": "address"
+        }
+      ],
+      "name": "setupEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "emitAccessBlocked",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_user",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "emitAccessGiven",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "claimContractOwnership",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "changeContractOwnership",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingContractOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_actor",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isAllowed",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_actor",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "giveAccess",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_actor",
+          "type": "address"
+        },
+        {
+          "name": "_role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "blockAccess",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "contractOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitError",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "actor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AccessGiven",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "actor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AccessBlocked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "Error",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x60606040525b60018054600160a060020a03191633600160a060020a03161790555b5b6106d4806100316000396000f3006060604052361561009e5763ffffffff60e060020a60003504166302927d2081146100a0578063157fbd8d146100ce5780632c19d480146100ef5780634592cd1d14610110578063557f4bc9146101345780635aa77d3c146101645780635cb8dd091461019057806385c53cf1146101c3578063bd17a9d8146101f4578063ce606ee014610225578063df26ca0814610251578063fff10aba14610266575bfe5b34156100a857fe5b6100bc600160a060020a0360043516610292565b60408051918252519081900360200190f35b34156100d657fe5b6100ed600160a060020a03600435166024356102df565b005b34156100f757fe5b6100ed600160a060020a0360043516602435610334565b005b341561011857fe5b610120610389565b604080519115158252519081900360200190f35b341561013c57fe5b610120600160a060020a03600435166103d6565b604080519115158252519081900360200190f35b341561016c57fe5b610174610416565b60408051600160a060020a039092168252519081900360200190f35b341561019857fe5b610120600160a060020a0360043516602435610425565b604080519115158252519081900360200190f35b34156101cb57fe5b6100bc600160a060020a0360043516602435610453565b60408051918252519081900360200190f35b34156101fc57fe5b6100bc600160a060020a03600435166024356104b1565b60408051918252519081900360200190f35b341561022d57fe5b61017461050c565b60408051600160a060020a039092168252519081900360200190f35b341561025957fe5b6100ed60043561051b565b005b341561026e57fe5b610174610567565b60408051600160a060020a039092168252519081900360200190f35b60015460009033600160a060020a03908116911614156102d8576102b4610567565b600160a060020a0316156102cb57506113886102d8565b6102d482610577565b5060015b5b5b919050565b6102e7610596565b60408051600160a060020a0385811682526020820185905282519316927fd21adfcaa3724e99864abea371528f9aa867d0b433e7d29dd972bf8d839ce467929181900390910190a25b5050565b61033c610596565b60408051600160a060020a0385811682526020820185905282519316927fb6798040b2ff718946767eb5764382753f7d49017204678c8905ccbd393f48bc929181900390910190a25b5050565b60025460009033600160a060020a039081169116146103aa575060006103d3565b506002805460018054600160a060020a0319908116600160a060020a0384161782559091169091555b90565b60015460009033600160a060020a03908116911614156102d8575060028054600160a060020a031916600160a060020a03831617905560015b5b5b919050565b600254600160a060020a031681565b600160a060020a038216600090815260036020908152604080832084845290915290205460ff165b92915050565b60015460009033600160a060020a039081169116141561044d57600160a060020a03831660009081526003602090815260408083208584529091529020805460ff191660011790556104a5838361059b565b5060015b5b5b92915050565b60015460009033600160a060020a039081169116141561044d57600160a060020a03831660009081526003602090815260408083208584529091529020805460ff191690556104a58383610621565b5060015b5b5b92915050565b600154600160a060020a031681565b610523610596565b600160a060020a03167f9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c826040518082815260200191505060405180910390a25b50565b600054600160a060020a03165b90565b60008054600160a060020a031916600160a060020a0383161790555b50565b335b90565b6105a3610567565b600160a060020a031615610330576105b9610567565b6040805160e760020a625833a9028152600160a060020a0385811660048301526024820185905291519290911691632c19d4809160448082019260009290919082900301818387803b151561060a57fe5b6102c65a03f1151561061857fe5b5050505b5b5050565b610629610567565b600160a060020a0316156103305761063f610567565b6040805160e060020a63157fbd8d028152600160a060020a038581166004830152602482018590529151929091169163157fbd8d9160448082019260009290919082900301818387803b151561060a57fe5b6102c65a03f1151561061857fe5b5050505b5b50505600a165627a7a723058209a91001ce4a1d5adf7a066f3cda762b34eeab3fa57c560eab8e734d84100d1490029",
+  "networks": {
+    "4": {
+      "events": {
+        "0xb6798040b2ff718946767eb5764382753f7d49017204678c8905ccbd393f48bc": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessGiven",
+          "type": "event"
+        },
+        "0xd21adfcaa3724e99864abea371528f9aa867d0b433e7d29dd972bf8d839ce467": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessBlocked",
+          "type": "event"
+        },
+        "0x9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "errorCode",
+              "type": "uint256"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xacdfccba1c82957583398912096b37282f3b586e",
+      "updated_at": 1500447060962
+    },
+    "42": {
+      "events": {
+        "0xb6798040b2ff718946767eb5764382753f7d49017204678c8905ccbd393f48bc": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessGiven",
+          "type": "event"
+        },
+        "0xd21adfcaa3724e99864abea371528f9aa867d0b433e7d29dd972bf8d839ce467": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessBlocked",
+          "type": "event"
+        },
+        "0x9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "errorCode",
+              "type": "uint256"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xe785f4b389bd35976c59176a4b837deec966d79c",
+      "updated_at": 1500439425743
+    },
+    "1500454726937": {
+      "events": {
+        "0xb6798040b2ff718946767eb5764382753f7d49017204678c8905ccbd393f48bc": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessGiven",
+          "type": "event"
+        },
+        "0xd21adfcaa3724e99864abea371528f9aa867d0b433e7d29dd972bf8d839ce467": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "actor",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessBlocked",
+          "type": "event"
+        },
+        "0x9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "self",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "errorCode",
+              "type": "uint256"
+            }
+          ],
+          "name": "Error",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x9ffe5f70474da09f5b7c3ce9571cc93d49175783",
+      "updated_at": 1500455314047
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1500455314047
+}

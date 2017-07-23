@@ -6,21 +6,17 @@ import "./WalletsManagerEmitter.sol";
 
 contract WalletsManager is Managed,WalletsManagerEmitter {
 
-    uint constant ERROR_WALLET_INVALID_INVOCATION = 11000;
-    uint constant ERROR_WALLET_EXISTS = 11001;
-    uint constant ERROR_WALLET_TOKEN_EXISTS = 11002;
-    uint constant ERROR_WALLET_OWNER_ONLY = 11006;
-    uint constant ERROR_WALLET_CANNOT_ADD_TO_REGISTRY = 11007;
+    uint constant ERROR_WALLET_INVALID_INVOCATION = 14000;
+    uint constant ERROR_WALLET_EXISTS = 14001;
+    uint constant ERROR_WALLET_OWNER_ONLY = 14002;
+    uint constant ERROR_WALLET_CANNOT_ADD_TO_REGISTRY = 14003;
+    uint constant ERROR_WALLET_UNKNOWN = 14004;
 
-    StorageInterface.OrderedAddressesSet wallets;
+    event Err(bool error);
 
-    modifier onlyWalletOwner(address _wallet) {
-        if (isWalletOwner(_wallet, msg.sender)) {
-            _;
-        }
-    }
+StorageInterface.OrderedAddressesSet wallets;
 
-    function isWalletOwner(address _wallet, address _owner) constant returns (bool) {
+    function isWalletOwner(address _wallet, address _owner) internal returns (bool) {
         return Wallet(_wallet).isOwner(_owner);
     }
 
@@ -39,6 +35,12 @@ contract WalletsManager is Managed,WalletsManagerEmitter {
         }
 
         store.set(contractsManager, _contractsManager);
+        return OK;
+    }
+
+    function kill(address[] tokens) onlyAuthorized returns (uint) {
+        withdrawnTokens(tokens);
+        selfdestruct(msg.sender);
         return OK;
     }
 
@@ -63,17 +65,36 @@ contract WalletsManager is Managed,WalletsManagerEmitter {
         return OK;
     }
 
-    function addWallet(address wallet) returns (uint errorCode) {
-        store.add(wallets, wallet);
+    function addWallet(address _wallet) returns (uint) {
+        bool r = _wallet.call.gas(3000).value(0)(bytes4(sha3("isOwner(address)")),msg.sender);
+        Err(r);
+        if(!r) {
+            return _emitError(ERROR_WALLET_UNKNOWN);
+        }
+        if(store.includes(wallets,_wallet)) {
+            return _emitError(ERROR_WALLET_EXISTS);
+        }
+        if(!isWalletOwner(_wallet,msg.sender)) {
+            return _emitError(ERROR_WALLET_CANNOT_ADD_TO_REGISTRY);
+        }
 
-        _emitWalletAdded(wallet);
+        store.add(wallets, _wallet);
+
+        _emitWalletAdded(_wallet);
 
         return OK;
     }
 
+    function removeWallet() returns (uint) {
+        if(store.includes(wallets,msg.sender)) {
+            store.remove(wallets,msg.sender);
+            return OK;
+        }
+        return _emitError(ERROR_WALLET_UNKNOWN);
+    }
+
     function createWallet(address[] _owners, uint _required) returns (uint errorCode) {
-        address _erc20Manager;
-        address _wallet = new Wallet(_owners,_required,_erc20Manager);
+        address _wallet = new Wallet(_owners,_required,store.get(contractsManager));
         store.add(wallets, _wallet);
         _emitWalletCreated(_wallet);
         return OK;

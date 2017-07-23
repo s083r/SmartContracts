@@ -3,6 +3,8 @@ pragma solidity ^0.4.8;
 contract ERC20ManagerInterface {
 
     function getTokenAddressBySymbol(bytes32 _symbol) constant returns (address tokenAddress);
+    function getAddressById(uint _id) constant returns (address);
+    function tokensCount() constant returns (uint);
 
     function addToken(
     address _token,

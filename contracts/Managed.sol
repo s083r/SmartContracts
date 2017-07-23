@@ -4,6 +4,7 @@ import {PendingManagerInterface as Shareable} from "./PendingManagerInterface.so
 import "./UserManagerInterface.sol";
 import "./ContractsManagerInterface.sol";
 import "./StorageAdapter.sol";
+import "./ERC20Interface.sol";
 
 contract Managed is StorageAdapter {
 
@@ -48,5 +49,14 @@ contract Managed is StorageAdapter {
     function isAuthorized(address key) constant returns (bool) {
         address userManager = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("UserManager"));
         return UserManagerInterface(userManager).getCBE(key);
+    }
+
+    function withdrawnTokens(address[] tokens) onlyAuthorized returns(uint) {
+        for(uint i=0;i<tokens.length;i++) {
+            address token = tokens[i];
+            uint balance = ERC20Interface(token).balanceOf(this);
+            if(balance != 0)
+            ERC20Interface(token).transfer(msg.sender,balance);
+        }
     }
 }

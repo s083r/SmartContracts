@@ -1,0 +1,67 @@
+{
+  "contract_name": "ProxyFactory",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "createAssetWithFee",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "createAsset",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "createProxy",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x",
+  "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xd991c004ce43fd79d1ad2242d655edc583d2ae4a",
+      "updated_at": 1500445890375
+    },
+    "42": {
+      "events": {},
+      "links": {},
+      "address": "0x99e178b0fc732e564960df5f0dcd9b23787ad8d1",
+      "updated_at": 1500439041124
+    },
+    "1500454726937": {
+      "events": {},
+      "links": {},
+      "address": "0x9a206c85a2befe5250c35d187abc127fd4def506",
+      "updated_at": 1500455310223
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1500603705184
+}

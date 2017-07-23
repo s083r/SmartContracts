@@ -12,7 +12,9 @@ var setupCBE = function (callback) {
 
   const addresses = [
     "0xc38f003c0a14a05f11421d793edc9696a25cb2b3",
-    "0x64a5d8B41BA9D01D64016164BF5B51B48440D46d"
+    "0x64a5d8B41BA9D01D64016164BF5B51B48440D46d",
+    "0x281bda743d5abcc94d54b604ab1462f4c6c6d6c2",
+    "0x00d451bedd4f8567631b5811c1d3d57cfd410ddd"
   ]
 
   let _setupCBE = (userManager, addresses) => {

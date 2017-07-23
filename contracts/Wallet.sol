@@ -12,11 +12,27 @@
 pragma solidity ^0.4.10;
 
 import {ERC20ManagerInterface as ERC20Manager} from "./ERC20ManagerInterface.sol";
+import {ContractsManagerInterface as ContractsManager} from "./ContractsManagerInterface.sol";
 import "./ERC20Interface.sol";
+
+contract WalletsManagerInterface {
+    function removeWallet() returns (uint);
+}
 
 contract multiowned {
 
 	// TYPES
+
+    uint constant WALLET_INVALID_INVOCATION = 0;
+    uint constant OK = 1;
+    uint constant WALLET_UNKNOWN_OWNER = 2;
+    uint constant WALLET_OWNER_ALREADY_EXISTS = 3;
+    uint constant WALLET_CONFIRMATION_NEEDED = 4;
+    uint constant WALLET_UNKNOWN_OPERATION = 5;
+    uint constant WALLET_OWNERS_LIMIT_EXIDED = 6;
+    uint constant WALLET_UNKNOWN_TOKEN_TRANSFER = 7;
+    uint constant WALLET_TRANSFER_ALREADY_REGISTERED = 8;
+    uint constant WALLET_INSUFFICIENT_BALANCE = 9;
 
     // struct for the status of a pending operation.
     struct PendingState {
@@ -38,19 +54,11 @@ contract multiowned {
     // the last one is emitted if the required signatures change
     event RequirementChanged(uint newRequirement);
 
-	// MODIFIERS
+    event Error(uint errorCode);
 
-    // simple single-sig function modifier.
-    modifier onlyowner {
-        require(isOwner(msg.sender));
-        _;
-    }
-    // multi-sig function modifier: the operation must have an intrinsic hash in order
-    // that later attempts can be realised as the same underlying operation and
-    // thus count as confirmations.
-    modifier onlymanyowners(bytes32 _operation) {
-        require(confirmAndCheck(_operation));
-        _;
+    function _emitError(uint error) internal returns (uint) {
+        Error(error);
+        return error;
     }
 
 	// METHODS
@@ -70,63 +78,84 @@ contract multiowned {
     }
     
     // Revokes a prior confirmation of the given operation
-    function revoke(bytes32 _operation) external {
+    function revoke(bytes32 _operation) external returns (uint) {
         uint ownerIndex = m_ownerIndex[uint(msg.sender)];
         // make sure they're an owner
-        if (ownerIndex == 0) return;
+        if (ownerIndex == 0) return _emitError(WALLET_UNKNOWN_OWNER);
         uint ownerIndexBit = 2**ownerIndex;
         var pending = m_pending[_operation];
         if (pending.ownersDone & ownerIndexBit > 0) {
             pending.yetNeeded++;
             pending.ownersDone -= ownerIndexBit;
             Revoke(msg.sender, _operation);
+            return OK;
         }
+        return _emitError(WALLET_UNKNOWN_OPERATION);
     }
     
     // Replaces an owner `_from` with another `_to`.
-    function changeOwner(address _from, address _to) onlymanyowners(sha3(msg.data)) external {
-        if (isOwner(_to)) return;
+    function changeOwner(address _from, address _to) external returns (uint) {
+        uint e = confirmAndCheck(sha3(msg.data));
+        if(OK != e) {
+            return _emitError(e);
+        }
+        if (isOwner(_to)) return _emitError(WALLET_OWNER_ALREADY_EXISTS);
         uint ownerIndex = m_ownerIndex[uint(_from)];
-        if (ownerIndex == 0) return;
-
+        if (ownerIndex == 0) return _emitError(WALLET_UNKNOWN_OWNER);
         clearPending();
         m_owners[ownerIndex] = uint(_to);
         m_ownerIndex[uint(_from)] = 0;
         m_ownerIndex[uint(_to)] = ownerIndex;
         OwnerChanged(_from, _to);
+        return OK;
     }
-    
-    function addOwner(address _owner) onlymanyowners(sha3(msg.data)) external {
-        if (isOwner(_owner)) return;
+
+    function addOwner(address _owner) external returns (uint) {
+        uint e = confirmAndCheck(sha3(msg.data));
+        if(OK != e) {
+            return _emitError(e);
+        }
+        if (isOwner(_owner)) return _emitError(WALLET_OWNER_ALREADY_EXISTS);
 
         clearPending();
         if (m_numOwners >= c_maxOwners)
             reorganizeOwners();
         if (m_numOwners >= c_maxOwners)
-            return;
+            return WALLET_OWNERS_LIMIT_EXIDED;
         m_numOwners++;
         m_owners[m_numOwners] = uint(_owner);
         m_ownerIndex[uint(_owner)] = m_numOwners;
         OwnerAdded(_owner);
+        return OK;
     }
     
-    function removeOwner(address _owner) onlymanyowners(sha3(msg.data)) external {
+    function removeOwner(address _owner) external returns (uint) {
+        uint e = confirmAndCheck(sha3(msg.data));
+        if(OK != e) {
+            return _emitError(e);
+        }
         uint ownerIndex = m_ownerIndex[uint(_owner)];
-        if (ownerIndex == 0) return;
-        if (m_required > m_numOwners - 1) return;
+        if (ownerIndex == 0) return _emitError(WALLET_UNKNOWN_OWNER);
+        if (m_required > m_numOwners - 1) return _emitError(WALLET_INVALID_INVOCATION);
 
         m_owners[ownerIndex] = 0;
         m_ownerIndex[uint(_owner)] = 0;
         clearPending();
         reorganizeOwners(); //make sure m_numOwner is equal to the number of owners and always points to the optimal free slot
         OwnerRemoved(_owner);
+        return OK;
     }
     
-    function changeRequirement(uint _newRequired) onlymanyowners(sha3(msg.data)) external {
+    function changeRequirement(uint _newRequired) external returns (uint) {
+        uint e = confirmAndCheck(sha3(msg.data));
+        if(OK != e) {
+            return _emitError(e);
+        }
         if (_newRequired > m_numOwners) return;
         m_required = _newRequired;
         clearPending();
         RequirementChanged(_newRequired);
+        return OK;
     }
 
     // Gets an owner by 0-indexed position (using numOwners as the count)
@@ -137,7 +166,7 @@ contract multiowned {
     function isOwner(address _addr) returns (bool) {
         return m_ownerIndex[uint(_addr)] > 0;
     }
-    
+
     function hasConfirmed(bytes32 _operation, address _owner) constant returns (bool) {
         var pending = m_pending[_operation];
         uint ownerIndex = m_ownerIndex[uint(_owner)];
@@ -152,11 +181,11 @@ contract multiowned {
     
     // INTERNAL METHODS
 
-    function confirmAndCheck(bytes32 _operation) internal returns (bool) {
+    function confirmAndCheck(bytes32 _operation) internal returns (uint) {
         // determine what index the present sender is:
         uint ownerIndex = m_ownerIndex[uint(msg.sender)];
         // make sure they're an owner
-        if (ownerIndex == 0) return;
+        if (ownerIndex == 0) return _emitError(WALLET_UNKNOWN_OWNER);
 
         var pending = m_pending[_operation];
         // if we're not yet working on this operation, switch over and reset the confirmation status.
@@ -178,13 +207,14 @@ contract multiowned {
                 // enough confirmations: reset and run interior.
                 delete m_pendingIndex[m_pending[_operation].index];
                 delete m_pending[_operation];
-                return true;
+                return OK;
             }
             else
             {
                 // not enough: record that this owner in particular confirmed.
                 pending.yetNeeded--;
                 pending.ownersDone |= ownerIndexBit;
+                return WALLET_CONFIRMATION_NEEDED;
             }
         }
     }
@@ -222,6 +252,7 @@ contract multiowned {
     // list of owners
     uint[256] m_owners;
     uint constant c_maxOwners = 250;
+    uint constant c_maxPending = 20;
     // index on the list of owners to allow reverse lookup
     mapping(uint => uint) m_ownerIndex;
     // the ongoing operations.
@@ -245,7 +276,6 @@ contract Wallet is multiowned {
     event MultiTransact(address owner, bytes32 operation, uint value, address to, bytes32 symbol);
     // Confirmation still needed for a transaction.
     event ConfirmationNeeded(bytes32 operation, address initiator, uint value, address to, bytes32 symbol);
-
 	// TYPES
 
     // Transaction structure to remember details of transaction lest it need be saved for a later call.
@@ -255,19 +285,42 @@ contract Wallet is multiowned {
         bytes32 symbol;
     }
 
-	address erc20Manager;
+    address contractsManager;
 
     // METHODS
 
     // constructor - just pass on the owner array to the multiowned and
     // the limit to daylimit
-    function Wallet(address[] _owners, uint _required, address _erc20Manager) multiowned(_owners, _required)  {
-		erc20Manager = _erc20Manager;
+    function Wallet(address[] _owners, uint _required, address _contractsManager) multiowned(_owners, _required)  {
+        contractsManager = _contractsManager;
+    }
+
+    function getTokenAddresses() constant returns (address[] result) {
+        address erc20Manager = ContractsManager(contractsManager).getContractAddressByType(bytes32("ERC20Manager"));
+        uint counter = ERC20Manager(erc20Manager).tokensCount();
+        result = new address[](counter);
+        for(uint i=0;i<counter;i++) {
+            result[i] = ERC20Manager(erc20Manager).getAddressById(i);
+        }
+        return result;
     }
     
     // kills the contract sending everything to `_to`.
-    function kill(address _to) onlymanyowners(sha3(msg.data)) external {
+    function kill(address _to) external returns (uint) {
+        uint e = confirmAndCheck(sha3(msg.data));
+        if(OK != e) {
+            return _emitError(e);
+        }
+        address[] memory tokens = getTokenAddresses();
+        for(uint i=0;i<tokens.length;i++) {
+            address token = tokens[i];
+            uint balance = ERC20Interface(token).balanceOf(this);
+            if(balance != 0)
+                ERC20Interface(token).transfer(_to,balance);
+        }
         selfdestruct(_to);
+        address walletsManager = ContractsManager(contractsManager).getContractAddressByType(bytes32("walletsManager"));
+        return WalletsManagerInterface(walletsManager).removeWallet();
     }
     
     // gets called when no other function matches
@@ -281,31 +334,55 @@ contract Wallet is multiowned {
     // If not, goes into multisig process. We provide a hash on return to allow the sender to provide
     // shortcuts for the other confirmations (allowing them to avoid replicating the _to, _value
     // and _data arguments). They still get the option of using them if they want, anyways.
-    function transfer(address _to, uint _value, bytes32 _symbol) external onlyowner returns (bytes32 _r) {
+    function transfer(address _to, uint _value, bytes32 _symbol) external returns (uint) {
+        if(!isOwner(msg.sender)) {
+            return _emitError(WALLET_UNKNOWN_OWNER);
+        }
+        address erc20Manager = ContractsManager(contractsManager).getContractAddressByType(bytes32("ERC20Manager"));
+        if(_symbol != bytes32('ETH') && ERC20Manager(erc20Manager).getTokenAddressBySymbol(_symbol) == 0)
+            return _emitError(WALLET_UNKNOWN_TOKEN_TRANSFER);
+        if(_symbol == bytes32('ETH')) {
+            if(this.balance < _value) {
+                return _emitError(WALLET_INSUFFICIENT_BALANCE);
+            }
+        }
+        else {
+            address token = ERC20Manager(erc20Manager).getTokenAddressBySymbol(_symbol);
+            if(ERC20Interface(token).balanceOf(this) < _value)
+                return _emitError(WALLET_INSUFFICIENT_BALANCE);
+        }
         // determine our operation hash.
-        _r = sha3(msg.data, block.number);
-        if (!confirm(_r) && m_txs[_r].to == 0) {
+        bytes32 _r = sha3(msg.data, block.number);
+        uint status = confirm(_r);
+        if (!(status == OK) && (m_txs[_r].to == 0)) {
             m_txs[_r].to = _to;
             m_txs[_r].value = _value;
             m_txs[_r].symbol = _symbol;
             ConfirmationNeeded(_r, msg.sender, _value, _to, _symbol);
+            return status;
         }
+        return _emitError(WALLET_TRANSFER_ALREADY_REGISTERED);
     }
     
     // confirm a transaction through just the hash. we use the previous transactions map, m_txs, in order
     // to determine the body of the transaction from the hash provided.
-    function confirm(bytes32 _h) onlymanyowners(_h) returns (bool) {
+    function confirm(bytes32 _h) returns (uint) {
+        uint e = confirmAndCheck(_h);
+        if(OK != e) {
+            return e;
+        }
         if (m_txs[_h].to != 0) {
-			if(m_txs[_h].symbol == bytes32(0)) {
-				require(m_txs[_h].to.call.value(m_txs[_h].value)());	
-			}
+            if(m_txs[_h].symbol == bytes32('ETH')) {
+                require(m_txs[_h].to.send(m_txs[_h].value));
+            }
             else {
-			    address token = 0x0; 
+                address erc20Manager = ContractsManager(contractsManager).getContractAddressByType(bytes32("ERC20Manager"));
+                address token = ERC20Manager(erc20Manager).getTokenAddressBySymbol(m_txs[_h].symbol);
                 ERC20Interface(token).transfer(m_txs[_h].to,m_txs[_h].value);
             }
             MultiTransact(msg.sender, _h, m_txs[_h].value, m_txs[_h].to, m_txs[_h].symbol);
             delete m_txs[_h];
-            return true;
+            return OK;
         }
     }
     

@@ -11,7 +11,8 @@ const errorScope = {
     contract: 10000,
     assets: 11000,
     timeholder: 12000,
-    ercmanager: 13000
+    ercmanager: 13000,
+    walletsmanager: 14000
 }
 
 const errorsLibrary = {
@@ -124,6 +125,12 @@ const errorsLibrary = {
     ASSETS_NOT_A_PROXY: errorScope.assets + 5,
     ASSETS_OWNER_ONLY: errorScope.assets + 6,
     ASSETS_CANNOT_ADD_TO_REGISTRY: errorScope.assets + 7,
+
+    ERROR_WALLET_INVALID_INVOCATION: errorScope.walletsmanager + 0,
+    ERROR_WALLET_EXISTS: errorScope.walletsmanager + 1,
+    ERROR_WALLET_OWNER_ONLY: errorScope.walletsmanager + 2,
+    ERROR_WALLET_CANNOT_ADD_TO_REGISTRY: errorScope.walletsmanager + 3,
+    ERROR_WALLET_UNKNOWN: errorScope.walletsmanager + 4,
 }
 
 module.exports = errorsLibrary
