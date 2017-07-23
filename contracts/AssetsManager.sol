@@ -36,7 +36,7 @@ contract CrowdsaleManager {
 }
 
 
-contract AssetsManager is Managed, AssetsManagerEmitter {
+contract AssetsManager is Managed, AssetsManagerEmitter, Owned {
 
     uint constant ERROR_ASSETS_INVALID_INVOCATION = 11000;
     uint constant ERROR_ASSETS_EXISTS = 11001;
@@ -46,6 +46,7 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
     uint constant ERROR_ASSETS_NOT_A_PROXY = 11005;
     uint constant ERROR_ASSETS_OWNER_ONLY = 11006;
     uint constant ERROR_ASSETS_CANNOT_ADD_TO_REGISTRY = 11007;
+    uint constant ERROR_ASSETS_CANNON_PASS_PLATFORM_OWNERSHIP = 11008;
 
     StorageInterface.Address platform;
     StorageInterface.Address proxyFactory;
@@ -103,11 +104,19 @@ contract AssetsManager is Managed, AssetsManagerEmitter {
     }
 
     function claimPlatformOwnership() returns (uint errorCode) {
-        if (OwnedInterface(store.get(platform)).claimContractOwnership()) {
-            return OK;
+        if (!OwnedInterface(store.get(platform)).claimContractOwnership()) {
+            return _emitError(ERROR_ASSETS_CANNON_CLAIM_PLATFORM_OWNERSHIP);
         }
         //platform = address(0);
-        return _emitError(ERROR_ASSETS_CANNON_CLAIM_PLATFORM_OWNERSHIP);
+        return OK;
+    }
+
+    function passPlatformOwnership(address _to) onlyContractOwner() returns (uint errorCode) {
+        if (!OwnedInterface(store.get(platform)).changeContractOwnership(_to)) {
+            return _emitError(ERROR_ASSETS_CANNON_PASS_PLATFORM_OWNERSHIP);
+        }
+
+        return OK;
     }
 
     function getAssetBalance(bytes32 symbol) constant returns (uint) {

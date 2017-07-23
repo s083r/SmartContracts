@@ -125,6 +125,7 @@ const errorsLibrary = {
     ASSETS_NOT_A_PROXY: errorScope.assets + 5,
     ASSETS_OWNER_ONLY: errorScope.assets + 6,
     ASSETS_CANNOT_ADD_TO_REGISTRY: errorScope.assets + 7,
+    ASSETS_CANNON_PASS_PLATFORM_OWNERSHIP: errorScope.assets + 8,
 
     ERROR_WALLET_INVALID_INVOCATION: errorScope.walletsmanager + 0,
     ERROR_WALLET_EXISTS: errorScope.walletsmanager + 1,

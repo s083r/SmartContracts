@@ -7,9 +7,9 @@ before_install:
 - git config --global user.email "mike@chronobank.com"
 - git config --global user.name "Travis-CI"
 script:
-- testrpc -g 1 > /dev/null &
-- truffle migrate
-- truffle test
+- testrpc -g 1 --network-id 424242 > /dev/null &
+- truffle migrate --network test
+- truffle test --network test
 - if [ "$TRAVIS_BRANCH" == "deploy" ]; then
     truffle migrate --network kovan;
     git config credential.helper "store --file=.git/credentials";

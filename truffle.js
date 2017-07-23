@@ -37,6 +37,12 @@ networks: {
       network_id: 1337 // custom private network
       // use default rpc settings
     },
+    test: {
+     network_id: 424242,
+     host: 'localhost',
+     port: 8545,
+     gas: 4700000
+    },
     development: {
       host: 'localhost',
       port: 8545,
@@ -46,4 +52,3 @@ networks: {
   },
   migrations_directory: './migrations'
 }
-

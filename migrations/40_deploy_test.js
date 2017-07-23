@@ -8,7 +8,7 @@ var ChronoBankPlatformTestable = artifacts.require("./ChronoBankPlatformTestable
 var KrakenPriceTicker = artifacts.require("./KrakenPriceTicker.sol");
 
 module.exports = function(deployer,network) {
-  if(network === 'development') {
+  if(network === 'development' || network === 'test') {
       deployer.deploy(Stub)
         .then(() => deployer.deploy(ChronoBankPlatformTestable))
         .then(() => deployer.deploy(FakeCoin))
