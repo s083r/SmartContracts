@@ -17,6 +17,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
     );
 
     event LogTokenChange (
+    address oldToken,
     address token,
     bytes32 name,
     bytes32 symbol,
@@ -205,7 +206,7 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
         }
 
         if(changed) {
-            LogAddToken(_newToken, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
+            LogTokenChange(_token, _newToken, _name, _symbol, _url, _decimals, _ipfsHash, _swarmHash);
             return OK;
         }
 
