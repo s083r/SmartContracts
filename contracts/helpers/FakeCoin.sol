@@ -14,6 +14,14 @@ contract FakeCoin {
     function totalSupply() constant returns(uint) {
         return 0;
     }
+    
+    function symbol() constant returns(string) {
+        return 'FAKE';
+    }
+    
+    function decimals() constant returns(uint) {
+        return 4;
+    }
 
     function transfer(address _to, uint _value) returns(bool) {
         return transferFrom(msg.sender, _to, _value);
