@@ -41,7 +41,6 @@ contract('Rewards', (accounts) => {
     .then(() => reward.init(contractsManager.address, ZERO_INTERVAL))
     .then(() => userManager.init(contractsManager.address))
     .then(() => timeHolder.init(contractsManager.address, shares.address))
-    .then(() => timeHolder.addListener(reward.address))
     .then(() => assetsManager.addAsset(asset1.address, 'LHT', chronoMint.address))
     .then(() => reward.setupEventsHistory(multiEventsHistory.address))
     .then(() => multiEventsHistory.authorize(reward.address))
@@ -99,7 +98,7 @@ contract('Rewards', (accounts) => {
 
   let depositShareholders = (count, amount) => {
     let data = [];
-    for(let i = 0; i < count; i++) {
+    for(let i = 1000; i < count+1000; i++) {
        data.push(timeHolder.depositFor(i, amount));
     }
     return Promise.all(data);
@@ -109,13 +108,13 @@ contract('Rewards', (accounts) => {
 
     Storage.new()
     .then((instance) => storage = instance)
-    .then(() => Rewards.new(storage.address, "Rewards"))
+    .then(() => Rewards.new(storage.address, "Deposits"))
     .then((instance) => reward = instance)
     .then(() => AssetsManagerMock.deployed())
     .then((instance) => assetsManager = instance)
     .then(() => LOCManager.new(storage.address, 'LOCs Manager'))
     .then((instance) => chronoMint = instance)
-    .then(() => TimeHolder.new())
+    .then(() => TimeHolder.new(storage.address,'Deposits'))
     .then((instance) => timeHolder = instance)
     .then(() => ContractsManager.new(storage.address, 'Contracts Manager'))
     .then((instance) => contractsManager = instance)
@@ -236,7 +235,7 @@ contract('Rewards', (accounts) => {
       .then(() => reward.init(contractsManager.address, ZERO_INTERVAL + 1))
       .then(() => userManager.init(contractsManager.address))
       .then(() => timeHolder.init(contractsManager.address, shares.address))
-      .then(() => timeHolder.addListener(reward.address))
+      //.then(() => timeHolder.addListener(reward.address))
       .then(() => reward.setupEventsHistory(multiEventsHistory.address))
       .then(() => multiEventsHistory.authorize(reward.address))
       .then(() => reward.closePeriod.call())
@@ -256,13 +255,13 @@ contract('Rewards', (accounts) => {
   });
 
   // registerAsset(address _assetAddress) returns(bool)
-  it('should not be possible to register asset for first period (periods.length == 1)', () => {
+  /*it('should not be possible to register asset for first period (periods.length == 1)', () => {
     return defaultInit()
       .then(() => asset1.mint(reward.address, 100))
       .then(() => reward.registerAsset(asset1.address)
         .then(assert.fail, () => {})
       );
-  });
+  });*/
 
  it('should not be possible to register asset twice with non zero balance', () => {
     return defaultInit()
@@ -287,7 +286,7 @@ contract('Rewards', (accounts) => {
       .then(() => assertRewardsLeft(asset1.address, 100));
   });
 
-  it('should not be possible to register shares as an asset', () => {
+  /*it('should not be possible to register shares as an asset', () => {
     return defaultInit()
       .then(() => shares.mint(reward.address, 100))
       .then(() => reward.closePeriod([]))
@@ -297,7 +296,7 @@ contract('Rewards', (accounts) => {
       .then(() => reward.registerAsset(shares.address))
       .then(() => assertAssetBalanceInPeriod(shares.address, 0, 0))
       .then(() => assertRewardsLeft(shares.address, 0));
-  });
+  });*/
 
   it('should count incoming rewards separately for each period', () => {
     return defaultInit()
@@ -520,12 +519,11 @@ contract('Rewards', (accounts) => {
       .then(() => assertRewardsFor(accounts[0], asset1.address, 70));
   });
 
-  /*  it('should allow 1111 shareholders to deposit, calculate and withdrawn', () => {
+   /* it('should allow 1111 shareholders to deposit, calculate and withdrawn', () => {
         return defaultInit()
           .then(() => asset1.mint(reward.address, 1000000))
           .then(() => timeHolder.depositFor(accounts[0], 50))
           .then(() => depositShareholders(711,1))
-	  .then(() => reward.addAsset(asset1.address))
           .then(() => reward.closePeriod())
           .then(() => timeHolder.withdrawShares(25))
           .then(() => { return reward.getPartsCount.call() })

@@ -51,12 +51,13 @@ contract Managed is StorageAdapter {
         return UserManagerInterface(userManager).getCBE(key);
     }
 
-    function withdrawnTokens(address[] tokens) onlyAuthorized returns(uint) {
+    function withdrawnTokens(address[] tokens, address _to) onlyAuthorized returns(uint) {
         for(uint i=0;i<tokens.length;i++) {
             address token = tokens[i];
             uint balance = ERC20Interface(token).balanceOf(this);
             if(balance != 0)
-            ERC20Interface(token).transfer(msg.sender,balance);
+                ERC20Interface(token).transfer(_to,balance);
         }
+        return OK;
     }
 }

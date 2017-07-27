@@ -6,17 +6,17 @@ contract TimeHolderEmmiter is MultiEventsHistoryAdapter {
     /**
     *  User deposited into current period.
     */
-    event Deposit(address indexed who, uint indexed amount);
+    event Deposit(address who, uint amount);
 
     /**
     *  Shares withdrawn by a shareholder.
     */
-    event WithdrawShares(address indexed who, uint amount);
+    event WithdrawShares(address who, uint amount);
 
     /**
     *  Shares withdrawn by a shareholder.
     */
-    event ListenerAdded(address indexed listener);
+    event ListenerAdded(address listener);
 
     /**
     *  Something went wrong.

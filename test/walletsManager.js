@@ -113,6 +113,7 @@ contract('Wallets Manager', function(accounts) {
           gas: 3000000
         }).then(function (tx) {
           return Setup.walletsManager.getWallets.call().then(function (r2) {
+            console.log(r)
             assert.equal(r, ErrorsEnum.OK);
             assert.equal(r2.length, 2);
           });
@@ -127,6 +128,7 @@ contract('Wallets Manager', function(accounts) {
           gas: 3000000
         }).then(function (tx) {
           return Setup.walletsManager.getWallets.call().then(function (r2) {
+            console.log(r)
             assert.equal(r, ErrorsEnum.ERROR_WALLET_EXISTS);
             assert.equal(r2.length, 2);
           });
@@ -135,13 +137,11 @@ contract('Wallets Manager', function(accounts) {
     });
 
     it("doesn't allow add non Multisig Wallet contract", function() {
-      return Setup.walletsManager.addWallet.call(Setup.walletsManager.address).then(function(r) {
-        return Setup.walletsManager.addWallet(Setup.walletsManager.address, {
-          from: owner,
-          gas: 3000000
-        }).then(() => { assert.equal(r, ErrorsEnum.ERROR_WALLET_UNKNOWN)})
-      });
-    });
+      return Setup.walletsManager.addWallet.call(Setup.chronoBankAsset.address).then(function(r) {
+        console.log(r)
+        assert.equal(r, ErrorsEnum.ERROR_WALLET_UNKNOWN)
+      })
+    })
 
     it('should be able to multisig send ETH', function() {
       return wallet.transfer.call(owner3, 5000, 'ETH').then(function (r) {

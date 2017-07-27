@@ -12,8 +12,6 @@ contract WalletsManager is Managed,WalletsManagerEmitter {
     uint constant ERROR_WALLET_CANNOT_ADD_TO_REGISTRY = 14003;
     uint constant ERROR_WALLET_UNKNOWN = 14004;
 
-    event Err(bool error);
-
 StorageInterface.OrderedAddressesSet wallets;
 
     function isWalletOwner(address _wallet, address _owner) internal returns (bool) {
@@ -39,7 +37,7 @@ StorageInterface.OrderedAddressesSet wallets;
     }
 
     function kill(address[] tokens) onlyAuthorized returns (uint) {
-        withdrawnTokens(tokens);
+        withdrawnTokens(tokens,msg.sender);
         selfdestruct(msg.sender);
         return OK;
     }
@@ -67,7 +65,6 @@ StorageInterface.OrderedAddressesSet wallets;
 
     function addWallet(address _wallet) returns (uint) {
         bool r = _wallet.call.gas(3000).value(0)(bytes4(sha3("isOwner(address)")),msg.sender);
-        Err(r);
         if(!r) {
             return _emitError(ERROR_WALLET_UNKNOWN);
         }

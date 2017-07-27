@@ -63,7 +63,7 @@ contract LOCManager is Managed, LOCManagerEmitter {
     }
 
     function kill(address[] tokens) onlyAuthorized returns (uint) {
-        withdrawnTokens(tokens);
+        withdrawnTokens(tokens,msg.sender);
         selfdestruct(msg.sender);
         return OK;
     }

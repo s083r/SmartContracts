@@ -38,7 +38,9 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
         }
 
         address timeHolder = ContractsManagerInterface(store.get(contractsManager)).getContractAddressByType(bytes32("TimeHolder"));
-        if (TimeHolder(timeHolder).shares(msg.sender) == 0) {
+        uint balance = TimeHolder(timeHolder).depositBalance(msg.sender);
+
+        if (balance == 0) {
             return _emitError(ERROR_VOTE_POLL_NO_SHARES);
         }
 
@@ -46,9 +48,9 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
             return _emitError(ERROR_VOTE_POLL_ALREADY_VOTED);
         }
 
-        uint optionsValue = store.get(options, _pollId, _choice) + TimeHolder(timeHolder).shares(msg.sender);
+        uint optionsValue = store.get(options, _pollId, _choice) + balance;
         store.set(options, _pollId, _choice, optionsValue);
-        store.set(memberVotes, _pollId, msg.sender, TimeHolder(timeHolder).shares(msg.sender));
+        store.set(memberVotes, _pollId, msg.sender, balance);
         store.add(members, bytes32(_pollId), msg.sender);
         store.set(memberOption, _pollId, msg.sender, _choice);
         store.add(memberPolls, bytes32(msg.sender), _pollId);

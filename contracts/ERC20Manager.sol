@@ -119,7 +119,12 @@ contract ERC20Manager is Managed, ERC20ManagerEmitter {
             return _emitError(ERROR_ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS);
         }
 
-        Asset(_token).totalSupply();
+        bool r = _token.call.gas(3000).value(0)(bytes4(sha3("balanceOf(address)")),msg.sender);
+
+        if(!r) {
+            return _emitError(ERROR_ERCMANAGER_INVALID_INVOCATION);
+        }
+
         store.add(tokenAddresses,_token);
         store.set(tokenBySymbol,_symbol,_token);
         store.set(name,_token,_name);

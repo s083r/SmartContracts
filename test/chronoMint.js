@@ -902,7 +902,7 @@ contract('LOC Manager', function(accounts) {
 
     it("should return periods length = 1", function () {
       return Setup.rewards.periodsLength.call().then((r) => {
-        assert.equal(r, 1);
+        assert.equal(r, 0);
       })
     })
 

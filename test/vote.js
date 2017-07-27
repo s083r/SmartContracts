@@ -98,6 +98,7 @@ contract('Vote', function(accounts) {
     it("owner should be able to approve 50 TIME to Vote", function() {
       return Setup.chronoBankAssetProxy.approve.call(Setup.timeHolder.address, 50, {from: accounts[0]}).then((r) => {
         return Setup.chronoBankAssetProxy.approve(Setup.timeHolder.address, 50, {from: accounts[0]}).then(() => {
+          console.log(r);
           assert.isOk(r);
         });
       });
@@ -105,29 +106,27 @@ contract('Vote', function(accounts) {
 
     it("should be able to deposit 50 TIME from owner", function() {
       return Setup.timeHolder.deposit.call(50, {from: accounts[0]}).then((r) => {
+        console.log(r);
+        assert.isOk(r);
         return Setup.timeHolder.deposit(50, {from: accounts[0]}).then(() => {
-          assert.isOk(r);
+          return Setup.timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r2) =>
+          {
+            console.log(r2);
+            assert.equal(r2, 50);
+          });
         });
-      });
-    });
-
-    it("should show 50 TIME owner balance", function() {
-      return Setup.timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
-        assert.equal(r,50);
       });
     });
 
     it("should be able to withdraw 25 TIME from owner", function() {
       return Setup.timeHolder.withdrawShares.call(25, {from: accounts[0]}).then((r) => {
+        assert.isOk(r);
         return Setup.timeHolder.withdrawShares(25, {from: accounts[0]}).then(() => {
-          assert.isOk(r);
+          return Setup.timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r2) => {
+            console.log(r2);
+            assert.equal(r2, 25);
+          });
         });
-      });
-    });
-
-    it("should show 25 TIME owner balance", function() {
-      return Setup.timeHolder.depositBalance.call(owner, {from: accounts[0]}).then((r) => {
-        assert.equal(r,25);
       });
     });
 

@@ -4,14 +4,11 @@ import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 
 contract TimeHolderInterface {
 
-    mapping(address => uint) public shares;
-    mapping(uint => address)  public shareholders;
-    mapping(address => uint)  public shareholdersId;
-    uint public shareholdersCount = 1;
-    uint public totalShares;
-    // ERC20 token that acts as shares.
-    Asset public sharesContract;
+    function totalShares() constant returns (uint);
+    function sharesContract() constant returns (address);
+    function shareholdersCount() constant returns (uint);
     function totalSupply() constant returns(uint);
+    function depositBalance(address _address) constant returns(uint);
 
 }
 

@@ -1,0 +1,202 @@
+{
+  "contract_name": "RewardsEmitter",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "total",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitWithdrawn",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_part",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitDepositStored",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitWithdrawnReward",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "assetAddress",
+          "type": "address"
+        }
+      ],
+      "name": "emitAssetRegistered",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "error",
+          "type": "uint256"
+        }
+      ],
+      "name": "emitError",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "emitPeriodClosed",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEventsHistory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "total",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawnSuccess",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "amountReward",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawnRewardSuccess",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_part",
+          "type": "uint256"
+        }
+      ],
+      "name": "DepositStored",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "assetAddress",
+          "type": "address"
+        }
+      ],
+      "name": "AssetRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "PeriodClosed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "self",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "errorCode",
+          "type": "uint256"
+        }
+      ],
+      "name": "Error",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b5b6103098061001c6000396000f300606060405236156100675763ffffffff60e060020a6000350416631bbf65ef81146100695780631bc240831461008d5780633752f49a146100a2578063b1a97052146100c9578063df26ca08146100e7578063e29065d6146100fc578063fff10aba1461010e575bfe5b341561007157fe5b61008b600160a060020a036004351660243560443561013a565b005b341561009557fe5b61008b600435610189565b005b34156100aa57fe5b61008b600160a060020a03600435811690602435166044356101c0565b005b34156100d157fe5b61008b600160a060020a0360043516610210565b005b34156100ef57fe5b61008b600435610250565b005b341561010457fe5b61008b61029c565b005b341561011657fe5b61011e6102c8565b60408051600160a060020a039092168252519081900360200190f35b60408051600160a060020a03851681526020810184905280820183905290517f9733cd8dacd543098fb51634f576590185a97c05da7322f63548f68af37aa01c9181900360600190a15b505050565b6040805182815290517f8df23d404ca3f2bdd82171b596b4670e76c1657cda0edcde1e8f2e0b5acac6cd9181900360200190a15b50565b60408051600160a060020a0380861682528416602082015280820183905290517f9e059fe0bc0d282ae325ba68777c9617b5c01b3a517ddb819f5e2c0de8e7a78a9181900360600190a15b505050565b60408051600160a060020a038316815290517f0700b0f4c19e631ed321192cfc0b71a83caa514675497afc74fe817d5f839dd59181900360200190a15b50565b6102586102d8565b600160a060020a03167f9cf38cf2dbf9139f5c32639950507b10775fbbe0421f3e168bc2d1bb1ae3208c826040518082815260200191505060405180910390a25b50565b6040517f3a273a3330d1f4c56aa39bf2b3df76adde3fd94f62ce06e19d173e66af02fa6390600090a15b565b600054600160a060020a03165b90565b335b905600a165627a7a72305820f8ee9a5c3d41967ccef0983a4f2780fcbaa82109da42c622331967d6f293a8c10029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1500603705186
+}

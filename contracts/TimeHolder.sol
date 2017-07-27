@@ -1,12 +1,10 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
 import "./TimeHolderEmmiter.sol";
-import "./Owned.sol";
 import "./ListenerInterface.sol";
-import "./ContractsManagerInterface.sol";
-import {ERC20Interface as Asset} from "./ERC20Interface.sol";
+import "./Deposits.sol";
 
-contract TimeHolder is Owned, TimeHolderEmmiter {
+contract TimeHolder is Deposits, TimeHolderEmmiter {
 
     uint constant ERROR_TIMEHOLDER_ALREADY_ADDED = 12000;
     uint constant ERROR_TIMEHOLDER_INVALID_INVOCATION = 12001;
@@ -16,20 +14,12 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
     uint constant ERROR_TIMEHOLDER_DEPOSIT_FAILED = 12005;
     uint constant ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE = 12006;
 
-    mapping(address => uint) public shares;
-    mapping(uint => address)  public shareholders;
-    mapping(address => uint)  public shareholdersId;
-    uint public shareholdersCount = 1;
+    StorageInterface.OrderedAddressesSet listeners;
 
-    mapping(address => uint) listenerIndex;
-    mapping(uint => address) public listeners;
-    uint public listenersCount = 1;
-    uint public totalShares;
-
-    // ERC20 token that acts as shares.
-    Asset public sharesContract;
-
-    address public contractsManager;
+    function TimeHolder(Storage _store, bytes32 _crate) StorageAdapter(_store, _crate) {
+        _init();
+        listeners.init('listeners');
+    }
 
     /**
      * Init TimeHolder contract.
@@ -40,43 +30,53 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
      *
      * @return success.
      */
-    function init(address _contractsManager, Asset _sharesContract) returns (uint) {
-        if(contractsManager != 0x0) {
-            return ERROR_TIMEHOLDER_INVALID_INVOCATION;
+    function init(address _contractsManager, address _sharesContract) returns (uint) {
+        address contractsManagerAddress = store.get(contractsManager);
+        if (contractsManagerAddress != 0x0 && contractsManagerAddress != _contractsManager) {
+            return _emitError(ERROR_TIMEHOLDER_INVALID_INVOCATION);
         }
 
-        uint e = ContractsManagerInterface(_contractsManager).addContract(this,bytes32("TimeHolder"));
+        uint e = ContractsManagerInterface(_contractsManager).addContract(this, bytes32("TimeHolder"));
+
         if(OK != e) {
             return e;
         }
 
-        contractsManager = _contractsManager;
-        sharesContract = _sharesContract;
+        store.set(contractsManager,_contractsManager);
+        store.set(sharesContractStorage,_sharesContract);
 
         return OK;
     }
-/*
-    function setupEventsHistory(address _eventsHistory) onlyContractOwner returns (uint) {
+
+    function kill(address[] tokens) onlyAuthorized returns (uint) {
+        withdrawnTokens(tokens,msg.sender);
+        selfdestruct(msg.sender);
+        return OK;
+    }
+
+    function setupEventsHistory(address _eventsHistory) onlyAuthorized returns (uint) {
         if (getEventsHistory() != 0x0) {
             return ERROR_TIMEHOLDER_INVALID_INVOCATION;
         }
 
         _setEventsHistory(_eventsHistory);
         return OK;
-    }*/
+    }
 
-    function addListener(address _listener) onlyContractOwner returns (uint) {
-        if(listenerIndex[_listener] != uint(0x0)) {
-            return _emitError(ERROR_TIMEHOLDER_INVALID_INVOCATION);
-        }
-
+    function addListener(address _listener) onlyAuthorized returns (uint) {
+        //if(store.includes(listeners,_listener) || !_listener.call.gas(3000).value(0)(bytes4(sha3("deposit(address,uint256,uint256)")),this,0,0) || !_listener.call.gas(3000).value(0)(bytes4(sha3("withdrawn(address,uint256,uint256)")),this,0,0)) {
+        //    return _emitError(ERROR_TIMEHOLDER_INVALID_INVOCATION);
+        //}
         ListenerInterface(_listener).deposit(this,0,0);
         ListenerInterface(_listener).withdrawn(this,0,0);
-        listeners[listenersCount] = _listener;
-        listenerIndex[_listener] = listenersCount;
-        listenersCount++;
+        if(store.includes(listeners,_listener)) {
+            return _emitError( ERROR_TIMEHOLDER_ALREADY_ADDED);
+        }
+
+        store.add(listeners,_listener);
 
         _emitListenerAdded(_listener);
+
         return OK;
     }
 
@@ -111,26 +111,39 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
      * @return success.
      */
     function depositFor(address _address, uint _amount) returns (uint) {
-        if (_amount != 0 && !sharesContract.transferFrom(msg.sender, this, _amount)) {
+        address asset = store.get(sharesContractStorage);
+        if (_amount != 0 && !ERC20Interface(asset).transferFrom(msg.sender, this, _amount)) {
             return _emitError(ERROR_TIMEHOLDER_TRANSFER_FAILED);
         }
 
-        if(shareholdersId[_address] == 0) {
-            shareholders[shareholdersCount] = _address;
-            shareholdersId[_address] = shareholdersCount++;
+        if(!store.includes(shareholders,_address)) {
+            store.add(shareholders,_address);
         }
-        shares[_address] += _amount;
-        totalShares += _amount;
 
+        uint prevId = store.get(depositsIdCounter);
+        uint id = prevId + 1;
+        store.set(depositsIdCounter, id);
+        store.add(deposits,bytes32(_address),id);
+        store.set(amounts,_address,id,_amount);
+        store.set(timestamps,_address,id,now);
+
+        uint balance = depositBalance(_address);
         uint errorCode;
-        for(uint i = 1; i < listenersCount; i++) {
-            errorCode = ListenerInterface(listeners[i]).deposit(_address, _amount, shares[_address]);
+        StorageInterface.Iterator memory iterator = store.listIterator(listeners);
+        for(uint i = 0; store.canGetNextWithIterator(listeners,iterator); i++) {
+            address listener = store.getNextWithIterator(listeners,iterator);
+            errorCode = ListenerInterface(listener).deposit(_address, _amount, balance);
             if (OK != errorCode) {
                 _emitError(errorCode);
             }
         }
 
         _emitDeposit(_address, _amount);
+
+        uint prevAmount = store.get(totalSharesStorage);
+        _amount += prevAmount;
+        store.set(totalSharesStorage,_amount);
+
         return OK;
     }
 
@@ -142,44 +155,72 @@ contract TimeHolder is Owned, TimeHolderEmmiter {
     * @return success.
     */
     function withdrawShares(uint _amount) returns (uint) {
-        // Provide latest possesion proof.
-        //deposit(0);
-        if (_amount > shares[msg.sender]) {
+
+
+        if (_amount > depositBalance(msg.sender)) {
             return _emitError(ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE);
         }
 
-        shares[msg.sender] -= _amount;
-        totalShares -= _amount;
+        if (!ERC20Interface(store.get(sharesContractStorage)).transfer(msg.sender, _amount)) {
+            return _emitError(ERROR_TIMEHOLDER_TRANSFER_FAILED);
+        }
+
+        uint _original_amount = _amount;
+
+        uint i;
+
+        StorageInterface.Iterator memory iterator;
+
+        if(depositBalance(msg.sender) != 0) {
+            iterator = store.listIterator(deposits,bytes32(msg.sender));
+            uint deposits_count = iterator.count();
+            if(deposits_count != 0) {
+                for(i = 0; store.canGetNextWithIterator(deposits,iterator); i++) {
+                    uint _id = store.getNextWithIterator(deposits,iterator);
+                    uint _cur_amount = store.get(amounts,msg.sender,_id);
+                    if(_amount < _cur_amount) {
+                        store.set(amounts,msg.sender,_id,_cur_amount-_amount);
+                        break;
+                    }
+                    if(_amount == _cur_amount) {
+                        store.remove(deposits,bytes32(msg.sender),_id);
+                        deposits_count--;
+                        break;
+                    }
+                    if(_amount > _cur_amount) {
+                        _amount -= _cur_amount;
+                        store.remove(deposits,bytes32(msg.sender),_id);
+                        deposits_count--;
+                    }
+                }
+            }
+            if(deposits_count == 0) {
+                store.remove(shareholders,msg.sender);
+            }
+        }
 
         uint errorCode;
-        for(uint i = 1; i < listenersCount; i++) {
-            errorCode = ListenerInterface(listeners[i]).withdrawn(msg.sender, _amount, shares[msg.sender]);
+        uint balance = depositBalance(msg.sender);
+
+        iterator = store.listIterator(listeners);
+        for(i = 0; store.canGetNextWithIterator(listeners,iterator); i++) {
+            address listener = store.getNextWithIterator(listeners,iterator);
+            errorCode = ListenerInterface(listener).withdrawn(msg.sender, _original_amount, balance);
             if (OK != errorCode) {
                 _emitError(errorCode);
             }
         }
 
-        if (!sharesContract.transfer(msg.sender, _amount)) {
-            throw;
-        }
+        _emitWithdrawShares(msg.sender, _original_amount);
 
-        _emitWithdrawShares(msg.sender, _amount);
+        store.set(totalSharesStorage,store.get(totalSharesStorage)-_original_amount);
+
         return OK;
     }
 
-    /**
-     * Returns shares amount deposited by a particular shareholder.
-     *
-     * @param _address shareholder address.
-     *
-     * @return shares amount.
-     */
-    function depositBalance(address _address) constant returns(uint) {
-        return shares[_address];
-    }
-
     function totalSupply() constant returns (uint) {
-        return sharesContract.totalSupply();
+        address asset = store.get(sharesContractStorage);
+        return ERC20Interface(asset).totalSupply();
     }
 
     function _emitDeposit(address who, uint amount) private {

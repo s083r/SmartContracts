@@ -1,0 +1,30 @@
+{
+  "contract_name": "Stub",
+  "abi": [
+    {
+      "payable": false,
+      "type": "fallback"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600b57fe5b5b60408060196000396000f30060606040525b3415600c57fe5b60125b5b565b0000a165627a7a72305820652474b83f727e52a662eba65593cbd848b89e28a9470bd0968bcb9a9a6ae5d50029",
+  "networks": {
+    "4": {
+      "links": {},
+      "events": {},
+      "updated_at": 1500446639701
+    },
+    "42": {
+      "links": {},
+      "events": {},
+      "updated_at": 1500439259336
+    },
+    "1500454726937": {
+      "events": {},
+      "links": {},
+      "address": "0x242e66394045a95e2f0a3e241a258c4bab470bb4",
+      "updated_at": 1500455312194
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1500455312194
+}
