@@ -5,10 +5,15 @@ const ChronoBankAssetWithFee = artifacts.require("./ChronoBankAssetWithFee.sol")
 const ChronoBankAsset = artifacts.require("./ChronoBankAsset.sol");
 const AssetsManager = artifacts.require("./AssetsManager.sol");
 const Rewards = artifacts.require("./Rewards.sol");
+const LOCManager = artifacts.require('./LOCManager.sol');
+
+var Web3 = require("../node_modules/web3/");
 
 module.exports = function(deployer,network) {
     const TIME_SYMBOL = 'TIME';
     const LHT_SYMBOL = 'LHT';
+
+    var web3 = new Web3(deployer.provider);
 
     deployer
       .then(() => Rewards.deployed())
@@ -33,5 +38,15 @@ module.exports = function(deployer,network) {
       .then(() => chronoBankPlatform.changeOwnership(LHT_SYMBOL, assetsManager.address))
       .then(() => chronoBankPlatform.changeContractOwnership(assetsManager.address))
       .then(() => assetsManager.claimPlatformOwnership())
+      .then(() => {
+        if (network !== "test") {
+          return assetsManager.addAsset(ChronoBankAssetProxy.address, TIME_SYMBOL, web3.eth.accounts[0])
+        }
+      })
+      .then(() => {
+        if (network !== "test") {
+          return assetsManager.addAsset(chronoBankAssetWithFeeProxy.address, LHT_SYMBOL, LOCManager.address)
+        }
+      })
       .then(() => console.log("[MIGRATION] [32] Setup Assets: #done"))
 }
