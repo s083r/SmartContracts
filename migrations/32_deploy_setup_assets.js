@@ -6,8 +6,7 @@ const ChronoBankAsset = artifacts.require("./ChronoBankAsset.sol");
 const AssetsManager = artifacts.require("./AssetsManager.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const LOCManager = artifacts.require('./LOCManager.sol');
-
-var Web3 = require("../node_modules/web3/");
+const Web3 = require("web3");
 
 module.exports = function(deployer,network) {
     const TIME_SYMBOL = 'TIME';

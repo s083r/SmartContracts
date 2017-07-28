@@ -9,7 +9,7 @@ before_install:
 script:
 - testrpc -g 1 --network-id 424242 > /dev/null &
 - truffle migrate --network test
-- truffle test --network test
+- travis_wait 30 truffle test --network test
 - if [ "$TRAVIS_BRANCH" == "deploy" ]; then
     truffle migrate --network kovan;
     git config credential.helper "store --file=.git/credentials";
