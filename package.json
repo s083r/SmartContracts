@@ -21,9 +21,11 @@
   "author": "Mike Fluff <mf@mikefluff.com> (http://mikefluff.com)",
   "license": "GPLv3",
   "dependencies": {
+    "bs58": "^4.0.1",
+    "buffer": "^5.0.6",
+    "ethereumjs-testrpc": "3.0.5",
     "truffle": "3.4.3",
-    "truffle-hdwallet-provider": "mikefluff/truffle-hdwallet-provider",
-    "ethereumjs-testrpc": "3.0.5"
+    "truffle-hdwallet-provider": "mikefluff/truffle-hdwallet-provider"
   },
   "devDependencies": {
     "@digix/contest": "^0.2.6",
