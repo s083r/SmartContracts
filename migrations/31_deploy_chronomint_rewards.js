@@ -12,7 +12,6 @@ module.exports = function (deployer, network) {
         .then(() => Rewards.deployed())
         .then(_manager => manager = _manager)
         .then(() => manager.init(ContractsManager.address, 0))
-        .then(() => manager.setupEventsHistory(MultiEventsHistory.address))
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(manager.address))
      //   .then(() => TimeHolder.deployed())

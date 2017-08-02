@@ -57,6 +57,7 @@ contract('Vote', function(accounts) {
   // }
 
   before('setup', function(done) {
+    console.log("Initial balance:", web3.eth.getBalance( web3.eth.accounts[0]))
     PendingManager.at(MultiEventsHistory.address).then((instance) => {
       eventor = instance;
       Setup.setup(done);
@@ -67,14 +68,11 @@ contract('Vote', function(accounts) {
 
     it("allow add TIME Asset", function() {
       return Setup.assetsManager.addAsset.call(Setup.chronoBankAssetProxy.address,'TIME', owner).then(function(r) {
-        console.log(r);
         return Setup.assetsManager.addAsset(Setup.chronoBankAssetProxy.address,'TIME', owner, {
           from: accounts[0],
           gas: 3000000
         }).then(function(tx) {
-          console.log(tx);
           return Setup.assetsManager.getAssets.call().then(function(r) {
-            console.log(r);
             assert.equal(r.length,1);
           });
         });
@@ -174,7 +172,6 @@ contract('Vote', function(accounts) {
       return Setup.vote.manager.addIpfsHashToPoll.call(1, bytes32('1234567890'), {from: owner1}).then((r) => {
         return Setup.vote.manager.addIpfsHashToPoll(1, bytes32('1234567890'), {from: owner1}).then(() => {
           return Setup.vote.details.getIpfsHashesFromPoll.call(1, {from: owner1}).then((r2) => {
-            console.log(r, r2)
             assert.equal(r, ErrorsEnum.UNAUTHORIZED);
             assert.notEqual(r2[3], bytes32('1234567890'));
           });
@@ -186,7 +183,6 @@ contract('Vote', function(accounts) {
       return Setup.vote.manager.addIpfsHashToPoll.call(1, bytes32('1234567890'), {from: owner}).then(function (r) {
         return Setup.vote.manager.addIpfsHashToPoll(1, bytes32('1234567890'), {from: owner}).then(function () {
           return Setup.vote.details.getIpfsHashesFromPoll.call(1, {from: owner}).then(function (r2) {
-            console.log(r, r2);
             assert.equal(r2[2], bytes32('1234567890'));
           });
         });
@@ -221,14 +217,12 @@ contract('Vote', function(accounts) {
 
     it("should be able to get Polls list owner took part", function() {
       return Setup.vote.details.getMemberPolls.call({from: owner}).then((r) => {
-        console.log(r);
         assert.equal(r.length,1);
       });
     });
 
     it("should be able to get owner option for Poll 1", function() {
       return Setup.vote.details.getMemberVotesForPoll.call(1,{from: owner}).then((r) => {
-        console.log(r);
         assert.equal(r,1);
       });
     });
@@ -336,9 +330,6 @@ contract('Vote', function(accounts) {
         return Setup.vote.details.getActivePollsCount.call().then((activePollsCount) => {
           return Setup.vote.details.getInactivePollsCount.call().then((inactivePollsCount) => {
             return Setup.vote.details.pollsCount.call().then((pollsCount) => {
-              console.log("Active polls count:", activePollsCount);
-              console.log("Inactive polls count:", inactivePollsCount);
-              console.log("Polls count:", pollsCount);
               assert.isTrue(pollsCount.cmp(activePollsCount.add(inactivePollsCount)) == 0)
             })
           })
@@ -347,7 +338,6 @@ contract('Vote', function(accounts) {
 
     it("shouldn't show Poll 2 as finished", function() {
       return Setup.vote.details.getPoll.call(2).then((r) => {
-        console.log(r)
         assert.equal(r[6],true)
       });
     });
@@ -362,7 +352,6 @@ contract('Vote', function(accounts) {
 
     it("should show Poll 2 as finished", function() {
       return Setup.vote.details.getPoll.call(2).then((r) => {
-        console.log(r)
         assert.equal(r[6],false)
       });
     });
@@ -436,7 +425,6 @@ contract('Vote', function(accounts) {
 
     it("should be able to show number of Votes for each Option for Poll 1", function() {
       return Setup.vote.details.getOptionsVotesForPoll.call(1).then((r) => {
-        console.log(r);
         assert.equal(r[0],25)
         assert.equal(r[1],50)
       })
@@ -452,7 +440,6 @@ contract('Vote', function(accounts) {
 
     it("should be able to show number of Votes for each Option for Poll 1", function() {
       return Setup.vote.details.getOptionsVotesForPoll.call(1).then((r) => {
-        console.log(r);
         assert.equal(r[0],25)
         assert.equal(r[1],45)
       })
@@ -466,7 +453,6 @@ contract('Vote', function(accounts) {
 
     it("should show owner1 took part in poll 0 and 1", function() {
       return Setup.vote.details.getMemberPolls.call({from: owner1}).then((r) => {
-	      console.log(r)
         assert.equal(r.length,2);
       })
     })
@@ -515,21 +501,18 @@ contract('Vote', function(accounts) {
 
     it("should show Poll 1 as finished", function() {
       return Setup.vote.details.getPoll.call(1).then((r) => {
-        console.log(r);
         assert.equal(r[6],false)
       })
     })
 
     it("should decrese active Polls count", function() {
       return Setup.vote.details.getActivePollsCount.call().then((r) => {
-        console.log(r);
         assert.equal(r, 19)
       })
     })
 
     it("should be able to show number of Votes for each Option for Poll 1", function() {
       return Setup.vote.details.getOptionsVotesForPoll.call(1).then((r) => {
-        console.log(r);
         assert.equal(r[0],100000000)
         assert.equal(r[1],0)
       })
@@ -552,8 +535,8 @@ contract('Vote', function(accounts) {
 
     it("should decrese active Polls count", function() {
       return Setup.vote.details.getActivePollsCount.call().then((r) => {
-        console.log(r);
         assert.equal(r, 18)
+        console.log("Final balance:", web3.eth.getBalance( web3.eth.accounts[0]))
       })
     })
 

@@ -9,10 +9,7 @@ module.exports = function(deployer, network) {
       .then(() => deployer.deploy(StorageManager))
       .then(() => Storage.deployed())
       .then((_storage) => _storage.setManager(StorageManager.address))
-      .then(() => StorageManager.deployed())
-      .then((_storageManager) => storageManager = _storageManager)
-      .then(() => storageManager.setupEventsHistory(MultiEventsHistory.address))
       .then(() => MultiEventsHistory.deployed())
-      .then(_history => _history.authorize(storageManager.address))
+      .then(_history => _history.authorize(StorageManager.address))
       .then(() => console.log("[MIGRATION] [12] Storage Contracts: #done"))
 }

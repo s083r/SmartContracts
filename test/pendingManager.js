@@ -31,8 +31,8 @@ contract('Pending Manager', function(accounts) {
   context("with one CBE key", function(){
 
     it('should receive the right ContractsManager contract address after init() call', () => {
-      return Setup.shareable.getContractsManager.call()
-        .then((address) => { console.log(address); assert.equal(address, Setup.contractsManager.address) });
+      return Setup.shareable.contractsManager.call()
+        .then((address) => assert.equal(address, Setup.contractsManager.address));
     });
 
     it("can provide PendingManager address.", function() {
@@ -64,7 +64,6 @@ contract('Pending Manager', function(accounts) {
     it("shouldn't allow setRequired signatures 2.", function() {
       return Setup.userManager.setRequired(2).then(function() {
         return Setup.userManager.required.call({from: owner}).then(function(r) {
-          console.log(r);
           assert.equal(r, 0);
         });
       });
@@ -81,7 +80,6 @@ contract('Pending Manager', function(accounts) {
     it("should allow setRequired signatures 2.", function() {
       return Setup.userManager.setRequired(2).then(function() {
         return Setup.userManager.required.call({from: owner}).then(function(r) {
-          console.log(r);
           assert.equal(r, 2);
         });
       });
@@ -121,8 +119,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.addCBE(owner2, 0x0, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events);
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         Setup.shareable.pendingsCount.call({from: owner}).then(function(r) {
           assert.equal(r,1);
@@ -142,7 +138,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.addCBE(owner2, 0x0, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from:owner1}).then(function() {
           return Setup.chronoMint.isAuthorized.call(owner2).then(function(r){
@@ -162,7 +157,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.setRequired(3).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.userManager.required.call({from: owner}).then(function(r) {
@@ -180,7 +174,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.addCBE(owner3, 0x0, {from: owner2}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -202,7 +195,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.setRequired(4).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner2}).then(function() {
@@ -222,7 +214,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.addCBE(owner4, 0x0, {from: owner3}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -246,7 +237,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.setRequired(5).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner2}).then(function() {
@@ -267,7 +257,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.addCBE(owner5, 0x0, {from: owner4}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -295,7 +284,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.setRequired(6).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner2}).then(function () {
@@ -323,7 +311,6 @@ contract('Pending Manager', function(accounts) {
       return Setup.userManager.revokeCBE(owner5, {from: owner}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign2 = events[0].args.hash;
         return Setup.userManager.isAuthorized.call(owner5).then(function (r) {
           assert.isOk(r);

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
 contract ManagerMock {
     bool denied;
@@ -12,6 +12,10 @@ contract ManagerMock {
             denied = false;
             return false;
         }
+        return true;
+    }
+
+    function hasAccess(address _actor) constant returns(bool) {
         return true;
     }
 }

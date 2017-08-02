@@ -32,12 +32,12 @@ const contractTypes = {
   ERC20Manager: bytes32("ERC20Manager"), // ERC20Manager
   ExchangeManager: bytes32("ExchangeManager"), // ExchangeManager
   TrackersManager: bytes32("TrackersManager"), // TrackersManager
-  Voting: bytes32("Voting"), // Voting
+  Voting: bytes32("PollManager"), // Voting
   Rewards: bytes32("Rewards"), // Rewards
   AssetsManager: bytes32("AssetsManager"), // AssetsManager
   TimeHolder: bytes32("TimeHolder"), //TimeHolder
   CrowdsaleManager: bytes32("CrowdsaleManager"),
-  VotingActor: bytes32("VotingActor")
+  VotingActor: bytes32("VoteActor")
 }
 
 let storage

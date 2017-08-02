@@ -73,7 +73,6 @@ contract('Exchange Manager', function(accounts) {
         from: accounts[0],
         gas: 3000000
       }).then(function (r) {
-          console.log(r);
           assert.equal(r, ErrorsEnum.OK);
       });
     });
@@ -87,7 +86,6 @@ contract('Exchange Manager', function(accounts) {
           from: accounts[0],
           gas: 3000000
         }).then(function () {
-          console.log(r);
           assert.equal(r, ErrorsEnum.OK);
         });
       });
@@ -102,7 +100,6 @@ contract('Exchange Manager', function(accounts) {
           from: accounts[0],
           gas: 3000000
         }).then(function () {
-          console.log(r);
           assert.equal(r, ErrorsEnum.EXCHANGE_STOCK_INVALID_PARAMETER);
         });
       });
@@ -124,7 +121,6 @@ contract('Exchange Manager', function(accounts) {
     it("should allow exchange owner to delete exchange contract to owner", function () {
       return Setup.exchangeManager.removeExchange.call(exchange.address).then(function (r) {
         return Setup.exchangeManager.removeExchange(exchange.address).then(function () {
-            console.log(r);
           assert.equal(r, ErrorsEnum.OK);
         });
       });
@@ -137,7 +133,6 @@ contract('Exchange Manager', function(accounts) {
     it("should allow to add exchange contract", function () {
       return Setup.exchangeManager.addExchange.call(exchange.address, {from: owner1}).then(function (r) {
         return Setup.exchangeManager.addExchange(exchange.address, {from: owner1}).then(function () {
-          console.log(r);
           assert.equal(r, ErrorsEnum.OK);
         });
       });
@@ -165,7 +160,6 @@ contract('Exchange Manager', function(accounts) {
       return Setup.exchangeManager.addExchangeOwner.call(exchange.address, owner, {from: owner1}).then(function (r) {
         return Setup.exchangeManager.addExchangeOwner(exchange.address, owner, {from: owner1}).then(function () {
           return Setup.exchangeManager.isExchangeOwner.call(exchange.address,owner).then(function (r2) {
-              console.log(r);
             assert.equal(r, ErrorsEnum.OK);
             assert.equal(r2, true);
           });
@@ -192,7 +186,6 @@ contract('Exchange Manager', function(accounts) {
         return Setup.exchangeManager.removeExchangeOwner.call(exchange.address, owner, {from: owner1}).then(function (r2) {
           return Setup.exchangeManager.removeExchangeOwner(exchange.address, owner, {from: owner1}).then(function () {
             return Setup.exchangeManager.isExchangeOwner.call(exchange.address, owner).then(function (r3) {
-                console.log(r2);
               assert.equal(r, true);
               assert.equal(r2, ErrorsEnum.OK);
               assert.equal(r3, false);

@@ -36,13 +36,12 @@ contract('Rewards', (accounts) => {
 
   let defaultInit = () => {
     return storage.setManager(ManagerMock.address)
-    .then(() => contractsManager.init({from: accounts[0]}))
     .then(() => assetsManager.init(contractsManager.address))
     .then(() => reward.init(contractsManager.address, ZERO_INTERVAL))
+    .then(() => chronoMint.init(contractsManager.address))
     .then(() => userManager.init(contractsManager.address))
     .then(() => timeHolder.init(contractsManager.address, shares.address))
     .then(() => assetsManager.addAsset(asset1.address, 'LHT', chronoMint.address))
-    .then(() => reward.setupEventsHistory(multiEventsHistory.address))
     .then(() => multiEventsHistory.authorize(reward.address))
   };
 
@@ -112,13 +111,13 @@ contract('Rewards', (accounts) => {
     .then((instance) => reward = instance)
     .then(() => AssetsManagerMock.deployed())
     .then((instance) => assetsManager = instance)
-    .then(() => LOCManager.new(storage.address, 'LOCs Manager'))
+    .then(() => LOCManager.new(storage.address, 'LOCManager'))
     .then((instance) => chronoMint = instance)
     .then(() => TimeHolder.new(storage.address,'Deposits'))
     .then((instance) => timeHolder = instance)
-    .then(() => ContractsManager.new(storage.address, 'Contracts Manager'))
+    .then(() => ContractsManager.new(storage.address, "ContractsManager"))
     .then((instance) => contractsManager = instance)
-    .then(() => UserManager.new(storage.address, 'User Manager'))
+    .then(() => UserManager.new(storage.address, 'UserManager'))
     .then((instance) => userManager = instance)
     .then(() => MultiEventsHistory.deployed())
     .then((instance) => multiEventsHistory = instance)
@@ -142,24 +141,24 @@ contract('Rewards', (accounts) => {
   // init(address _timeHolder, uint _closeIntervalDays) returns(bool)
   it('should receive the right ContractsManager contract address after init() call', () => {
     return defaultInit()
-      .then(() => reward.getContractsManager.call())
+      .then(() => reward.contractsManager.call())
       .then((address) => assert.equal(address, contractsManager.address) );
   });
 
-  it('should not be possible to call init twice', () => {
-    return defaultInit()
-      .then(() => reward.init('0x1', 30))
-      .then(reward.getContractsManager)
-      .then((address) => assert.equal(address, contractsManager.address))
-      .then(reward.getCloseInterval)
-      .then((interval) => assert.equal(interval, ZERO_INTERVAL));
-  });
+  // it('should not be possible to call init twice', () => {
+  //   return defaultInit()
+  //     .then(() => reward.init('0x1', 30))
+  //     .then(reward.contractsManager)
+  //     .then((address) => assert.equal(address, contractsManager.address))
+  //     .then(reward.getCloseInterval)
+  //     .then((interval) => assert.equal(interval, ZERO_INTERVAL));
+  // });
 
   // init(address _timeHolder, uint _closeIntervalDays) returns(bool)
   it('should receive the rigth reward assets list', () => {
     return defaultInit()
       .then(reward.getAssets)
-      .then((result) => { console.log(result); assert.equal(result[0], asset1.address) });
+      .then((result) => assert.equal(result[0], asset1.address));
   });
 
   // depositFor(address _address, uint _amount) returns(bool)
@@ -231,12 +230,9 @@ contract('Rewards', (accounts) => {
   // closePeriod() returns(bool)
   it('should not be possible to close period if period.startDate + closeInterval * 1 days > now', () => {
     return storage.setManager(ManagerMock.address)
-      .then(() => contractsManager.init())
       .then(() => reward.init(contractsManager.address, ZERO_INTERVAL + 1))
       .then(() => userManager.init(contractsManager.address))
       .then(() => timeHolder.init(contractsManager.address, shares.address))
-      //.then(() => timeHolder.addListener(reward.address))
-      .then(() => reward.setupEventsHistory(multiEventsHistory.address))
       .then(() => multiEventsHistory.authorize(reward.address))
       .then(() => reward.closePeriod.call())
       .then((res) => assert.notEqual(res, 1))

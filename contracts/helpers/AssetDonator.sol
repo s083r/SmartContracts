@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
-import "../ContractsManagerInterface.sol";
-import "../AssetsManager.sol";
+import "../core/contracts/ContractsManagerInterface.sol";
+import "../assets/AssetsManager.sol";
 
 /**
 *  @title AssetDonator
@@ -34,7 +34,7 @@ contract AssetDonator {
         }
 
         address assetManager = ContractsManagerInterface(contractManager)
-              .getContractAddressByType(bytes32("AssetsManager"));
+              .getContractAddressByType("AssetsManager");
 
         if (!AssetsManager(assetManager).sendAsset(bytes32("TIME"), msg.sender, 1000000000)) {
             return false;

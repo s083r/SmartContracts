@@ -11,30 +11,31 @@ module.exports = function(deployer, network) {
     let voteActor
     let pollManager
 
-    deployer.deploy(VoteActor, Storage.address, 'Vote')
+    deployer
       .then(() => StorageManager.deployed())
-      .then(_storageManager => _storageManager.giveAccess(VoteActor.address, 'Vote'))
+      .then(_storageManager => storageManager = _storageManager)
+      .then(() => MultiEventsHistory.deployed())
+      .then(_history => history = _history)
+
+      .then(() => deployer.deploy(VoteActor, Storage.address, 'Vote'))
+      .then(() => storageManager.giveAccess(VoteActor.address, 'Vote'))
       .then(() => VoteActor.deployed())
       .then(_voteActor => voteActor = _voteActor)
       .then(() => voteActor.init(ContractsManager.address))
-      .then(() => voteActor.setupEventsHistory(MultiEventsHistory.address))
-      .then(() => MultiEventsHistory.deployed())
-      .then(_history => _history.authorize(voteActor.address))
+      .then(() => history.authorize(voteActor.address))
       .then(() => TimeHolder.deployed())
       .then(_timeHolder => _timeHolder.addListener(voteActor.address))
       .then(() => console.log("[MIGRATION] [41.1] Vote Actor: #done"))
+
       .then(() => deployer.deploy(PollManager, Storage.address, 'Vote'))
-      .then(() => StorageManager.deployed())
-      .then(_storageManager => _storageManager.giveAccess(PollManager.address, 'Vote'))
+      .then(() => storageManager.giveAccess(PollManager.address, 'Vote'))
       .then(() => PollManager.deployed())
       .then(_pollManager => pollManager = _pollManager)
       .then(() => pollManager.init(ContractsManager.address))
-      .then(() => pollManager.setupEventsHistory(MultiEventsHistory.address))
-      .then(() => MultiEventsHistory.deployed())
-      .then(_history => _history.authorize(pollManager.address))
+      .then(() => history.authorize(pollManager.address))
       .then(() => console.log("[MIGRATION] [41.2] Poll Manager: #done"))
+
       .then(() => deployer.deploy(PollDetails, Storage.address, 'Vote'))
-      .then(() => StorageManager.deployed())
-      .then(_storageManager => _storageManager.giveAccess(PollDetails.address, 'Vote'))
+      .then(() => storageManager.giveAccess(PollDetails.address, 'Vote'))
       .then(() => console.log("[MIGRATION] [41.3] Poll Details: #done"))
 }

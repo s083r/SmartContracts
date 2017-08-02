@@ -98,7 +98,6 @@ contract('ERC20 Manager', function(accounts) {
 
     it("can show all ERC20 contracts", function() {
       return Setup.erc20Manager.getTokenAddresses.call().then(function(r) {
-        console.log(r);
         assert.equal(r.length,2);
       });
     });
@@ -259,7 +258,6 @@ contract('ERC20 Manager', function(accounts) {
 
     it("shows empty ERC20 contracts list", function() {
       return Setup.erc20Manager.getTokenAddresses.call().then(function(r) {
-        console.log(r);
         assert.equal(r.length,0);
       });
     });

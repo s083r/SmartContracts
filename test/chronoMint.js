@@ -94,21 +94,17 @@ contract('LOC Manager', function(accounts) {
 
     it("can provide PendingManager address.", function() {
       return Setup.contractsManager.getContractAddressByType.call(Setup.contractTypes.PendingManager).then(function(r) {
-        console.log(r);
         assert.equal(r,Setup.shareable.address);
       });
     });
 
     it("allow add TIME Asset", function() {
       return Setup.assetsManager.addAsset.call(Setup.chronoBankAssetProxy.address,'TIME', owner).then(function(r) {
-        console.log(r);
         return Setup.assetsManager.addAsset(Setup.chronoBankAssetProxy.address,'TIME', owner, {
           from: accounts[0],
           gas: 3000000
         }).then(function(tx) {
-          console.log(tx);
           return Setup.assetsManager.getAssets.call().then(function(r) {
-            console.log(r);
             assert.equal(r.length,1);
           });
         });
@@ -117,14 +113,11 @@ contract('LOC Manager', function(accounts) {
 
     it("allow add LHT Asset", function() {
       return Setup.assetsManager.addAsset.call(Setup.chronoBankAssetWithFeeProxy.address,'LHT', Setup.chronoMint.address).then(function(r) {
-        console.log(r);
         return Setup.assetsManager.addAsset(Setup.chronoBankAssetWithFeeProxy.address,'LHT', Setup.chronoMint.address, {
           from: accounts[0],
           gas: 3000000
         }).then(function(tx) {
-          console.log(tx);
           return Setup.assetsManager.getAssets.call().then(function(r) {
-            console.log(r);
             assert.equal(r.length,2);
           });
         });
@@ -151,7 +144,6 @@ contract('LOC Manager', function(accounts) {
 
     it("pending operation counter should be 0", function() {
       return Setup.shareable.pendingsCount.call({from: owner}).then(function(r) {
-        console.log(r);
         assert.equal(r, 0);
       });
     });
@@ -176,7 +168,6 @@ contract('LOC Manager', function(accounts) {
             gas: 3000000
           }
         ).then(function(){
-          console.log(r);
           assert.equal(r,ErrorsEnum.UNAUTHORIZED);
         });
       });
@@ -203,7 +194,6 @@ contract('LOC Manager', function(accounts) {
           }
         ).then(function(){
           return Setup.chronoMint.getLOCById.call(0).then(function(r2){
-            console.log(r,r2);
             assert.equal(r, ErrorsEnum.OK)
             assert.equal(r2[6], Status.maintenance);
           });
@@ -303,7 +293,6 @@ contract('LOC Manager', function(accounts) {
         gas: 3000000
       }).then(function() {
         return Setup.chronoMint.getLOCCount.call().then(function(r){
-          console.log(r);
           assert.equal(r, 1);
         });
       });
@@ -325,7 +314,6 @@ contract('LOC Manager', function(accounts) {
         gas: 3000000
       }).then(function() {
         return Setup.chronoMint.getLOCCount.call().then(function(r){
-          console.log(r);
           assert.equal(r, 0);
         });
       });
@@ -347,7 +335,6 @@ contract('LOC Manager', function(accounts) {
 
     it("checks CBE counter is 2.", function() {
       return Setup.userManager.adminCount.call().then(function(r) {
-        console.log(r);
         assert.equal(r,2);
       });
     });
@@ -394,7 +381,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.addCBE(owner2, 0x2, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         Setup.shareable.pendingsCount.call({from: owner}).then(function(r) {
           assert.equal(r,1);
@@ -414,7 +400,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.addCBE(owner2, 0x1, {from:owner}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from:owner1}).then(function() {
           return Setup.chronoMint.isAuthorized.call(owner2).then(function(r){
@@ -434,7 +419,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.setRequired(3).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.userManager.required.call({from: owner}).then(function(r) {
@@ -452,7 +436,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.addCBE(owner3, 0x1, {from: owner2}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -474,7 +457,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.setRequired(4).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner2}).then(function() {
@@ -494,7 +476,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.addCBE(owner4, 0x1, {from: owner3}).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
@@ -520,7 +501,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.setRequired(5).then(function(txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign,{from:owner1}).then(function() {
           return Setup.shareable.confirm(conf_sign,{from:owner2}).then(function() {
@@ -541,7 +521,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.addCBE(owner5, 0x1, {from: owner4}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -569,7 +548,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.setRequired(6).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner2}).then(function () {
@@ -610,7 +588,6 @@ contract('LOC Manager', function(accounts) {
 
     it("Proposed LOC should increment LOCs counter", function () {
       return Setup.chronoMint.getLOCCount.call().then(function (r) {
-        console.log(r);
         assert.equal(r, 1);
       });
     });
@@ -626,7 +603,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.chronoMint.setStatus(bytes32("Bob's Hard Workers"), Status.active, {from: owner}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function (r) {
           return Setup.shareable.confirm(conf_sign, {from: owner2}).then(function (r) {
@@ -654,7 +630,6 @@ contract('LOC Manager', function(accounts) {
       return Setup.userManager.revokeCBE(owner5, {from: owner}).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign2 = events[0].args.hash;
         return Setup.userManager.isAuthorized.call(owner5).then(function (r) {
           assert.isOk(r);
@@ -704,7 +679,6 @@ contract('LOC Manager', function(accounts) {
 
     it("should show 0 LHT balance", function () {
       return Setup.assetsManager.getAssetBalance.call(bytes32('LHT')).then(function (r) {
-        console.log(r);
         assert.equal(r, 0);
       });
     });
@@ -722,7 +696,6 @@ contract('LOC Manager', function(accounts) {
       }).then((txHash) => {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner4}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -747,14 +720,12 @@ contract('LOC Manager', function(accounts) {
       }).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner4}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
             return Setup.shareable.confirm(conf_sign, {from: owner2}).then(function () {
               return Setup.shareable.confirm(conf_sign, {from: owner3}).then(function () {
                 return Setup.chronoBankAssetWithFeeProxy.balanceOf.call(Setup.assetsManager.address).then(function (r2) {
-                  console.log(r2);
                   assert.equal(r2, 1000000);
                 });
               });
@@ -771,7 +742,6 @@ contract('LOC Manager', function(accounts) {
       }).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner4}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -806,7 +776,6 @@ contract('LOC Manager', function(accounts) {
       }).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner4}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
@@ -835,14 +804,12 @@ contract('LOC Manager', function(accounts) {
       }).then(function (txHash) {
         return eventsHelper.getEvents(txHash, watcher);
       }).then(function(events) {
-        console.log(events[0].args.hash);
         conf_sign = events[0].args.hash;
         return Setup.shareable.confirm(conf_sign, {from: owner4}).then(function () {
           return Setup.shareable.confirm(conf_sign, {from: owner1}).then(function () {
             return Setup.shareable.confirm(conf_sign, {from: owner2}).then(function () {
               return Setup.shareable.confirm(conf_sign, {from: owner3}).then(function () {
                 return Setup.chronoBankAssetWithFeeProxy.balanceOf.call(owner2).then(function (r) {
-                  console.log(r);
                   assert.equal(r, 495049);
                 });
               });
@@ -871,7 +838,6 @@ contract('LOC Manager', function(accounts) {
 
     it("check Owner has 100 TIME", function () {
       return Setup.chronoBankAssetProxy.balanceOf.call(owner).then(function (r) {
-        console.log(r);
         assert.equal(r, 100);
       });
     });

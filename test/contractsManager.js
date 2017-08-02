@@ -97,7 +97,7 @@ contract('Contracts Manager', function(accounts) {
     });
 
     it("doesn't allow a non CBE key to change the contract address", function() {
-      return Setup.contractsManager.setContractAddress(Setup.rewards.address,Setup.contractTypes.VotingActor,{from: owner1}).then(function(r) {
+      return Setup.contractsManager.addContract(Setup.rewards.address,Setup.contractTypes.VotingActor,{from: owner1}).then(function(r) {
         return Setup.contractsManager.getContractAddressByType.call(Setup.contractTypes.VotingActor).then(function(r){
           assert.equal(r, Setup.vote.actor.address);
         });
@@ -105,7 +105,7 @@ contract('Contracts Manager', function(accounts) {
     });
 
     it("allows a CBE key to change the contract address", function() {
-      return Setup.contractsManager.setContractAddress('0x0000000000000000000000000000000000000123',Setup.contractTypes.VotingActor).then(function(r) {
+      return Setup.contractsManager.addContract('0x0000000000000000000000000000000000000123',Setup.contractTypes.VotingActor).then(function(r) {
         return Setup.contractsManager.getContractAddressByType.call(Setup.contractTypes.VotingActor).then(function(r){
           assert.equal(r, '0x0000000000000000000000000000000000000123');
         });

@@ -44,7 +44,6 @@ contract('Wallets Manager', function(accounts) {
         coin = instance;
         return Wallet.new([owner1], 2, Setup.contractsManager.address).then(function (instance) {
           wallet = instance;
-          console.log(wallet.address);
           return Setup.erc20Manager.addToken(coin.address, 'TOKEN', 'TOKEN', '', 2, bytes32('0x0'), bytes32('0x0'), {
             from: owner,
             gas: 3000000
@@ -53,10 +52,8 @@ contract('Wallets Manager', function(accounts) {
               return coin.mint(wallet.address, 10000)}).then(() => {
               web3.eth.sendTransaction({to: wallet.address, value: 10000, from: accounts[0]})
               balanceETH = web3.eth.getBalance(wallet.address)
-              console.log(balanceETH);
               assert.equal(balanceETH, 10000)
               return coin.balanceOf.call(wallet.address).then((balanceERC20) => {
-                console.log(balanceERC20);
                 assert.equal(balanceERC20, 10000)
               })
             });
@@ -150,13 +147,11 @@ contract('Wallets Manager', function(accounts) {
           assert.isDefined(confirmationEvent)
           const confirmationHash = confirmationEvent.args.operation
           const old_balance = web3.eth.getBalance(owner3)
-          console.log(old_balance.add(5000))
           return wallet.confirm.call(confirmationHash, {from: owner1}).then(function (r2) {
             return wallet.confirm(confirmationHash, {from: owner1}).then(function () {
               assert.equal(r, 4)
               assert.equal(r2, 1)
               const new_balance = web3.eth.getBalance(owner3)
-              console.log(new_balance)
               assert.isTrue(new_balance.equals(old_balance.add(5000)))
             });
           });
@@ -166,7 +161,6 @@ contract('Wallets Manager', function(accounts) {
 
     it("shouldn't be able to multisig send ETH if balance not enough", function() {
       return wallet.transfer.call(owner3, 6000, 'ETH').then(function (r) {
-        console.log(r);
         assert.equal(r,9);
       });
     });
@@ -174,7 +168,6 @@ contract('Wallets Manager', function(accounts) {
     it("should be able to multisig send ERC20", function() {
       return wallet.transfer.call(owner3,5000,'TOKEN', {from: owner}).then(function(r) {
         return wallet.transfer(owner3,5000,'TOKEN', {from: owner}).then(function(tx) {
-          console.log(wallet.address);
           const confirmationEvent = eventsHelper.extractEvent(tx, "ConfirmationNeeded")
           assert.isDefined(confirmationEvent)
           const confirmationHash = confirmationEvent.args.operation
@@ -182,7 +175,6 @@ contract('Wallets Manager', function(accounts) {
             return wallet.confirm(confirmationHash, {from:owner1}).then(function() {
               return coin.balanceOf.call(owner3).then(function(r3)
               {
-                console.log(r,r2,r3)
                 assert.equal(r, 4)
                 assert.equal(r2, 1)
                 assert.equal(r3, 5000)
@@ -255,10 +247,6 @@ contract('Wallets Manager', function(accounts) {
               return wallet.kill(owner4, {from: owner2}).then(function () {
                 return coin.balanceOf.call(owner4).then(function (r2) {
                   const new_balance = web3.eth.getBalance(owner4)
-                  console.log(old_balance.add(wallet_eth_balance))
-                  console.log(new_balance)
-                  console.log(wallet_erc20_balance)
-                  console.log(r2)
                   assert(r, 1)
                   assert.isTrue(new_balance.equals(old_balance.add(wallet_eth_balance)))
                   assert.isTrue(wallet_erc20_balance.equals(r2))

@@ -123,7 +123,6 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-              console.log(r);
             assert.equal(r,ErrorsEnum.ASSETS_NOT_A_PROXY);
             assert.equal(r2.length,2);
           });
@@ -138,7 +137,6 @@ contract('Assets Manager', function(accounts) {
           gas: 3000000
         }).then(function(tx) {
           return Setup.assetsManager.getAssets.call().then(function(r2) {
-              console.log(r);
             assert.equal(r,ErrorsEnum.ASSETS_EXISTS);
             assert.equal(r2.length,2);
           });
@@ -174,7 +172,6 @@ contract('Assets Manager', function(accounts) {
 
     it("should show 1000000000000 TIME balance", function () {
       return Setup.assetsManager.getAssetBalance.call(bytes32('TIME')).then(function (r) {
-        console.log(r);
         assert.equal(r, 1000000000000);
       });
     });
@@ -199,7 +196,6 @@ contract('Assets Manager', function(accounts) {
 
     it("should show assets symbol owner by address provided", function () {
       return Setup.assetsManager.getAssetsForOwner.call(owner).then(function (r) {
-        console.log(r);
         assert.equal(r.length, 2);
       });
     });

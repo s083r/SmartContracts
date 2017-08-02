@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-import "../ChronoBankPlatform.sol";
+import "../core/platform/ChronoBankPlatform.sol";
 
 // For testing purposes.
 contract ChronoBankPlatformTestable is ChronoBankPlatform {
