@@ -1,6 +1,4 @@
 const ChronoBankPlatform = artifacts.require('./ChronoBankPlatform.sol')
-const ChronoBankPlatformEmitter = artifacts.require('./ChronoBankPlatformEmitter.sol')
-const EventsHistory = artifacts.require('./EventsHistory.sol')
 const ChronoBankAssetProxy = artifacts.require('./ChronoBankAssetProxy.sol')
 const ChronoBankAssetWithFeeProxy = artifacts.require('./ChronoBankAssetWithFeeProxy.sol')
 const ChronoBankAsset = artifacts.require('./ChronoBankAsset.sol')
@@ -48,9 +46,7 @@ let chronoMint
 let contractsManager
 let timeHolder
 let shareable
-let eventsHistory
 let erc20Manager
-let chronoBankPlatformEmitter
 let rewards
 let voteActor
 let pollManager
@@ -110,8 +106,6 @@ var setup = function (callback) {
       PollManager.deployed(),
       PollDetails.deployed(),
       TimeHolder.deployed(),
-      ChronoBankPlatformEmitter.deployed(),
-      EventsHistory.deployed(),
       MultiEventsHistory.deployed(),
       StorageManager.deployed()
     ])
@@ -136,8 +130,6 @@ var setup = function (callback) {
       pollManager,
       pollDetails,
       timeHolder,
-      chronoBankPlatformEmitter,
-      eventsHistory,
       multiEventsHistory,
       storageManager
     ] = instances
@@ -151,9 +143,7 @@ var setup = function (callback) {
     module.exports.contractsManager = contractsManager
     module.exports.timeHolder = timeHolder
     module.exports.shareable = shareable
-    module.exports.eventsHistory = eventsHistory
     module.exports.erc20Manager = erc20Manager
-    module.exports.chronoBankPlatformEmitter = chronoBankPlatformEmitter
     module.exports.rewards = rewards
     module.exports.userManager = userManager
     module.exports.exchangeManager = exchangeManager

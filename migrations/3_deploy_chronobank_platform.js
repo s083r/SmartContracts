@@ -1,5 +1,5 @@
 var ChronoBankPlatform = artifacts.require("./ChronoBankPlatform.sol");
-const EventsHistory = artifacts.require("./EventsHistory.sol");
+const MultiEventsHistory = artifacts.require("./MultiEventsHistory.sol");
 
 module.exports = function(deployer,network) {
     const TIME_SYMBOL = 'TIME'; // TODO: AG(21-06-2017) copy-paste warn
@@ -15,13 +15,13 @@ module.exports = function(deployer,network) {
     const IS_NOT_REISSUABLE = false;
 
     deployer.deploy(ChronoBankPlatform)
-        .then(() => EventsHistory.deployed())
-        .then(_history => _history.addVersion(ChronoBankPlatform.address, 'Origin', 'Initial version.'))
+        .then(() => MultiEventsHistory.deployed())
+        .then(_history => history = _history )
         .then(() => ChronoBankPlatform.deployed())
         .then(_platform => platform = _platform)
-        .then(() => platform.setupEventsHistory(EventsHistory.address))
+        .then(() => history.authorize(platform.address))
+        .then(() => platform.setupEventsHistory(history.address))
         .then(() => platform.issueAsset(TIME_SYMBOL, 1000000000000, TIME_NAME, TIME_DESCRIPTION, BASE_UNIT, IS_NOT_REISSUABLE))
         .then(() => platform.issueAsset(LHT_SYMBOL, 0, LHT_NAME, LHT_DESCRIPTION, BASE_UNIT, IS_REISSUABLE))
-        .then(() => platform.issueAsset(LHT_SYMBOL, 0, LHT_NAME, LHT_DESCRIPTION, BASE_UNIT, IS_REISSUABLE))
-        .then(() => console.log("[MIGRATION] [3] ChronoBankPlatform: #done"))        
+        .then(() => console.log("[MIGRATION] [3] ChronoBankPlatform: #done"))
 }

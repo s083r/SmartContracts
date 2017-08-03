@@ -103,7 +103,7 @@ contract Exchange is Object {
      *
      * Can be set only once, and only by contract owner.
      *
-     * @param _eventsHistory EventsHistory contract address.
+     * @param _eventsHistory MultiEventsHistory contract address.
      *
      * @return success.
      */

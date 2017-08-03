@@ -9,11 +9,11 @@ contract ChronoBankPlatformTestable is ChronoBankPlatform {
     }
 
     function transferWithReference(address _to, uint _value, bytes32 _symbol, string _reference) returns(bool) {
-        return _transfer(getHolderId(msg.sender), _createHolderId(_to), _value, _symbol, _reference, getHolderId(msg.sender));
+        return _transfer(getHolderId(msg.sender), _createHolderId(_to), _value, _symbol, _reference, getHolderId(msg.sender)) == OK;
     }
 
     function approve(address _spender, uint _value, bytes32 _symbol) returns(bool) {
-        return _approve(_createHolderId(_spender), _value, _symbol, _createHolderId(msg.sender));
+        return _approve(_createHolderId(_spender), _value, _symbol, _createHolderId(msg.sender)) == OK;
     }
 
     function transferFrom(address _from, address _to, uint _value, bytes32 _symbol) returns(bool) {
@@ -21,6 +21,6 @@ contract ChronoBankPlatformTestable is ChronoBankPlatform {
     }
 
     function transferFromWithReference(address _from, address _to, uint _value, bytes32 _symbol, string _reference) returns(bool) {
-        return _transfer(getHolderId(_from), _createHolderId(_to), _value, _symbol, _reference, getHolderId(msg.sender));
+        return _transfer(getHolderId(_from), _createHolderId(_to), _value, _symbol, _reference, getHolderId(msg.sender)) == OK;
     }
 }

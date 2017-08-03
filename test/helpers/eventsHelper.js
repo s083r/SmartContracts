@@ -77,18 +77,19 @@ function EventsHelper() {
     console.log("all events for contract:" + allEventsWatcher);
   }
 
-  this.extractEvent = function(txHash, eventName) {
+  this.extractEvents = function(txHash, eventName) {
       if (txHash.logs.length == 0) {
-          return;
+          return [];
       }
 
       const logs = txHash.logs;
+      var filteredLogs = [];
       for (logEntry of logs) {
-          console.log(logEntry);
           if (logEntry.event.toLowerCase() == eventName.toLowerCase()) {
-              return logEntry;
+              filteredLogs.push(logEntry);
           }
       }
+      return filteredLogs
   }
 };
 

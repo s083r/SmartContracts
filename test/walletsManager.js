@@ -72,9 +72,9 @@ contract('Wallets Manager', function(accounts) {
           from: owner,
           gas: 3000000
         }).then((tx) => {
-          const walletCreatedEvent = eventsHelper.extractEvent(tx, "WalletCreated")
-          assert.isDefined(walletCreatedEvent);
-          const walletAddress = walletCreatedEvent.args.wallet;
+          const walletCreatedEvents = eventsHelper.extractEvents(tx, "WalletCreated")
+          assert.notEqual(walletCreatedEvents.length, 0);
+          const walletAddress = walletCreatedEvents[0].args.wallet;
           return Wallet.at(walletAddress).then(function(instance) {
             return instance.m_required.call().then(function(r2) {
               return instance.m_numOwners.call().then(function(r3) {
@@ -143,9 +143,9 @@ contract('Wallets Manager', function(accounts) {
     it('should be able to multisig send ETH', function() {
       return wallet.transfer.call(owner3, 5000, 'ETH').then(function (r) {
         return wallet.transfer(owner3, 5000, 'ETH').then(function (tx) {
-          const confirmationEvent = eventsHelper.extractEvent(tx, "ConfirmationNeeded")
-          assert.isDefined(confirmationEvent)
-          const confirmationHash = confirmationEvent.args.operation
+          const confirmationEvents = eventsHelper.extractEvents(tx, "ConfirmationNeeded")
+          assert.notEqual(confirmationEvents.length, 0)
+          const confirmationHash = confirmationEvents[0].args.operation
           const old_balance = web3.eth.getBalance(owner3)
           return wallet.confirm.call(confirmationHash, {from: owner1}).then(function (r2) {
             return wallet.confirm(confirmationHash, {from: owner1}).then(function () {
@@ -168,9 +168,9 @@ contract('Wallets Manager', function(accounts) {
     it("should be able to multisig send ERC20", function() {
       return wallet.transfer.call(owner3,5000,'TOKEN', {from: owner}).then(function(r) {
         return wallet.transfer(owner3,5000,'TOKEN', {from: owner}).then(function(tx) {
-          const confirmationEvent = eventsHelper.extractEvent(tx, "ConfirmationNeeded")
-          assert.isDefined(confirmationEvent)
-          const confirmationHash = confirmationEvent.args.operation
+          const confirmationEvents = eventsHelper.extractEvents(tx, "ConfirmationNeeded")
+          assert.notEqual(confirmationEvents.length, 0)
+          const confirmationHash = confirmationEvents[0].args.operation
           return wallet.confirm.call(confirmationHash, {from:owner1}).then(function(r2) {
             return wallet.confirm(confirmationHash, {from:owner1}).then(function() {
               return coin.balanceOf.call(owner3).then(function(r3)

@@ -12,7 +12,8 @@ const errorScope = {
     assets: 11000,
     timeholder: 12000,
     ercmanager: 13000,
-    walletsmanager: 14000
+    walletsmanager: 14000,
+    chronobankplatform: 15000
 }
 
 const errorsLibrary = {
@@ -20,6 +21,7 @@ const errorsLibrary = {
     OK: 1,
     MULTISIG_ADDED: 3,
     UNDEFINED: 0xDEFDEFDEF,
+    OBJECT_ACCESS_DENIED_CONTRACT_OWNER_ONLY: 8,
 
     LOC_NOT_FOUND: errorScope.loc + 0,
     LOC_EXISTS: errorScope.loc + 1,
@@ -132,6 +134,25 @@ const errorsLibrary = {
     ERROR_WALLET_OWNER_ONLY: errorScope.walletsmanager + 2,
     ERROR_WALLET_CANNOT_ADD_TO_REGISTRY: errorScope.walletsmanager + 3,
     ERROR_WALLET_UNKNOWN: errorScope.walletsmanager + 4,
+
+    CHRONOBANK_PLATFORM_PROXY_ALREADY_EXISTS: errorScope.chronobankplatform + 0,
+    CHRONOBANK_PLATFORM_CANNOT_APPLY_TO_ONESELF: errorScope.chronobankplatform + 1,
+    CHRONOBANK_PLATFORM_INVALID_VALUE: errorScope.chronobankplatform + 2,
+    CHRONOBANK_PLATFORM_INSUFFICIENT_BALANCE: errorScope.chronobankplatform + 3,
+    CHRONOBANK_PLATFORM_NOT_ENOUGH_ALLOWANCE: errorScope.chronobankplatform + 4,
+    CHRONOBANK_PLATFORM_ASSET_ALREADY_ISSUED: errorScope.chronobankplatform + 5,
+    CHRONOBANK_PLATFORM_CANNOT_ISSUE_FIXED_ASSET_WITH_INVALID_VALUE: errorScope.chronobankplatform + 6,
+    CHRONOBANK_PLATFORM_CANNOT_REISSUE_FIXED_ASSET: errorScope.chronobankplatform + 7,
+    CHRONOBANK_PLATFORM_SUPPLY_OVERFLOW: errorScope.chronobankplatform + 8,
+    CHRONOBANK_PLATFORM_NOT_ENOUGH_TOKENS: errorScope.chronobankplatform + 9,
+    CHRONOBANK_PLATFORM_INVALID_NEW_OWNER: errorScope.chronobankplatform + 10,
+    CHRONOBANK_PLATFORM_ALREADY_TRUSTED: errorScope.chronobankplatform + 11,
+    CHRONOBANK_PLATFORM_SHOULD_RECOVER_TO_NEW_ADDRESS: errorScope.chronobankplatform + 12,
+    CHRONOBANK_PLATFORM_ASSET_IS_NOT_ISSUED: errorScope.chronobankplatform + 13,
+    CHRONOBANK_PLATFORM_ACCESS_DENIED_ONLY_OWNER: errorScope.chronobankplatform + 14,
+    CHRONOBANK_PLATFORM_ACCESS_DENIED_ONLY_PROXY: errorScope.chronobankplatform + 15,
+    CHRONOBANK_PLATFORM_ACCESS_DENIED_ONLY_TRUSTED: errorScope.chronobankplatform + 16,
+    CHRONOBANK_PLATFORM_INVALID_INVOCATION: errorScope.chronobankplatform + 17
 }
 
 module.exports = errorsLibrary

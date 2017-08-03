@@ -23,8 +23,8 @@ contract('Assets Manager', function(accounts) {
   var watcher;
   var unix = Math.round(+new Date()/1000);
 
-  const SYMBOL = 'TIME';
-  const SYMBOL2 = 'LHT';
+  const TIME_SYMBOL = 'TIME';
+  const LHT_SYMBOL = 'LHT';
   const NAME = 'Time Token';
   const DESCRIPTION = 'ChronoBank Time Shares';
   const NAME2 = 'Labour-hour Token';
@@ -43,38 +43,38 @@ contract('Assets Manager', function(accounts) {
 
   context("initial tests", function() {
     it("Platform has correct TIME proxy address.", function() {
-      return Setup.chronoBankPlatform.proxies.call(SYMBOL).then(function(r) {
+      return Setup.chronoBankPlatform.proxies(TIME_SYMBOL).then(function(r) {
         assert.equal(r,Setup.chronoBankAssetProxy.address);
       });
     });
 
     it("Platform has correct LHT proxy address.", function() {
-      return Setup.chronoBankPlatform.proxies.call(SYMBOL2).then(function(r) {
+      return Setup.chronoBankPlatform.proxies(LHT_SYMBOL).then(function(r) {
         assert.equal(r,Setup.chronoBankAssetWithFeeProxy.address);
       });
     });
 
 
     it("TIME contract has correct TIME proxy address.", function() {
-      return Setup.chronoBankAsset.proxy.call().then(function(r) {
+      return Setup.chronoBankAsset.proxy().then(function(r) {
         assert.equal(r,Setup.chronoBankAssetProxy.address);
       });
     });
 
     it("LHT contract has correct LHT proxy address.", function() {
-      return Setup.chronoBankAssetWithFee.proxy.call().then(function(r) {
+      return Setup.chronoBankAssetWithFee.proxy().then(function(r) {
         assert.equal(r,Setup.chronoBankAssetWithFeeProxy.address);
       });
     });
 
     it("TIME proxy has right version", function() {
-      return Setup.chronoBankAssetProxy.getLatestVersion.call().then(function(r) {
+      return Setup.chronoBankAssetProxy.getLatestVersion().then(function(r) {
         assert.equal(r,Setup.chronoBankAsset.address);
       });
     });
 
     it("LHT proxy has right version", function() {
-      return Setup.chronoBankAssetWithFeeProxy.getLatestVersion.call().then(function(r) {
+      return Setup.chronoBankAssetWithFeeProxy.getLatestVersion().then(function(r) {
         assert.equal(r,Setup.chronoBankAssetWithFee.address);
       });
     });
@@ -84,17 +84,18 @@ contract('Assets Manager', function(accounts) {
 
     it("can issue new Asset", function() {
         const supplyValue = 1000000;
+        console.log(Setup.assetsManager.address);
       return Setup.assetsManager.createAsset.call('TEST','TEST','TEST',supplyValue,2,true,false).then(function(r1) {
         return Setup.assetsManager.createAsset('TEST','TEST','TEST',supplyValue,2,true,false,{
           from: accounts[0],
           gas: 3000000
       }).then((tx) => {
-          const assetCreatedEvent = eventsHelper.extractEvent(tx, "AssetCreated")
-          assert.isDefined(assetCreatedEvent);
-            const tokenAddress = assetCreatedEvent.args.token;
+          assert.equal(r1, ErrorsEnum.OK);
+          const assetCreatedEvents = eventsHelper.extractEvents(tx, "AssetCreated")
+          assert.notEqual(assetCreatedEvents.length, 0);
+            const tokenAddress = assetCreatedEvents[0].args.token;
           return ChronoBankAssetProxy.at(tokenAddress).then(function(instance) {
             return instance.totalSupply().then(function(r2) {
-              assert.equal(r1, ErrorsEnum.OK);
               assert.equal(r2, supplyValue);
             });
           });
@@ -234,8 +235,8 @@ contract('Assets Manager', function(accounts) {
     });*/
 
     it("should be able to send 100 TIME to owner1", function () {
-      return Setup.assetsManager.sendAsset.call(bytes32('TIME'), owner1, 100).then(function (r) {
-        return Setup.assetsManager.sendAsset(bytes32('TIME'), owner1, 100, {
+      return Setup.assetsManager.sendAsset.call(TIME_SYMBOL, owner1, 100).then(function (r) {
+        return Setup.assetsManager.sendAsset(TIME_SYMBOL, owner1, 100, {
           from: accounts[0],
           gas: 3000000
         }).then(function () {

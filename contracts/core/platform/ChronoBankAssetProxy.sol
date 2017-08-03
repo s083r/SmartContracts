@@ -28,6 +28,10 @@ import {ERC20Interface as ERC20} from "../erc20/ERC20Interface.sol";
  * didn't happen yet.
  */
 contract ChronoBankAssetProxy is ERC20 {
+
+    // Supports ChronoBankPlatform ability to return error codes from methods
+    uint constant OK = 1;
+
     // Assigned platform, immutable.
     ChronoBankPlatform public chronoBankPlatform;
 
@@ -193,7 +197,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __transferWithReference(address _to, uint _value, string _reference, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyTransferWithReference(_to, _value, smbl, _reference, _sender);
+        return chronoBankPlatform.proxyTransferWithReference(_to, _value, smbl, _reference, _sender) == OK;
     }
 
     /**
@@ -228,7 +232,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __transferFromWithReference(address _from, address _to, uint _value, string _reference, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyTransferFromWithReference(_from, _to, _value, smbl, _reference, _sender);
+        return chronoBankPlatform.proxyTransferFromWithReference(_from, _to, _value, smbl, _reference, _sender) == OK;
     }
 
     /**
@@ -260,7 +264,7 @@ contract ChronoBankAssetProxy is ERC20 {
      * @return success.
      */
     function __approve(address _spender, uint _value, address _sender) onlyAccess(_sender) returns(bool) {
-        return chronoBankPlatform.proxyApprove(_spender, _value, smbl, _sender);
+        return chronoBankPlatform.proxyApprove(_spender, _value, smbl, _sender) == OK;
     }
 
     /**

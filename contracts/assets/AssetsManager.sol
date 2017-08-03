@@ -62,7 +62,7 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
     }
 
     function isAssetSymbolExists(bytes32 _symbol) private constant returns (bool) {
-        return store.get(assets, _symbol) != address(0);
+        return store.get(assets, _symbol) != 0x0;
     }
 
     function isAssetOwner(bytes32 _symbol, address _owner) constant returns (bool) {
@@ -84,6 +84,28 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
         store.set(platform, _platform);
         store.set(proxyFactory, _proxyFactory);
         return OK;
+    }
+
+    function destroy(bytes32[] _symbols) onlyContractOwner {
+        address chronobankPlatform = store.get(platform);
+        bytes32 assetSymbol;
+        for (uint assetIdx = 0; assetIdx < _symbols.length; ++assetIdx) {
+            assetSymbol = _symbols[assetIdx];
+            if (ChronoBankPlatformInterface(chronobankPlatform).isOwner(this, assetSymbol)) {
+                ChronoBankPlatformInterface(chronobankPlatform).changeOwnership(assetSymbol, msg.sender);
+            }
+        }
+
+        Owned(chronobankPlatform).changeContractOwnership(msg.sender);
+
+        BaseManager.destroy();
+    }
+
+    /**
+    *   @dev Use other `destroy` implementation
+    */
+    function destroy() {
+        throw;
     }
 
     function claimPlatformOwnership() returns (uint errorCode) {
@@ -127,11 +149,11 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
     }
 
     function reissueAsset(bytes32 _symbol, uint _value) onlyAssetOwner(_symbol) returns (bool) {
-        return ChronoBankPlatformInterface(store.get(platform)).reissueAsset(_symbol, _value);
+        return ChronoBankPlatformInterface(store.get(platform)).reissueAsset(_symbol, _value) == OK;
     }
 
     function revokeAsset(bytes32 _symbol, uint _value) onlyAssetOwner(_symbol) returns (bool) {
-        return ChronoBankPlatformInterface(store.get(platform)).revokeAsset(_symbol, _value);
+        return ChronoBankPlatformInterface(store.get(platform)).revokeAsset(_symbol, _value) == OK;
     }
 
     function addAsset(address asset, bytes32 _symbol, address owner) returns (uint errorCode) {
@@ -181,14 +203,20 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
 
         token = ProxyFactory(store.get(proxyFactory)).createProxy();
         address asset;
-        ChronoBankPlatformInterface(store.get(platform)).issueAsset(symbol, value, name, description, decimals, isMint);
+        errorCode = ChronoBankPlatformInterface(store.get(platform)).issueAsset(symbol, value, name, description, decimals, isMint);
+        if (errorCode != OK) {
+            return errorCode;
+        }
         if (withFee) {
             asset = ProxyFactory(store.get(proxyFactory)).createAssetWithFee();
         }
         else {
             asset = ProxyFactory(store.get(proxyFactory)).createAsset();
         }
-        ChronoBankPlatformInterface(store.get(platform)).setProxy(token, symbol);
+        errorCode = ChronoBankPlatformInterface(store.get(platform)).setProxy(token, symbol);
+        if (errorCode != OK) {
+            return errorCode;
+        }
         ChronoBankAssetProxyInterface(token).init(store.get(platform), bytes32ToString(symbol), name);
         ChronoBankAssetProxyInterface(token).proposeUpgrade(asset);
         ChronoBankAsset(asset).init(ChronoBankAssetProxyInterface(token));

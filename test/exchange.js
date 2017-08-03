@@ -1,7 +1,7 @@
 var Exchange = artifacts.require("./Exchange.sol");
 var FakeCoin = artifacts.require("./FakeCoin.sol");
 var FakeCoin2 = artifacts.require("./FakeCoin2.sol");
-var EventsHistory = artifacts.require("./EventsHistory.sol");
+var MultiEventsHistory = artifacts.require("./MultiEventsHistory.sol");
 var Reverter = require('./helpers/reverter');
 var bytes32 = require('./helpers/bytes32');
 var eventsHelper = require('./helpers/eventsHelper');
@@ -38,22 +38,22 @@ contract('Exchange', (accounts) => {
   };
 
   before('Set Coin contract address', (done) => {
-    Exchange.deployed().then(function (instance) {
-      exchange = instance;
-      exchange.setupEventsHistory(EventsHistory.address);
-      FakeCoin.deployed().then(function (instance) {
-        coin = instance;
-        FakeCoin2.deployed().then(function (instance) {
-          coin2 = instance;
-          coin.mint(accounts[0], BALANCE)
-            .then(() => coin.mint(accounts[1], BALANCE))
-            .then(() => coin.mint(exchange.address, BALANCE))
-            .then(() => web3.eth.sendTransaction({to: exchange.address, value: BALANCE_ETH, from: accounts[0]}))
-            .then(() => reverter.snapshot(done))
-            .catch(done);
-        });
-      });
-    });
+      var eventsHistory
+      Exchange.deployed().then(instance => exchange = instance)
+      .then(() => MultiEventsHistory.deployed())
+      .then(instance => eventsHistory = instance)
+      .then(() => exchange.setupEventsHistory(eventsHistory.address))
+      .then(() => eventsHistory.authorize(exchange.address))
+      .then(() => FakeCoin.deployed())
+      .then(instance => coin = instance)
+      .then(() => FakeCoin2.deployed())
+      .then(instance => coin2 = instance)
+      .then(() => coin.mint(accounts[0], BALANCE))
+      .then(() => coin.mint(accounts[1], BALANCE))
+      .then(() => coin.mint(exchange.address, BALANCE))
+      .then(() => web3.eth.sendTransaction({to: exchange.address, value: BALANCE_ETH, from: accounts[0]}))
+      .then(() => reverter.snapshot(done))
+      .catch(done);
   });
 
   it('should receive the right contract address after init() call', () => {
