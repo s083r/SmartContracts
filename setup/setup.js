@@ -23,21 +23,21 @@ const StorageManager = artifacts.require('StorageManager.sol')
 const VoteActor = artifacts.require("./VoteActor.sol");
 const PollManager = artifacts.require("./PollManager.sol");
 const PollDetails = artifacts.require("./PollDetails.sol");
-const bytes32 = require('../test/helpers/bytes32');
 
 const contractTypes = {
-  LOCManager: bytes32("LOCManager"), // LOCManager
-  PendingManager: bytes32("PendingManager"), // PendingManager
-  UserManager: bytes32("UserManager"), // UserManager
-  ERC20Manager: bytes32("ERC20Manager"), // ERC20Manager
-  ExchangeManager: bytes32("ExchangeManager"), // ExchangeManager
-  TrackersManager: bytes32("TrackersManager"), // TrackersManager
-  Voting: bytes32("PollManager"), // Voting
-  Rewards: bytes32("Rewards"), // Rewards
-  AssetsManager: bytes32("AssetsManager"), // AssetsManager
-  TimeHolder: bytes32("TimeHolder"), //TimeHolder
-  CrowdsaleManager: bytes32("CrowdsaleManager"),
-  VotingActor: bytes32("VoteActor")
+  LOCManager: "LOCManager", // LOCManager
+  PendingManager: "PendingManager", // PendingManager
+  UserManager: "UserManager", // UserManager
+  ERC20Manager: "ERC20Manager", // ERC20Manager
+  ExchangeManager: "ExchangeManager", // ExchangeManager
+  TrackersManager: "TrackersManager", // TrackersManager
+  Voting: "PollManager", // Voting
+  Rewards: "Rewards", // Rewards
+  AssetsManager: "AssetsManager", // AssetsManager
+  TimeHolder: "TimeHolder", //TimeHolder
+  CrowdsaleManager: "CrowdsaleManager",
+  VotingActor: "VoteActor",
+  VotingDetails: "PollDetails"
 }
 
 let storage

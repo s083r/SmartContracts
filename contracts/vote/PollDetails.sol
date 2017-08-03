@@ -6,6 +6,10 @@ contract PollDetails is Vote {
     function PollDetails(Storage _store, bytes32 _crate) Vote(_store, _crate) {
     }
 
+    function init(address _contractsManager) onlyContractOwner returns (uint) {
+        return BaseManager.init(_contractsManager, "PollDetails");
+    }
+
     function pollsCount() constant returns (uint) {
         return store.count(polls);
     }

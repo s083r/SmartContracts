@@ -96,6 +96,12 @@ contract('Contracts Manager', function(accounts) {
       });
     });
 
+    it("can provide Voting details address.", function() {
+      return Setup.contractsManager.getContractAddressByType.call(Setup.contractTypes.VotingDetails).then(function(r) {
+        assert.equal(r,Setup.vote.details.address);
+      });
+    });
+
     it("doesn't allow a non CBE key to change the contract address", function() {
       return Setup.contractsManager.addContract(Setup.rewards.address,Setup.contractTypes.VotingActor,{from: owner1}).then(function(r) {
         return Setup.contractsManager.getContractAddressByType.call(Setup.contractTypes.VotingActor).then(function(r){

@@ -37,5 +37,7 @@ module.exports = function(deployer, network) {
 
       .then(() => deployer.deploy(PollDetails, Storage.address, 'Vote'))
       .then(() => storageManager.giveAccess(PollDetails.address, 'Vote'))
+      .then(() => PollDetails.deployed())
+      .then(_pollDetails => _pollDetails.init(ContractsManager.address))
       .then(() => console.log("[MIGRATION] [41.3] Poll Details: #done"))
 }
