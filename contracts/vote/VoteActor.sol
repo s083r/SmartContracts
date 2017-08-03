@@ -96,7 +96,7 @@ contract VoteActor is Vote, VoteActorEmitter, ListenerInterface {
         return OK;
     }
 
-    function removeMember(uint _pollId, address _address) {
+    function removeMember(uint _pollId, address _address) internal {
         store.set(memberOption, _pollId, _address, 0);
         store.set(memberVotes, _pollId, _address, 0);
         store.remove(memberPolls, bytes32(_address), _pollId);

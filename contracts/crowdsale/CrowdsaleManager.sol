@@ -21,7 +21,11 @@ contract CrowdfundingManager is CrowdfundingManagerEmitter, BaseManager {
         return OK;
     }
 
-    function createCompain(address _creator, bytes32 _symbol) returns (uint errorCode) {
+    function createCompain(bytes32 _symbol) returns (uint errorCode) {
+        return createCompain(msg.sender, _symbol);
+    }
+
+    function createCompain(address _creator, bytes32 _symbol) internal returns (uint errorCode) {
         AssetsManagerInterface assetsManager = AssetsManagerInterface(lookupManager("AssetsManager"));
         if (assetsManager.isAssetOwner(_symbol, _creator)) {
             address crowdsale = new Crowdsale(contractsManager, _symbol);

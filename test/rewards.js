@@ -440,7 +440,7 @@ contract('Rewards', (accounts) => {
   // withdrawRewardFor(address _address, uint _amount, address _assetAddress) returns(bool)
   it('should return false if rewardsLeft == 0', () => {
     return defaultInit()
-      .then(() => reward.withdrawRewardFor.call(asset1.address, accounts[0], 100))
+      .then(() => reward.withdrawReward.call(asset1.address, 100, {from: accounts[0],}))
       .then((res) => assert.notEqual(res, 1));
   });
 
@@ -453,7 +453,7 @@ contract('Rewards', (accounts) => {
       //.then(() => reward.registerAsset(asset1.address))
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[0], 0))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 100))
-      .then(() => reward.withdrawRewardFor(asset1.address, accounts[0], 100))
+      .then(() => reward.withdrawReward(asset1.address, 100, {from: accounts[0]}))
       .then(() => assertAsset1Balance(accounts[0], 100))
       .then(() => assertRewardsLeft(asset1.address, 0))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 0));
@@ -490,8 +490,8 @@ contract('Rewards', (accounts) => {
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[1], 0))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 33))
       .then(() => assertRewardsFor(accounts[1], asset1.address, 66))
-      .then(() => reward.withdrawRewardFor(asset1.address, accounts[0], 33))
-      .then(() => reward.withdrawRewardFor(asset1.address, accounts[1], 66))
+      .then(() => reward.withdrawReward(asset1.address, 33, {from: accounts[0]}))
+      .then(() => reward.withdrawReward(asset1.address, 66, {from: accounts[1]}))
       .then(() => assertAsset1Balance(accounts[0], 33))
       .then(() => assertAsset1Balance(accounts[1], 66))
       .then(() => assertRewardsLeft(asset1.address, 1))
@@ -509,7 +509,7 @@ contract('Rewards', (accounts) => {
       //.then(() => reward.calculateRewardForAddressAndPeriod(asset1.address, accounts[0], 0))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 100))
 
-      .then(() => reward.withdrawRewardFor(asset1.address, accounts[0], 30))
+      .then(() => reward.withdrawReward(asset1.address, 30, {from: accounts[0]}))
       .then(() => assertAsset1Balance(accounts[0], 30))
       .then(() => assertRewardsLeft(asset1.address, 70))
       .then(() => assertRewardsFor(accounts[0], asset1.address, 70));

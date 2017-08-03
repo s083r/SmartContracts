@@ -167,7 +167,7 @@ contract Rewards is Deposits, RewardsEmitter {
      *
      * @return success.
      */
-    function closePeriod() returns (uint) {
+    function closePeriod() onlyAuthorized returns (uint) {
         uint period = lastPeriod();
         if ((store.get(startDate,period) + (store.get(closeInterval) * 1 days)) > now) {
             return _emitError(ERROR_REWARD_CANNOT_CLOSE_PERIOD);
@@ -206,7 +206,7 @@ contract Rewards is Deposits, RewardsEmitter {
     *  @return error code and still left shares. `sharesLeft` is actual only
     *  if `errorCode` == OK, otherwise `sharesLeft` must be ignored.
     */
-    function storeDeposits() returns (uint result) {
+    function storeDeposits() onlyAuthorized returns (uint result) {
         uint period = lastClosedPeriod();
         uint period_end = getPeriodStartDate(lastPeriod());
         address[] memory assets = getAssets();
@@ -323,9 +323,9 @@ contract Rewards is Deposits, RewardsEmitter {
      *
      * @return success.
      */
-    function withdrawRewardTotalFor(address _asset, address _address) returns (uint) {
+    /*function withdrawRewardTotalFor(address _asset, address _address) returns (uint) {
         return withdrawRewardFor(_asset, _address, rewardsFor(_asset, _address));
-    }
+    }*/
 
     /**
      * Withdraw accumulated reward of a specified rewards asset.
@@ -352,7 +352,7 @@ contract Rewards is Deposits, RewardsEmitter {
      *
      * @return success.
      */
-    function withdrawRewardFor(address _asset, address _address, uint _amount) returns (uint) {
+    function withdrawRewardFor(address _asset, address _address, uint _amount) internal returns (uint) {
         if (store.get(rewardsLeft,_asset) == 0) {
             return _emitError(ERROR_REWARD_NO_REWARDS_LEFT);
         }
