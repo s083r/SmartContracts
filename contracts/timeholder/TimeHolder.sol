@@ -65,6 +65,33 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
     }
 
     /**
+    * Total amount of shares
+    *
+    * @return total amount of shares
+    */
+    function totalShares() constant returns (uint) {
+        return store.get(totalSharesStorage);
+    }
+
+    /**
+    * Contract address of shares
+    *
+    * @return address of shares contract
+    */
+    function sharesContract() constant returns (address) {
+        return store.get(sharesContractStorage);
+    }
+
+    /**
+    * Number of shareholders
+    *
+    * @return number of shareholders
+    */
+    function shareholdersCount() constant returns (uint) {
+        return store.count(shareholders);
+    }
+
+    /**
      * Deposit shares and prove possession.
      * Amount should be less than or equal to current allowance value.
      *
