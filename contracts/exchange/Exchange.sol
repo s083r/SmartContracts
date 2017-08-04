@@ -82,20 +82,20 @@ contract Exchange is Object {
      * @param error error from Errors library.
      */
     function _error(uint error) internal returns (uint) {
-        eventsHistory.emitError(error);
+        getEventsHistory().emitError(error);
         return error;
     }
 
     function _emitFeeUpdated(uint feePercent) internal {
-        eventsHistory.emitFeeUpdated(feePercent);
+        getEventsHistory().emitFeeUpdated(feePercent);
     }
 
     function _emitPricesUpdated(uint buyPrice, uint sellPrice) internal {
-        eventsHistory.emitPricesUpdated(buyPrice, sellPrice);
+        getEventsHistory().emitPricesUpdated(buyPrice, sellPrice);
     }
 
     function _emitActiveChanged(bool isActive) internal {
-        eventsHistory.emitActiveChanged(isActive);
+        getEventsHistory().emitActiveChanged(isActive);
     }
 
     /**
@@ -396,6 +396,9 @@ contract Exchange is Object {
         ActiveChanged(msg.sender, isActive);
     }
 
+    function getEventsHistory() constant returns (ExchangeEmitter) {
+        return address(eventsHistory) != 0x0 ? eventsHistory : ExchangeEmitter(this);
+    }
     /**
      * Overflow-safe multiplication.
      *

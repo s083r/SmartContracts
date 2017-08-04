@@ -26,7 +26,7 @@ contract('Exchange Manager', function(accounts) {
       return FakeCoin2.deployed()
     }).then(function(instance) {
       coin2 = instance
-      return Exchange.deployed()
+      return Exchange.new()
     }).then(function(instance) {
       exchange = instance
       Setup.setup(done)
@@ -69,11 +69,10 @@ contract('Exchange Manager', function(accounts) {
   context("CRUD interface test", function () {
 
     it("should allow to create new exchange", function () {
-      return Setup.exchangeManager.createExchange.call(SYMBOL, false,{
-        from: accounts[0],
-        gas: 3000000
-      }).then(function (r) {
-          assert.equal(r, ErrorsEnum.OK);
+      return Setup.exchangeManager.createExchange.call(SYMBOL, false)
+      .then(function (r) {
+        assert.equal(r, ErrorsEnum.OK);
+        return Setup.exchangeManager.createExchange(SYMBOL, false);
       });
     });
 

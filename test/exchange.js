@@ -39,7 +39,8 @@ contract('Exchange', (accounts) => {
 
   before('Set Coin contract address', (done) => {
       var eventsHistory
-      Exchange.deployed().then(instance => exchange = instance)
+      Exchange.new()
+      .then(instance => exchange = instance)
       .then(() => MultiEventsHistory.deployed())
       .then(instance => eventsHistory = instance)
       .then(() => exchange.setupEventsHistory(eventsHistory.address))

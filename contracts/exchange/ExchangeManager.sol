@@ -6,6 +6,7 @@ import {ERC20ManagerInterface as ERC20Manager} from "../core/erc20/ERC20ManagerI
 import {ERC20Interface as Asset} from "../core/erc20/ERC20Interface.sol";
 import "./ExchangeManagerEmitter.sol";
 
+
 contract ExchangeManager is ExchangeManagerEmitter, BaseManager {
   // Exchange Manager errors
     uint constant ERROR_EXCHANGE_STOCK_NOT_FOUND = 7000;
@@ -91,7 +92,7 @@ contract ExchangeManager is ExchangeManagerEmitter, BaseManager {
         return OK;
     }
 
-    function createExchange(bytes32 _symbol, bool _useTicker) returns (uint errorCode) {        
+    function createExchange(bytes32 _symbol, bool _useTicker) returns (uint errorCode) {
         address _erc20Manager = lookupManager("ERC20Manager");
         address tokenAddr = ERC20Manager(_erc20Manager).getTokenAddressBySymbol(_symbol);
         address rewards = lookupManager("Rewards");
@@ -106,6 +107,7 @@ contract ExchangeManager is ExchangeManagerEmitter, BaseManager {
             //address tickerAddr = new KrakenPriceTicker();
         }
 
+        Exchange(exchangeAddr).setupEventsHistory(getEventsHistory());
         Exchange(exchangeAddr).init(Asset(tokenAddr), rewards, tickerAddr, 10);
         exchanges.push(exchangeAddr);
         owners[exchangeAddr].push(msg.sender);
