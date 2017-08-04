@@ -8,15 +8,12 @@ const Rewards = artifacts.require("./Rewards.sol");
 const ERC20Manager = artifacts.require("./ERC20Manager.sol");
 const LOCManager = artifacts.require('./LOCManager.sol');
 
-const Web3 = require("web3");
 const bs58 = require("bs58");
 const Buffer = require("buffer").Buffer;
 
 module.exports = function(deployer,network) {
     const TIME_SYMBOL = 'TIME';
     const LHT_SYMBOL = 'LHT';
-
-    var web3 = new Web3(deployer.provider);
 
     deployer
       .then(() => AssetsManager.deployed())
@@ -35,7 +32,8 @@ module.exports = function(deployer,network) {
                 .then(() => chronoBankPlatform.changeOwnership(TIME_SYMBOL, assetsManager.address))
                 .then(() => {
                   if (network !== "test") {
-                      return assetsManager.addAsset(ChronoBankAssetProxy.address, TIME_SYMBOL, web3.eth.accounts[0])
+                      return getAccountsPromise()
+                          .then(accounts => assetsManager.addAsset(ChronoBankAssetProxy.address, TIME_SYMBOL, accounts[0]))
                   }
                 })
           }
@@ -70,6 +68,18 @@ module.exports = function(deployer,network) {
 // TODO: @ahiatsevich: copy-paste from
 // ChronoBank/ChronoMint/src/utils/Web3Converter.js
 
-function ipfsHashToBytes32 (value) {
+let ipfsHashToBytes32 = (value) => {
   return `0x${Buffer.from(bs58.decode(value)).toString('hex').substr(4)}`
 }
+
+let getAccountsPromise = () => {
+    return new Promise(function (resolve, reject) {
+        web3.eth.getAccounts(function (e, accounts) {
+            if (e != null) {
+                reject(e);
+            } else {
+                resolve(accounts);
+            }
+        });
+    });
+};

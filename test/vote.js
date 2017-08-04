@@ -57,7 +57,6 @@ contract('Vote', function(accounts) {
   // }
 
   before('setup', function(done) {
-    console.log("Initial balance:", web3.eth.getBalance( web3.eth.accounts[0]))
     PendingManager.at(MultiEventsHistory.address).then((instance) => {
       eventor = instance;
       Setup.setup(done);
@@ -536,7 +535,6 @@ contract('Vote', function(accounts) {
     it("should decrese active Polls count", function() {
       return Setup.vote.details.getActivePollsCount.call().then((r) => {
         assert.equal(r, 18)
-        console.log("Final balance:", web3.eth.getBalance( web3.eth.accounts[0]))
       })
     })
 
