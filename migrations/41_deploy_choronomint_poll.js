@@ -23,8 +23,12 @@ module.exports = function(deployer, network) {
       .then(_voteActor => voteActor = _voteActor)
       .then(() => voteActor.init(ContractsManager.address))
       .then(() => history.authorize(voteActor.address))
-      .then(() => TimeHolder.deployed())
-      .then(_timeHolder => _timeHolder.addListener(voteActor.address))
+      .then(() => {
+          if (TimeHolder.isDeployed()) {
+            return TimeHolder.deployed()
+                .then(_timeHolder => _timeHolder.addListener(voteActor.address))
+          }
+      })
       .then(() => console.log("[MIGRATION] [41.1] Vote Actor: #done"))
 
       .then(() => deployer.deploy(PollManager, Storage.address, 'Vote'))

@@ -3,7 +3,6 @@ const Storage = artifacts.require('./Storage.sol');
 const StorageManager = artifacts.require("./StorageManager.sol");
 const ContractsManager = artifacts.require("./ContractsManager.sol");
 const MultiEventsHistory = artifacts.require("./MultiEventsHistory.sol");
-const TimeHolder = artifacts.require("./TimeHolder.sol");
 
 module.exports = function (deployer, network) {
     deployer.deploy(Rewards, Storage.address, "Deposits")
@@ -14,7 +13,5 @@ module.exports = function (deployer, network) {
         .then(() => manager.init(ContractsManager.address, 0))
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(manager.address))
-     //   .then(() => TimeHolder.deployed())
-     //   .then(_timeHolder => _timeHolder.addListener(manager.address))
         .then(() => console.log("[MIGRATION] [31] Rewards: #done"))
 }

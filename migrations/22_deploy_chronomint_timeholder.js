@@ -6,7 +6,8 @@ const ContractsManager = artifacts.require("./ContractsManager.sol");
 const MultiEventsHistory = artifacts.require("./MultiEventsHistory.sol");
 
 module.exports = function(deployer, network) {
-    deployer.deploy(TimeHolder,Storage.address,'Deposits')
+    if(network !== 'main') {
+      deployer.deploy(TimeHolder,Storage.address,'Deposits')
         .then(() => StorageManager.deployed())
         .then((_storageManager) => _storageManager.giveAccess(TimeHolder.address, 'Deposits'))
         .then(() => TimeHolder.deployed())
@@ -14,4 +15,5 @@ module.exports = function(deployer, network) {
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(TimeHolder.address))
         .then(() => console.log("[MIGRATION] [22] TimeHolder: #done"))
+    }
 }
