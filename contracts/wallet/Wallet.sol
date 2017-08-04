@@ -291,8 +291,9 @@ contract Wallet is multiowned {
 
     // constructor - just pass on the owner array to the multiowned and
     // the limit to daylimit
-    function Wallet(address[] _owners, uint _required, address _contractsManager) multiowned(_owners, _required)  {
+    function Wallet(address[] _owners, uint _required, address _contractsManager, bytes32 _name) multiowned(_owners, _required)  {
         contractsManager = _contractsManager;
+        name = _name;
     }
 
     function getTokenAddresses() constant returns (address[] result) {
@@ -321,6 +322,17 @@ contract Wallet is multiowned {
         selfdestruct(_to);
         address walletsManager = ContractsManager(contractsManager).getContractAddressByType(bytes32("WalletsManager"));
         return WalletsManagerInterface(walletsManager).removeWallet();
+    }
+
+    function setName(bytes32 _name) returns (uint) {
+        // determine what index the present sender is and make sure they're an owner
+        if (m_ownerIndex[uint(msg.sender)] == 0) {
+            return _emitError(WALLET_UNKNOWN_OWNER);
+        }
+
+        name = _name;
+
+        return OK;
     }
 
     // gets called when no other function matches
@@ -399,4 +411,5 @@ contract Wallet is multiowned {
 
     // pending transactions we have at present.
     mapping (bytes32 => Transaction) m_txs;
+    bytes32 public name;
 }

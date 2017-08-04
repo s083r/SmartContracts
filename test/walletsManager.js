@@ -42,7 +42,7 @@ contract('Wallets Manager', function(accounts) {
     it("Token and balances initialization should pass.", function () {
       return FakeCoin.deployed().then(function (instance) {
         coin = instance;
-        return Wallet.new([owner1], 2, Setup.contractsManager.address).then(function (instance) {
+        return Wallet.new([owner1], 2, Setup.contractsManager.address, "Wallet1").then(function (instance) {
           wallet = instance;
           return Setup.erc20Manager.addToken(coin.address, 'TOKEN', 'TOKEN', '', 2, bytes32('0x0'), bytes32('0x0'), {
             from: owner,
@@ -67,8 +67,8 @@ contract('Wallets Manager', function(accounts) {
   context("CRUD test", function(){
 
     it("can create new MultiSig Wallet contract", function() {
-      return Setup.walletsManager.createWallet.call([owner1,owner2],2).then(function(r1) {
-        return Setup.walletsManager.createWallet([owner1,owner2],2,{
+      return Setup.walletsManager.createWallet.call([owner1,owner2],2, "Wallet").then(function(r1) {
+        return Setup.walletsManager.createWallet([owner1,owner2],2, "Wallet", {
           from: owner,
           gas: 3000000
         }).then((tx) => {
@@ -81,6 +81,8 @@ contract('Wallets Manager', function(accounts) {
                 assert.equal(r1, ErrorsEnum.OK);
                 assert.equal(r2, 2);
                 assert.equal(r3, 3);
+                return instance.name.call()
+                          .then(name => assert.equal(name, bytes32("Wallet")));
               });
             });
           });

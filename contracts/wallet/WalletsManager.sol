@@ -72,8 +72,8 @@ StorageInterface.OrderedAddressesSet wallets;
         return _emitError(ERROR_WALLET_UNKNOWN);
     }
 
-    function createWallet(address[] _owners, uint _required) returns (uint errorCode) {
-        address _wallet = new Wallet(_owners,_required, contractsManager);
+    function createWallet(address[] _owners, uint _required, bytes32 _name) returns (uint errorCode) {
+        address _wallet = new Wallet(_owners,_required, contractsManager, _name);
         store.add(wallets, _wallet);
         _emitWalletCreated(_wallet);
         return OK;
