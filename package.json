@@ -1,6 +1,6 @@
 {
   "name": "chronobank-smart-contracts",
-  "version": "1.1.31",
+  "version": "1.1.32",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
   "scripts": {
