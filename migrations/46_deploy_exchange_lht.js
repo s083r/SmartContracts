@@ -6,4 +6,5 @@ module.exports = function(deployer,network) {
     ExchangeManager.deployed()
       .then(_exchangeManager => exchangeManager = _exchangeManager)
       .then(() => exchangeManager.createExchange(LHT_SYMBOL, false))
+      .then(() => console.log("[MIGRATION] [46] LHT Exchange: #done"))
 }

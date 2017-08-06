@@ -14,6 +14,6 @@ contract ERC20ManagerInterface {
     uint8 _decimals,
     bytes32 _ipfsHash,
     bytes32 _swarmHash)
-    returns(bool);
+    returns(uint);
 
 }

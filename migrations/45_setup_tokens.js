@@ -9,6 +9,7 @@ module.exports = function(deployer,network) {
     deployer
       .then(() => ERC20Manager.deployed())
       .then(_erc20Manager => registerTokens(_erc20Manager, tokens))
+      .then(() => console.log("[MIGRATION] [45] Setup production tokens: #done"))
   }
 }
 

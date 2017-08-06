@@ -4,6 +4,10 @@ import "../common/BaseManager.sol";
 import {ERC20Interface as Asset} from "./ERC20Interface.sol";
 import "./ERC20ManagerEmitter.sol";
 
+contract ERC20TokenVerifier {
+    function verify(address token) returns (bool);
+}
+
 contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
 
     event LogAddToken(
@@ -59,6 +63,7 @@ contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
     StorageInterface.AddressBytes32Mapping ipfsHash;
     StorageInterface.AddressBytes32Mapping swarmHash;
     StorageInterface.AddressUIntMapping decimals;
+    StorageInterface.Address tokenVerifier;
 
     function ERC20Manager(Storage _store, bytes32 _crate) BaseManager(_store, _crate) {
         tokenAddresses.init('tokenAddresses');
@@ -69,12 +74,17 @@ contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
         ipfsHash.init('ipfsHash');
         swarmHash.init('swarmHash');
         decimals.init('decimals');
+        tokenVerifier.init('tokenVerifier');
     }
 
     function init(address _contractsManager) onlyContractOwner returns (uint) {
         BaseManager.init(_contractsManager, "ERC20Manager");
 
         return OK;
+    }
+
+    function setTokenVerifier(address _tokenVerifier) onlyContractOwner {
+        store.set(tokenVerifier, _tokenVerifier);
     }
 
     /// @dev Allows owner to add a new token to the registry.
@@ -102,9 +112,7 @@ contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
             return _emitError(ERROR_ERCMANAGER_TOKEN_SYMBOL_ALREADY_EXISTS);
         }
 
-        bool r = _token.call.gas(3000).value(0)(bytes4(sha3("balanceOf(address)")),msg.sender);
-
-        if(!r) {
+        if (!isTokenValid(_token)) {
             return _emitError(ERROR_ERCMANAGER_INVALID_INVOCATION);
         }
 
@@ -136,6 +144,10 @@ contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
     {
         if (!isTokenExists(_token)) {
             return _emitError(ERROR_ERCMANAGER_TOKEN_NOT_EXISTS);
+        }
+
+        if (!isTokenValid(_newToken)) {
+            return _emitError(ERROR_ERCMANAGER_INVALID_INVOCATION);
         }
 
         bool changed;
@@ -350,6 +362,15 @@ contract ERC20Manager is ERC20ManagerEmitter, BaseManager {
 
     function isTokenExists(address _token) constant returns (bool) {
         return store.includes(tokenAddresses, _token);
+    }
+
+    function isTokenValid(address _token) constant returns (bool) {
+      if (store.get(tokenVerifier) != 0x0) {
+          ERC20TokenVerifier verifier = ERC20TokenVerifier(store.get(tokenVerifier));
+          return verifier.verify(_token);
+      }
+
+      return true;
     }
 
     function isTokenSymbolExists(bytes32 _symbol) private constant returns (bool) {

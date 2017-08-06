@@ -110,6 +110,7 @@ const errorsLibrary = {
     TIMEHOLDER_WITHDRAWN_FAILED: errorScope.timeholder + 4,
     TIMEHOLDER_DEPOSIT_FAILED: errorScope.timeholder + 5,
     TIMEHOLDER_INSUFFICIENT_BALANCE: errorScope.timeholder + 6,
+    TIMEHOLDER_LIMIT_EXCEEDED: errorScope.timeholder + 7,
 
     ERCMANAGER_INVALID_INVOCATION: errorScope.ercmanager + 0,
     ERCMANAGER_INVALID_STATE: errorScope.ercmanager + 1,

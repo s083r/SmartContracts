@@ -176,8 +176,11 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
 
         uint8 decimals = ChronoBankPlatformInterface(_platform).baseUnit(_symbol);
         address erc20Manager = lookupManager("ERC20Manager");
-        if (!ERC20Manager(erc20Manager).addToken(asset, _symbol, _symbol, bytes32(0), decimals, bytes32(0), bytes32(0))) {
-            return _emitError(ERROR_ASSETS_CANNOT_ADD_TO_REGISTRY);
+
+        errorCode = ERC20Manager(erc20Manager)
+                        .addToken(asset, _symbol, _symbol, bytes32(0), decimals, bytes32(0), bytes32(0));
+        if (OK != errorCode) {
+            return _emitError(errorCode);
         }
 
         store.set(assets, _symbol, asset);
@@ -220,8 +223,11 @@ contract AssetsManager is AssetsManagerEmitter, BaseManager {
         ChronoBankAssetProxyInterface(token).init(store.get(platform), bytes32ToString(symbol), name);
         ChronoBankAssetProxyInterface(token).proposeUpgrade(asset);
         ChronoBankAsset(asset).init(ChronoBankAssetProxyInterface(token));
-        if (!ERC20Manager(erc20Manager).addToken(token, bytes32(0), symbol, bytes32(0), decimals, bytes32(0), bytes32(0))) {
-            return _emitError(ERROR_ASSETS_CANNOT_ADD_TO_REGISTRY);
+
+        errorCode = ERC20Manager(erc20Manager)
+                        .addToken(token, bytes32(0), symbol, bytes32(0), decimals, bytes32(0), bytes32(0));
+        if (OK != errorCode) {
+            return _emitError(errorCode);
         }
 
         store.set(assets, symbol, token);

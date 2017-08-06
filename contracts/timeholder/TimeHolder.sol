@@ -17,11 +17,14 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
     uint constant ERROR_TIMEHOLDER_WITHDRAWN_FAILED = 12004;
     uint constant ERROR_TIMEHOLDER_DEPOSIT_FAILED = 12005;
     uint constant ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE = 12006;
+    uint constant ERROR_TIMEHOLDER_LIMIT_EXCEEDED = 12007;
 
     StorageInterface.OrderedAddressesSet listeners;
+    StorageInterface.UInt limitAmount;
 
     function TimeHolder(Storage _store, bytes32 _crate) Deposits(_store, _crate) {
         listeners.init('listeners');
+        limitAmount.init('limitAmount');
     }
 
     /**
@@ -36,7 +39,8 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
     function init(address _contractsManager, address _sharesContract) onlyContractOwner returns (uint) {
         BaseManager.init(_contractsManager, "TimeHolder");
 
-        store.set(sharesContractStorage,_sharesContract);
+        store.set(sharesContractStorage, _sharesContract);
+        store.set(limitAmount, 2**255);
 
         return OK;
     }
@@ -92,6 +96,24 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
     }
 
     /**
+    * Returns deposit/withdraw limit
+    *
+    * @return limit
+    */
+    function getLimit() constant returns (uint) {
+        return store.get(limitAmount);
+    }
+
+    /**
+    * Setter deposit/withdraw limit
+    *
+    * @param _limitAmount is limit
+    */
+    function setLimit(uint _limitAmount) onlyContractOwner {
+        store.set(limitAmount, _limitAmount);
+    }
+
+    /**
      * Deposit shares and prove possession.
      * Amount should be less than or equal to current allowance value.
      *
@@ -122,7 +144,12 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
      * @return success.
      */
     function depositFor(address _address, uint _amount) returns (uint) {
+        if (_amount > getLimit()) {
+            return _emitError(ERROR_TIMEHOLDER_LIMIT_EXCEEDED);
+        }
+
         address asset = store.get(sharesContractStorage);
+        // TODO: @ahiatsevich: is there really msg.sender?
         if (_amount != 0 && !ERC20Interface(asset).transferFrom(msg.sender, this, _amount)) {
             return _emitError(ERROR_TIMEHOLDER_TRANSFER_FAILED);
         }
@@ -166,7 +193,9 @@ contract TimeHolder is Deposits, TimeHolderEmmiter {
     * @return success.
     */
     function withdrawShares(uint _amount) returns (uint) {
-
+        if (_amount > getLimit()) {
+            return _emitError(ERROR_TIMEHOLDER_LIMIT_EXCEEDED);
+        }
 
         if (_amount > depositBalance(msg.sender)) {
             return _emitError(ERROR_TIMEHOLDER_INSUFFICIENT_BALANCE);
