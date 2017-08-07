@@ -13,5 +13,5 @@ module.exports = function (deployer, network) {
         .then(() => manager.init(ContractsManager.address, 0))
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(manager.address))
-        .then(() => console.log("[MIGRATION] [31] Rewards: #done"))
+        .then(() => console.log("[MIGRATION] [26] Rewards: #done"))
 }

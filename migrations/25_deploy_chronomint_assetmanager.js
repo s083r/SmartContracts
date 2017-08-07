@@ -15,5 +15,5 @@ module.exports = function (deployer, network) {
         .then(() => manager.init(ChronoBankPlatform.address, ContractsManager.address, ProxyFactory.address))
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(manager.address))
-        .then(() => console.log("[MIGRATION] [30] AssetManager: #done"))
+        .then(() => console.log("[MIGRATION] [25] AssetManager: #done"))
 }

@@ -20,6 +20,6 @@ module.exports = function(deployer,network) {
         .then(() => StorageManager.deployed())
         .then(_storageManager => _storageManager.giveAccess(AssetsManagerMock.address, 'AssetsManager'))
         .then(() => deployer.deploy(KrakenPriceTicker, true))
-        .then(() => console.log("[MIGRATION] [40] Deploy Test contracts: #done"))
+        .then(() => console.log("[MIGRATION] [34] Deploy Test contracts: #done"))
     }
 }

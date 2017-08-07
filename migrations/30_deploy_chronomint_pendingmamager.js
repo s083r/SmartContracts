@@ -13,5 +13,5 @@ module.exports = function(deployer, network) {
         .then(() => manager.init(ContractsManager.address))
         .then(() => MultiEventsHistory.deployed())
         .then(_history => _history.authorize(manager.address))
-        .then(() => console.log("[MIGRATION] [23] PendingManager: #done"))
+        .then(() => console.log("[MIGRATION] [30] PendingManager: #done"))
 }

@@ -61,7 +61,7 @@ module.exports = function(deployer,network) {
       })
       .then(() => chronoBankPlatform.changeContractOwnership(assetsManager.address))
       .then(() => assetsManager.claimPlatformOwnership())
-      .then(() => console.log("[MIGRATION] [32] Setup Assets: #done"))
+      .then(() => console.log("[MIGRATION] [28] Setup Assets: #done"))
 }
 
 // Util function

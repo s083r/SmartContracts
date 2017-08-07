@@ -6,11 +6,11 @@ module.exports = function(deployer,network) {
       // check whether FakeCoin has been already deployed or not
       if (!FakeCoin.isDeployed()) {
           return deployer.deploy(FakeCoin)
-            .then(() => console.log("[MIGRATION] [43] Deploy FakeCoin: #done"));
+            .then(() => console.log("[MIGRATION] [36] Deploy FakeCoin: #done"));
       } else {
-          console.log("[MIGRATION] [43] Deploy FakeCoin: #skiped, already deployed");
+          console.log("[MIGRATION] [36] Deploy FakeCoin: #skiped, already deployed");
       }
   } else {
-      console.log("[MIGRATION] [43] Deploy FakeCoin: #skiped, main network");
+      console.log("[MIGRATION] [36] Deploy FakeCoin: #skiped, main network");
   }
 }

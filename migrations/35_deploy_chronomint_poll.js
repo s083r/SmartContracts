@@ -29,7 +29,7 @@ module.exports = function(deployer, network) {
                 .then(_timeHolder => _timeHolder.addListener(voteActor.address))
           }
       })
-      .then(() => console.log("[MIGRATION] [41.1] Vote Actor: #done"))
+      .then(() => console.log("[MIGRATION] [35.1] Vote Actor: #done"))
 
       .then(() => deployer.deploy(PollManager, Storage.address, 'Vote'))
       .then(() => storageManager.giveAccess(PollManager.address, 'Vote'))
@@ -37,11 +37,11 @@ module.exports = function(deployer, network) {
       .then(_pollManager => pollManager = _pollManager)
       .then(() => pollManager.init(ContractsManager.address))
       .then(() => history.authorize(pollManager.address))
-      .then(() => console.log("[MIGRATION] [41.2] Poll Manager: #done"))
+      .then(() => console.log("[MIGRATION] [35.2] Poll Manager: #done"))
 
       .then(() => deployer.deploy(PollDetails, Storage.address, 'Vote'))
       .then(() => storageManager.giveAccess(PollDetails.address, 'Vote'))
       .then(() => PollDetails.deployed())
       .then(_pollDetails => _pollDetails.init(ContractsManager.address))
-      .then(() => console.log("[MIGRATION] [41.3] Poll Details: #done"))
+      .then(() => console.log("[MIGRATION] [35.3] Poll Details: #done"))
 }
