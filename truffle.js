@@ -1,3 +1,4 @@
+//require("babel-register");
 var HDWalletProvider = require("truffle-hdwallet-provider");
 function getWallet(){
   try{
