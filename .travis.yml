@@ -3,9 +3,17 @@ dist: trusty
 language: node_js
 node_js: 6
 before_install:
-  - "npm install -g ethereumjs-testrpc@3.0.5"
-  - "npm install -g truffle@3.4.4"
+  - npm install -g ethereumjs-testrpc@3.0.5
+  - npm install -g truffle@3.4.4
+  - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
 install:
   - "testrpc > /dev/null &"
 script:
   - "truffle test"
+  - if [ "$TRAVIS_BRANCH" == "private" ]; then
+    truffle migrate --network kovan;
+    git config credential.helper "store --file=.git/credentials";
+    echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials;
+    npm run release;
+    npm publish;
+  fi
