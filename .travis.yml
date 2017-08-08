@@ -5,6 +5,7 @@ node_js: 6
 before_install:
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.4
+  - npm install truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
 install:
   - "testrpc > /dev/null &"
