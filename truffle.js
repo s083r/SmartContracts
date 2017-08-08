@@ -8,7 +8,7 @@ networks: {
     test: {
       network_id: 424242,
       host: 'kovan.chronobank.io',
-      port: 8545,
+      port: 443,
       gas: 4700000
     },
   },
