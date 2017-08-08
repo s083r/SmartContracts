@@ -3,7 +3,7 @@ module.exports = {
 networks: {
     kovan:{
       network_id:42,
-      host: 'kovan.chronobank.io'
+      host: 'kovan.chronobank.io',
       port: 80,
       gas: 4700000
     },
