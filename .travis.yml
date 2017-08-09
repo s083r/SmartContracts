@@ -7,13 +7,18 @@ before_install:
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
-
 script:
   - cat truffle.js
   - testrpc -g 1 --network-id 424242 > /dev/null &
   - truffle migrate --network test
   - truffle test --network test
   - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
-  - npm run release
-  - npm publish
- # fi
+ # - npm run release
+ # - npm publish
+deploy:
+  provider: npm
+  email: $EMAIL
+  api_key: $NPM_TOKEN
+notifications:
+  slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
+
