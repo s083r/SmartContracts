@@ -1,7 +1,7 @@
 sudo: required
 dist: trusty
 language: node_js
-node_js: 7
+node_js: 7.6
 before_install:
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
@@ -10,11 +10,11 @@ script:
   - testrpc -g 1 --network-id 424242 > /dev/null &
   - truffle migrate --network test
   - truffle test --network test
- # - if [ "$TRAVIS_BRANCH" == "private" ]; then
- 
+  
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
   - truffle migrate --network kovan
   - git config credential.helper "store --file=.git/credentials"
   - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
   - npm run release
   - npm publish
- # fi
+  fi
