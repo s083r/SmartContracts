@@ -19,6 +19,8 @@ deploy:
   provider: npm
   email: $EMAIL
   api_key: $NPM_TOKEN
+  on:
+    all_branches: true
 notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
 
