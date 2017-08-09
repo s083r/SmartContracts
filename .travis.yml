@@ -19,3 +19,4 @@ script:
     npm run release
     npm publish
   fi
+  
