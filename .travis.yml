@@ -10,11 +10,10 @@ script:
   - testrpc -g 1 --network-id 424242 > /dev/null &
   - truffle migrate --network test
   - truffle test --network test
-  
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-  - truffle migrate --network kovan
-  - git config credential.helper "store --file=.git/credentials"
-  - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
-  - npm run release
-  - npm publish
+    - truffle migrate --network kovan
+    - git config credential.helper "store --file=.git/credentials"
+    - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
+    - npm run release
+    - npm publish
   fi
