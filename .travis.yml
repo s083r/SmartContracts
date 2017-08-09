@@ -19,4 +19,9 @@ script:
     npm run release
     npm publish
   fi
-  
+deploy:
+  provider: npm
+  email: $EMAIL
+  api_key: $NPM_TOKEN
+notifications:
+  slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
