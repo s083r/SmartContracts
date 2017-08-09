@@ -1,22 +1,21 @@
-sudo: false
-
+sudo: required
 dist: trusty
 language: node_js
 node_js: 7
 before_install:
-- export PATH=$PATH:$(pwd)/node_modules/.bin
-- git config --global user.email "danila.zubkov@gmail.com"
-- git config --global user.name "Danila Zubkov"
-- npm install -g ethereumjs-testrpc@3.0.3
-- npm install -g truffle@3.1.1
+  - npm install -g ethereumjs-testrpc@3.0.5
+  - npm install -g truffle@3.4.3
+  - npm install -g mikefluff/truffle-hdwallet-provider
+  - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
 script:
-- testrpc -g 1 --network-id 424242 > /dev/null &
-- truffle migrate --network test
-- travis_wait 55 truffle test --network test
-deploy:
-  provider: npm
-  email: $EMAIL
-  api_key: $NPM_TOKEN
-notifications:
-  slack: $SLACK_TOKEN
-  
+  - testrpc -g 1 --network-id 424242 > /dev/null &
+  - truffle migrate --network test
+  - truffle test --network test
+ # - if [ "$TRAVIS_BRANCH" == "private" ]; then
+ 
+  - truffle migrate --network kovan
+  - git config credential.helper "store --file=.git/credentials"
+  - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
+  - npm run release
+  - npm publish
+ # fi
