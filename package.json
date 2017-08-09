@@ -18,7 +18,7 @@
       ]
     ]
   },
-  "author": "Mike Fluff <mf@mikefluff.com> (http://mikefluff.com)",
+  "author": "Mike Fluff <mf@mikefluff.com>",
   "license": "GPLv3",
   "dependencies": {
     "bs58": "^4.0.1",
