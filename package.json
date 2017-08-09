@@ -35,5 +35,8 @@
     "babel-register": "^6.24.1",
     "ethereumjs-wallet": "0.6.0",
     "standard-version": "^4.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
   }
 }
