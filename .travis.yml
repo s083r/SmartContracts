@@ -7,6 +7,8 @@ before_install:
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
+  - echo $WALLET_DATA > wallet.json
+  - cat wallet.json
 script:
   - cat truffle.js
   - testrpc -g 1 --network-id 424242 > /dev/null &
