@@ -17,6 +17,7 @@ script:
  # - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
  # - npm run release
  # - npm publish
+   - npm config get name
 deploy:
   provider: npm
   email: $EMAIL
