@@ -30,6 +30,7 @@ deploy:
   api_key: $NPM_TOKEN
   on:
     all_branches: true
+  tag: $TRAVIS_BRANCH
 
 notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
