@@ -20,10 +20,10 @@ script:
 # - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
 # - npm run release
 # - npm publish
+before_deploy:
   - cat package.json
   - json -I -f package.json -e 'this.name="abyrval"'
   - cat package.json
-   
 deploy:
   provider: npm
   email: $EMAIL
