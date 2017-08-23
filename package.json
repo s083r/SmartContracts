@@ -1,5 +1,5 @@
 {
-  "name": "shdshvdkhg451",
+  "name": "$TRAVIS_BRANCH-shdshvdkhg451",
   "version": "1.1.34",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
