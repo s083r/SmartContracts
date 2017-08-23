@@ -9,9 +9,6 @@ before_install:
   - npm install -g json
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
-  - cat package.json
-  - json -I -f package.json -e 'this.name=$TRAVIS_TAG'
-  - cat package.json
 script:
   - cat truffle.js
   - testrpc -g 1 --network-id 424242 > /dev/null &
@@ -31,7 +28,7 @@ deploy:
   api_key: $NPM_TOKEN
   on:
     all_branches: true
-  tag: gfdgf
+  tag: "gfdgf"
 
 notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
