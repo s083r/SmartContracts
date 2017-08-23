@@ -9,7 +9,7 @@ before_install:
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
   - cat package.json
-  - sed -i -- 's/"name": "/"name": "$TRAVIS_BRANCH/g' package.json
+  - npm config list
   
 script:
   - cat truffle.js
