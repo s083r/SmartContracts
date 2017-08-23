@@ -9,11 +9,12 @@ before_install:
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
   - cat wallet.json
-  - npm config get name
+
 script:
   - cat truffle.js
   - testrpc -g 1 --network-id 424242 > /dev/null &
   - truffle migrate --network test
+  - npm config get name
  # - truffle test --network test
  # - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
  # - npm run release
