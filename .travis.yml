@@ -6,9 +6,9 @@ before_install:
 
   - cat package.json
   - npm install -g json
-  - npm cache clear
+  - npm cache clear --force
   - json -I -f package.json -e 'this.name="abyrval"'
-  - npm cache clear
+  - npm cache clear --force
   - cat package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
