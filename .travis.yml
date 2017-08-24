@@ -3,9 +3,9 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-  - 'if [ $TRAVIS_BRANCH == "develop" ]; then echo "test"; elif [ $TRAVIS_BRANCH == "release" ]; then echo "preprod"; elif [ $TRAVIS_BRANCH == "master" ]; then echo "prod"; fi;'
-  - jq '.name = $BRANCH' package.json > tmp.json
-  - cat tmp.json
+  - 'if [ $TRAVIS_BRANCH == "develop" ]; then BRANCH_DEFINITION="test"; elif [ $TRAVIS_BRANCH == "release" ]; then BRANCH_DEFINITION="preprod"; elif [ $TRAVIS_BRANCH == "master" ]; then BRANCH_DEFINITION="prod"; fi;'
+  - echo $BRANCH_DEFINITION
+  - jq '.name = "none"' package.json > tmp.json
   - rm -rf package.json 
   - mv tmp.json package.json
   - cat package.json
