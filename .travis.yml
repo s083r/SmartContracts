@@ -3,8 +3,17 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
+  - if [ "$TRAVIS_BRANCH" == "develop" ]; then
+    BRANCH = "test"
+  fi
+  - if [ "$TRAVIS_BRANCH" == "release" ]; then
+    BRANCH = "preprod"
+  fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    BRANCH = "prod"
+  fi
   - cat package.json
-  - jq '.name = "newvalue"' package.json > tmp.json
+  - jq '.name = $BRANCH' package.json > tmp.json
   - cat tmp.json
   - rm -rf package.json 
   - mv tmp.json package.json
