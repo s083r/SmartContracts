@@ -6,7 +6,7 @@ before_install:
   - if [ $TRAVIS_BRANCH == "develop" ]; then BRANCH_DEFINITION="test"; elif [ $TRAVIS_BRANCH == "release" ]; then BRANCH_DEFINITION="preprod"; elif [ $TRAVIS_BRANCH == "master" ]; then BRANCH_DEFINITION="prod"; fi;
   - NAME_POSTFIX=$(jq -r '.name' package.json)
   - echo $BRANCH_DEFINITION-$NAME_POSTFIX
-  - jq '.name = ' $BRANCH_DEFINITION-$NAME_POSTFIX package.json > tmp.json && mv tmp.json package.json
+  - jq --arg v "$BRANCH_DEFINITION-$NAME_POSTFIX" '.name = $v' package.json > tmp.json && mv tmp.json package.json
   - cat package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
