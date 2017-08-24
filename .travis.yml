@@ -3,7 +3,9 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-  - jq '.name = "newvalue"' package.json > tmp.json && mv tmp.json package.json
+  - jq '.name = "newvalue"' package.json > tmp.json 
+  - rm -rf package.json 
+  - mv tmp.json package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
