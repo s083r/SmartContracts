@@ -4,7 +4,7 @@ language: node_js
 node_js: 7
 before_install:
   - 'if [ $TRAVIS_BRANCH == "develop" ]; then BRANCH_DEFINITION="test"; elif [ $TRAVIS_BRANCH == "release" ]; then BRANCH_DEFINITION="preprod"; elif [ $TRAVIS_BRANCH == "master" ]; then BRANCH_DEFINITION="prod"; fi;'
-  - NAME_POSTFIX=$(cat file.json | jq '.[] | .name')
+  - NAME_POSTFIX=$(cat package.json | jq '.[] | .name')
   - echo "$BRANCH_DEFINITION-$NAME_POSTFIX"
   - abyr
   - jq '.name = "none"' package.json > tmp.json
