@@ -9,7 +9,7 @@ before_install:
   - npm cache clear --force
   - json -I -f package.json -e 'this.name="abyrval"'
   - npm cache clear --force
-  - cat package.json
+  - rm -rf package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
