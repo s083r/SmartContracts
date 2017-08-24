@@ -7,8 +7,7 @@ before_install:
   - cat package.json
   - npm install -g json
   - json -I -f package.json -e 'this.name="abyrval"'
-  
-  - rm -rf package.json
+  - jq '.name = "newvalue"' package.json > tmp.json && mv tmp.json package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
