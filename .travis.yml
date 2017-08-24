@@ -3,16 +3,15 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
- - |
-   case "$TRAVIS_BRANCH" in
+  - |
+    case "$TRAVIS_BRANCH" in
       "develop")
         echo "develop"
         ;;
       "release")
         echo "develop"
         ;;
-   esac
-
+    esac
   - cat package.json
   - jq '.name = $BRANCH' package.json > tmp.json
   - cat tmp.json
