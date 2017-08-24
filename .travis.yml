@@ -9,6 +9,7 @@ before_install:
   - npm install -g json
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
+  - npm cache clear
   - cat package.json
   - json -I -f package.json -e 'this.name="abyrval"'
   - cat package.json
