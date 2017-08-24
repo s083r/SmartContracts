@@ -6,10 +6,9 @@ before_install:
 
   - cat package.json
   - npm install -g json
-  - npm cache clear --force
   - json -I -f package.json -e 'this.name="abyrval"'
-  - npm cache clear --force
-  - rm -rf package.json
+
+- rm -rf package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
@@ -25,14 +24,7 @@ script:
 # - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
 # - npm run release
 # - npm publish
-  - cat package.json
-  - json -I -f package.json -e 'this.name="abyrval"'
-  - cat package.json
    
-before_deploy:
-  - cat package.json
-  - json -I -f package.json -e 'this.name="abyrval"'
-  - cat package.json
 deploy:
   provider: npm
   email: $EMAIL
