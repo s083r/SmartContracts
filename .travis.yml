@@ -3,35 +3,22 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-
-  - cat package.json
-  - npm install -g json
-  - json -I -f package.json -e 'this.name="abyrval"'
   - jq '.name = "newvalue"' package.json > tmp.json && mv tmp.json package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
-
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
-
 script:
   - cat truffle.js
   - testrpc -g 1 --network-id 424242 > /dev/null &
   - truffle migrate --network test
-# - truffle test --network test
-# - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
-# - npm run release
-# - npm publish
-   
 deploy:
   provider: npm
   email: $EMAIL
   api_key: $NPM_TOKEN
   on:
     all_branches: true
-  tag: "gfdgf"
-
 notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
 
