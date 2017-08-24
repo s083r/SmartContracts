@@ -4,13 +4,13 @@ language: node_js
 node_js: 7
 before_install:
   - if [ "$TRAVIS_BRANCH" == "develop" ]; then
-    BRANCH = "test"
+      BRANCH = "test"
   fi
   - if [ "$TRAVIS_BRANCH" == "release" ]; then
-    BRANCH = "preprod"
+      BRANCH = "preprod"
   fi
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    BRANCH = "prod"
+      BRANCH = "prod"
   fi
   - cat package.json
   - jq '.name = $BRANCH' package.json > tmp.json
