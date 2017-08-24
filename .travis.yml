@@ -5,12 +5,13 @@ node_js: 7
 before_install:
   - npm cache clear
   - cat package.json
+  - npm install -g json
   - json -I -f package.json -e 'this.name="abyrval"'
   - cat package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
-  - npm install -g json
+
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
   - echo $SLACK_TOKEN > wallet.json
 
