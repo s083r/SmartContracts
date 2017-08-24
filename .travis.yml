@@ -3,10 +3,11 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-  - npm cache clear
+
   - cat package.json
   - npm install -g json
   - json -I -f package.json -e 'this.name="abyrval"'
+  - npm cache clear
   - cat package.json
   - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
