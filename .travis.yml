@@ -2,6 +2,7 @@ sudo: required
 dist: trusty
 language: node_js
 node_js: 7
+
 before_install:
   - if [ $TRAVIS_BRANCH == "develop" ]; then BRANCH_DEFINITION="test"; elif [ $TRAVIS_BRANCH == "release" ]; then BRANCH_DEFINITION="preprod"; elif [ $TRAVIS_BRANCH == "master" ]; then BRANCH_DEFINITION="prod"; fi;
   - NAME_POSTFIX=$(jq -r '.name' package.json)
