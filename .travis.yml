@@ -23,11 +23,12 @@ script:
       truffle migrate --network kovan;
       truffle migrate --network rinkeby;
     elif [ $TRAVIS_BRANCH == "master" ]; then 
-      BRANCH_DEFINITION="prod"; fi;
+      BRANCH_DEFINITION="prod"; 
       truffle migrate --network private;
       truffle migrate --network kovan;
       truffle migrate --network rinkeby;
       truffle migrate --network mainnet;
+    fi;
   - NAME_POSTFIX=$(jq -r '.name' package.json)
   - jq --arg v "$BRANCH_DEFINITION-$NAME_POSTFIX" '.name = $v' package.json > tmp.json && mv tmp.json package.json
 deploy:
