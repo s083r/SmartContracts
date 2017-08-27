@@ -3,18 +3,40 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-  - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
+  - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
+  - echo $WALLET_DATA > wallet.json
+branches:
+  only:
+    - develop
+    - release
+    - master
 script:
-  - testrpc -g 1 --network-id 424242 > /dev/null &
-  - truffle migrate --network test
-  - truffle test --network test
- # - if [ "$TRAVIS_BRANCH" == "private" ]; then
- 
-  - truffle migrate --network kovan
-  - git config credential.helper "store --file=.git/credentials"
-  - echo "https://${GITHUB_TOKEN}:@github.com" > .git/credentials
-  - npm run release
-  - npm publish
- # fi
+  - |
+    if [ $TRAVIS_BRANCH == "develop" ]; then 
+      BRANCH_DEFINITION="test" 
+      truffle migrate --network private;
+    elif [ $TRAVIS_BRANCH == "release" ]; then 
+      BRANCH_DEFINITION="preprod";
+      truffle migrate --network private;
+      truffle migrate --network kovan;
+      truffle migrate --network rinkeby;
+    elif [ $TRAVIS_BRANCH == "master" ]; then 
+      BRANCH_DEFINITION="prod"; 
+      truffle migrate --network private;
+      truffle migrate --network kovan;
+      truffle migrate --network rinkeby;
+      truffle migrate --network mainnet;
+    fi;
+  - NAME_POSTFIX=$(jq -r '.name' package.json)
+  - jq --arg v "$BRANCH_DEFINITION-$NAME_POSTFIX" '.name = $v' package.json > tmp.json && mv tmp.json package.json
+deploy:
+  provider: npm
+  email: $EMAIL
+  api_key: $NPM_TOKEN
+  skip_cleanup: true
+  on:
+    branch: develop
+notifications:
+  slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
