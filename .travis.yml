@@ -18,7 +18,7 @@ branches:
     - release
     - master
 script:
-  - truffle migrate --network develop
+  - truffle migrate --network private
 deploy:
   provider: npm
   email: $EMAIL
