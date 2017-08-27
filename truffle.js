@@ -45,7 +45,7 @@ networks: {
     },
     develop: {
      host: 'private.chronobank.io',
-     port: 443,
+     port: 8545,
      network_id: '456719',
      gas: 4700000 
     }
