@@ -20,7 +20,7 @@ branches:
     - master
 script:
   - testrpc -g 1 --network-id 424242 > /dev/null &
-  - truffle migrate --network test
+  - truffle migrate --network private
 deploy:
   provider: npm
   email: $EMAIL
