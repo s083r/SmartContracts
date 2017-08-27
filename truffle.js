@@ -16,7 +16,7 @@ networks: {
       gas: 3290337
     },
     "ropsten": {
-      network_id:3,    // Official ropsten network id
+      network_id:3,
       provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://ropsten.infura.io/'), // Use our custom provider
       timeout: 0,
       test_timeout: 0,
@@ -48,6 +48,7 @@ networks: {
       port: 443,
       network_id: '456719',
       gas: 4700000
+      
     }
   },
   migrations_directory: './migrations'
