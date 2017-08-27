@@ -43,10 +43,10 @@ networks: {
      port: 8545,
      gas: 4700000
     },
-    development: {
-      host: 'localhost',
-      port: 8545,
-      network_id: '*', // Match any network id
+    private: {
+      host: 'private.chronobank.io',
+      port: 443,
+      network_id: '456719',
       gas: 4700000
     }
   },
