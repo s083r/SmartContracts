@@ -1,7 +1,7 @@
 module.exports = {
     networks: {
         private: {
-            host: 'private.chronobank.io',
+            host: 35.185.52.92,
             port: 8545,
             network_id: '456719',
             gas: 4700000 
