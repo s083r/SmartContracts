@@ -8,7 +8,6 @@ before_install:
   - NAME_POSTFIX=$(jq -r '.name' package.json)
   - echo $BRANCH_DEFINITION-$NAME_POSTFIX
   - jq --arg v "$BRANCH_DEFINITION-$NAME_POSTFIX" '.name = $v' package.json > tmp.json && mv tmp.json package.json
-  - npm install -g ethereumjs-testrpc@3.0.5
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
@@ -19,7 +18,7 @@ branches:
     - release
     - master
 script:
-  - truffle migrate --network private
+  - truffle migrate --network develop
 deploy:
   provider: npm
   email: $EMAIL
