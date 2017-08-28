@@ -3,6 +3,7 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
+  - PWD=test
   - sed -i -e 's/pwd/$PWD/g' truffle-config.js
   - cat truffle-config.js
   - fdsfds
