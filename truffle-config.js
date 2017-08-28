@@ -31,9 +31,9 @@ networks: {
       provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://rinkeby.chronobank.io/'),
       gas: 4700000
     },
-    development: {
+    private: {
       network_id: '*', 
-      provider: new HDWalletProvider('','https://зкшмфеу.chronobank.io/'),
+      provider: new HDWalletProvider('','https://private.chronobank.io/'),
       gas: 4700000
     }
   },
