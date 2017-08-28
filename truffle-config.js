@@ -12,12 +12,12 @@ module.exports = {
   networks: {
     "mainnet": {
       network_id: 1,
-      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://mainnet.chronobank.io/'),
+      provider: new HDWalletProvider(getWallet(),'pwd','https://mainnet.chronobank.io/'),
       gas: 4700000
     },
     "ropsten": {
       network_id:3,
-      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://ropsten.chronobank.io/'),
+      provider: new HDWalletProvider(getWallet(),'pwd','https://ropsten.chronobank.io/'),
       timeout: 0,
       test_timeout: 0,
       before_timeout: 0,
@@ -25,7 +25,7 @@ module.exports = {
     },
     rinkeby:{
       network_id:4,
-      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://rinkeby.chronobank.io/'),
+      provider: new HDWalletProvider(getWallet(),'pwd','https://rinkeby.chronobank.io/'),
       gas: 4700000
     },
     kovan:{
