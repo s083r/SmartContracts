@@ -4,7 +4,6 @@ language: node_js
 node_js: 7
 before_install:
   - sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
-  - cat truffle-config.js
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
@@ -25,7 +24,7 @@ script:
       truffle migrate --network rinkeby;
     elif [ $TRAVIS_BRANCH == "develop" ]; then 
       BRANCH_DEFINITION="prod"; 
-    #  truffle migrate --network private;
+      truffle migrate --network private;
       truffle migrate --network kovan;
       truffle migrate --network rinkeby;
       truffle migrate --network mainnet;
