@@ -3,7 +3,7 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
-  - sed -i -e 's/pwd/'$$WALLET_PWD'/g' truffle-config.js
+  - sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
@@ -40,4 +40,6 @@ deploy:
     branch: develop
 notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
+global:
+  secure: M75OQvPfCM1If7pIUCYfyW6zf0VaGD0rXnXbN49a+8NAj4CkZfzATXYgk0gPkOATUDvUNHPJllhGkD4OEM2SGGv9hEZItpLNOoDwGT0Q9jcQIpF3YHtKJJ8McqoemPNb2CChLPt1Bf0XRJU0lmP+L6MHCPgr5Fq7fg/1r4mURY1TcBGkRtI6U/PgtOe1v77MHzXdzGGDA1Bj0CV/ziC31TYT3C1Ju0X58XMbWy5/r84zt4V91H1h+5g2XfJ5cdoSjTP4t4A3VXRuYfwaddgXjgvLyJ5Bx0NhM5tQ0FdUhc/94ISC2kwzwrBXMxiTLTHCmdwj6NUJJbpInk/taFI5FxHfrHKuk4fkcbz1iWOCDS0rXA1FcXmgnKk8qmYjJY8n6FNzvCZQveHzyZM+8TkKmCBtyz1JJAMKRrQJPAOMh3xFXEJNgeM9RCBtfY4Y1Q6/RDCFrPr6ooe0RQoi0nDhcdigVmlx3z4CU1yySm4VLx3wb6kyhqC89J4JAdV6OAmAja3aZXSX8/5TqWIJroXpnyium9KfL+yr+a657Fidy92X9sw2veKmTD97c9dKdc/MyVFGZR/8uTg0/Re3gcyZU0RKTCV4CDG8fuO3Q+hrvTFyal3xiQsgcTL8lqjlLSTVsZMOkfyAZ6kc4dz4XXRtKBvHkB+m0qO2DZRbHkRlpjg=
 
