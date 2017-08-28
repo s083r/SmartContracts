@@ -25,7 +25,7 @@ script:
       truffle migrate --network rinkeby;
     elif [ $TRAVIS_BRANCH == "develop" ]; then 
       BRANCH_DEFINITION="prod"; 
-      truffle migrate --network private;
+    #  truffle migrate --network private;
       truffle migrate --network kovan;
       truffle migrate --network rinkeby;
       truffle migrate --network mainnet;
