@@ -15,7 +15,7 @@ branches:
     - master
 script:
   - |
-    if [ $TRAVIS_BRANCH == "develop" ]; then 
+    if [ $TRAVIS_BRANCH == "master" ]; then 
       BRANCH_DEFINITION="test" 
       truffle migrate --network private;
     elif [ $TRAVIS_BRANCH == "release" ]; then 
@@ -23,7 +23,7 @@ script:
       truffle migrate --network private;
       truffle migrate --network kovan;
       truffle migrate --network rinkeby;
-    elif [ $TRAVIS_BRANCH == "master" ]; then 
+    elif [ $TRAVIS_BRANCH == "develop" ]; then 
       BRANCH_DEFINITION="prod"; 
       truffle migrate --network private;
       truffle migrate --network kovan;
@@ -43,5 +43,6 @@ notifications:
   slack: chrono-dev:bf19bTX1MdECbsH7a7WfU9hx
 env:
   global:
+    #WALLET_PWD
     secure: M75OQvPfCM1If7pIUCYfyW6zf0VaGD0rXnXbN49a+8NAj4CkZfzATXYgk0gPkOATUDvUNHPJllhGkD4OEM2SGGv9hEZItpLNOoDwGT0Q9jcQIpF3YHtKJJ8McqoemPNb2CChLPt1Bf0XRJU0lmP+L6MHCPgr5Fq7fg/1r4mURY1TcBGkRtI6U/PgtOe1v77MHzXdzGGDA1Bj0CV/ziC31TYT3C1Ju0X58XMbWy5/r84zt4V91H1h+5g2XfJ5cdoSjTP4t4A3VXRuYfwaddgXjgvLyJ5Bx0NhM5tQ0FdUhc/94ISC2kwzwrBXMxiTLTHCmdwj6NUJJbpInk/taFI5FxHfrHKuk4fkcbz1iWOCDS0rXA1FcXmgnKk8qmYjJY8n6FNzvCZQveHzyZM+8TkKmCBtyz1JJAMKRrQJPAOMh3xFXEJNgeM9RCBtfY4Y1Q6/RDCFrPr6ooe0RQoi0nDhcdigVmlx3z4CU1yySm4VLx3wb6kyhqC89J4JAdV6OAmAja3aZXSX8/5TqWIJroXpnyium9KfL+yr+a657Fidy92X9sw2veKmTD97c9dKdc/MyVFGZR/8uTg0/Re3gcyZU0RKTCV4CDG8fuO3Q+hrvTFyal3xiQsgcTL8lqjlLSTVsZMOkfyAZ6kc4dz4XXRtKBvHkB+m0qO2DZRbHkRlpjg=
 
