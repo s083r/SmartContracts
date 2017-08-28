@@ -30,12 +30,12 @@ module.exports = {
     },
     kovan:{
       network_id:42,
-      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://kovan.chronobank.io/'),
+      provider: new HDWalletProvider(getWallet(),'pwd','https://kovan.chronobank.io/'),
       gas: 4700000
     },
     private: {
       network_id: '456719',
-      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://private.chronobank.io/'),
+      provider: new HDWalletProvider(getWallet(),'pwd','https://private.chronobank.io/'),
       gas: 4700000 
     }
   },
