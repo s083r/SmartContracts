@@ -3,9 +3,13 @@ dist: trusty
 language: node_js
 node_js: 7
 before_install:
+  - sed -i -e 's/pwd/$PWD/g' truffle-config.js
+  - cat truffle-config.js
+  - fdsfds
   - npm install -g truffle@3.4.3
   - npm install -g mikefluff/truffle-hdwallet-provider
   - npm i -g makeshift && makeshift -s @s083r -r registry.npmjs.org
+
 branches:
   only:
     - develop
