@@ -35,8 +35,7 @@ module.exports = {
     },
     private: {
       network_id: '456719',
-      host: '35.185.52.92',
-      port: 8545,
+      provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://private.chronobank.io/'),
       gas: 4700000 
     }
   },
