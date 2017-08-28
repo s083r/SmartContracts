@@ -9,7 +9,7 @@ function getWallet(){
 }
 
 module.exports = {
-networks: {
+  networks: {
     "mainnet": {
       network_id: 1,
       provider: new HDWalletProvider(getWallet(),'QWEpoi123','https://mainnet.chronobank.io/'),
