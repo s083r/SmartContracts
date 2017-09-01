@@ -11,20 +11,19 @@ jobs:
       - run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
-      - run:
-      |
-      if [ $CIRCLE_BRANCH == "master" ]; then 
-        BRANCH_DEFINITION="test" 
-        truffle migrate --network private;
-      elif [ $CIRCLE_BRANCH == "release" ]; then 
-        BRANCH_DEFINITION="preprod";
-        truffle migrate --network private;
-        truffle migrate --network kovan;
-        truffle migrate --network rinkeby;
-      elif [ $CIRCLE_BRANCH == "develop" ]; then 
-        BRANCH_DEFINITION="prod"; 
-        #truffle migrate --network private;
-        truffle migrate --network kovan;
-        truffle migrate --network rinkeby;
-        truffle migrate --network mainnet;
-      fi;
+      - run: |
+        if [ $CIRCLE_BRANCH == "master" ]; then 
+          BRANCH_DEFINITION="test" 
+          truffle migrate --network private;
+        elif [ $CIRCLE_BRANCH == "release" ]; then 
+          BRANCH_DEFINITION="preprod";
+          truffle migrate --network private;
+          truffle migrate --network kovan;
+          truffle migrate --network rinkeby;
+        elif [ $CIRCLE_BRANCH == "develop" ]; then 
+          BRANCH_DEFINITION="prod"; 
+          #truffle migrate --network private;
+          truffle migrate --network kovan;
+          truffle migrate --network rinkeby;
+          truffle migrate --network mainnet;
+        fi;
