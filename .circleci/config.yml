@@ -4,6 +4,9 @@ jobs:
     docker:
       - image: circleci/node:7
     working_directory: ~/repo
+    dependencies:
+      pre:
+        - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
@@ -28,4 +31,8 @@ jobs:
             truffle migrate --network rinkeby;
             truffle migrate --network mainnet;
           fi;
+     deployment:
+       npm:
+         commands:
+           - npm publish
           
