@@ -31,8 +31,8 @@ jobs:
             truffle migrate --network rinkeby;
             truffle migrate --network mainnet;
           fi;
-     deployment:
-       npm:
-         commands:
-           - npm publish
+       deployment:
+         npm:
+           commands:
+             - npm publish
           
