@@ -21,7 +21,7 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
+      - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
 
