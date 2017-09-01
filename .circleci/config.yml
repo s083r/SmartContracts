@@ -11,7 +11,8 @@ jobs:
       - run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
-      - |
+      - run:
+      |
       if [ $CIRCLE_BRANCH == "master" ]; then 
         BRANCH_DEFINITION="test" 
         truffle migrate --network private;
