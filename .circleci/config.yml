@@ -15,7 +15,7 @@ version: 2
            paths:
              - node_modules
            key: v1-dependencies-{{ checksum "package.json" }}
-       truffle migrate --network private;
-       truffle migrate --network kovan;
-       truffle migrate --network rinkeby;
-       truffle migrate --network mainnet;
+       - run: truffle migrate --network private;
+       - run: truffle migrate --network kovan;
+       - run: truffle migrate --network rinkeby;
+       - run: truffle migrate --network mainnet;
