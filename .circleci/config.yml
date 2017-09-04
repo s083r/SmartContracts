@@ -18,8 +18,9 @@ jobs:
               BRANCH_DEFINITION="test" 
             elif [ "{$CIRCLE_BRANCH}" == "release" ]; then 
               BRANCH_DEFINITION="preprod";
-            elif [ "{$CIRCLE_BRANCH}" == "develop" ]; then 
+            elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then 
               BRANCH_DEFINITION="prod";
+              echo "!!!!"
             fi;
       - run: echo "$CIRCLE_BRANCH"
       - run: echo "$BRANCH_DEFINITION"
