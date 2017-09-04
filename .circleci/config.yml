@@ -15,9 +15,11 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo "Deploy"
-      - deploy:
-           commands:
-             - npm publish
+    deployment:
+      production:
+        branch: develop
+        commands:
+          - npm publish
 
 
 #        command: |
