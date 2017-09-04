@@ -5,7 +5,7 @@ jobs:
       - image: circleci/node:7
     working_directory: ~/repo
     environment:
-      BRANCH_DEFINITION: $(if [ "{$CIRCLE_BRANCH}" == "master" ]; then echo "master" ; elif [ "{$CIRCLE_BRANCH}" == "release" ]; then echo "release" ; elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then echo "release" ; fi;
+      BRANCH_DEFINITION: $(if [ "{$CIRCLE_BRANCH}" == "master" ]; then echo "master" ; elif [ "{$CIRCLE_BRANCH}" == "release" ]; then echo "release" ; elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then echo "release" ; fi;)
     steps:
       - run: echo $BRANCH_DEFINITION
       - checkout
