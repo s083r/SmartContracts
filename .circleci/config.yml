@@ -12,6 +12,7 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
+      
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]] ; then 
@@ -20,13 +21,13 @@ jobs:
             fi;
       - run:
           command: |
-            if [ $CIRCLE_BRANCH == "release" ] || [ $CIRCLE_BRANCH == "master" ]; then 
+            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then 
               echo "Migrate to Kovan"
               #truffle migrate --network kovan;
             fi;
       - run:
           command: |
-            if [ $CIRCLE_BRANCH == "release" ] || [ $CIRCLE_BRANCH == "master" ]; then 
+            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then 
               echo "Migrate to Rinkeby"
               #truffle migrate --network rinkeby;
             fi;
@@ -36,6 +37,5 @@ jobs:
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
-      - run: jq --arg v "$CIRCLE_BRANCH-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
-      - run: cat package.json
+      - run: jq --arg v "$(if [[ "$CIRCLE_BRANCH" == "develop" ]] ; then echo "test" fi; if [[ "$CIRCLE_BRANCH" == "release" ]] ; then echo "preprod" fi; if [[ "$CIRCLE_BRANCH" == "master" ]] ; then echo "prod" fi;)-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
       - run: npm publish
