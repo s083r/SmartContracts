@@ -32,7 +32,7 @@ jobs:
 #            truffle migrate --network mainnet;
 #          fi;
 
-   deployment:
+   deploy:
      npm:
        commands:
          - npm publish
