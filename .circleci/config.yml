@@ -14,14 +14,14 @@ jobs:
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
       - run:
           command: |
-            if [ $CIRCLE_BRANCH == "master" ]; then 
+            if [ "$CIRCLE_BRANCH" == "master" ]; then 
               BRANCH_DEFINITION="test" 
-            elif [ $CIRCLE_BRANCH == "release" ]; then 
+            elif [ "$CIRCLE_BRANCH" == "release" ]; then 
               BRANCH_DEFINITION="preprod";
-            elif [ "${CIRCLE_BRANCH}" == "develop" ]; then 
+            elif [ "$CIRCLE_BRANCH" == "develop" ]; then 
               BRANCH_DEFINITION="prod";
             fi;
-      - run: cat $BRANCH_DEFINITION
+      - run: cat "$BRANCH_DEFINITION"
       - run:
           command: |
             if [[ $BRANCH_DEFINITION == "test" ]] || [[ $BRANCH_DEFINITION == "preprod" ]] || [[ $BRANCH_DEFINITION == "prod" ]] ; then 
