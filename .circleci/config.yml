@@ -21,7 +21,7 @@ jobs:
             elif [ "$CIRCLE_BRANCH" == "develop" ]; then 
               BRANCH_DEFINITION="prod";
             fi;
-      - run: echo "$BRANCH_DEFINITION"
+      - run: echo "$CIRCLE_BRANCH"
       - run:
           command: |
             if [[ $BRANCH_DEFINITION == "test" ]] || [[ $BRANCH_DEFINITION == "preprod" ]] || [[ $BRANCH_DEFINITION == "prod" ]] ; then 
