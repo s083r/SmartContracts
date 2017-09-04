@@ -21,28 +21,28 @@ jobs:
           elif [ $CIRCLE_BRANCH == "develop" ]; then 
             BRANCH_DEFINITION="prod"; 
           fi;
-       - run:
-         command: |
+      - run:
+        command: |
            if [ $BRANCH_DEFINITION == "test" ] || [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
              echo "Migrate to Private"
              #truffle migrate --network private;
            fi;
-       - run:
-         command: |
+      - run:
+        command: |
            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
              echo "Migrate to Kovan"
              #truffle migrate --network kovan;
            fi;
-       - run:
-         command: |
+      - run:
+        command: |
            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
              echo "Migrate to Rinkeby"
              #truffle migrate --network rinkeby;
            fi;
-       - run:
-         command: |
+      - run:
+        command: |
            if [ $BRANCH_DEFINITION == "prod" ]; then 
              echo "Migrate to Mainnet"
              #truffle migrate --network mainnet;
            fi;
-       - run: npm publish
+      - run: npm publish
