@@ -25,7 +25,7 @@ jobs:
               echo "release"
             elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then 
               #BRANCH_DEFINITION="prod";
-              export BRANCH_DEFINITION="prod"
+              BRANCH_DEFINITION: "prod"
               echo "develop"
               echo "$BRANCH_DEFINITION"
             fi;
