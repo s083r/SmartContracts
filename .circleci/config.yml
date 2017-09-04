@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm config set unsafe-perm=true
-      - run: sudo npm install https://github.com/Mikefluff/truffle.git#v3.2.0 --save
+      - run: sudo npm install https://github.com/Mikefluff/truffle.git#3.2.0 --save
       #- run: sudo npm install -g truffle@3.4.9 #3
       - run: ls -lh
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
