@@ -4,6 +4,8 @@ jobs:
     docker:
       - image: circleci/node:7
     working_directory: ~/repo
+    environment:
+    
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
@@ -15,12 +17,15 @@ jobs:
       - run:
           command: |
             if [ "{$CIRCLE_BRANCH}" == "master" ]; then 
-              BRANCH_DEFINITION="test" 
+              BRANCH_DEFINITION="test"
+              echo "master"
             elif [ "{$CIRCLE_BRANCH}" == "release" ]; then 
               BRANCH_DEFINITION="preprod";
+              echo "release"
             elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then 
               BRANCH_DEFINITION="prod";
-              echo "!!!!"
+              export BRANCH_DEFINITION="prod"
+              echo "develop"
             fi;
       - run: echo "$CIRCLE_BRANCH"
       - run: echo "$BRANCH_DEFINITION"
