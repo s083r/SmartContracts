@@ -5,8 +5,9 @@ jobs:
       - image: circleci/node:7
     working_directory: ~/repo
     environment:
-    
+      BRANCH_DEFINITION: none
     steps:
+      - run: echo $BRANCH_DEFINITION
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm config set unsafe-perm=true
