@@ -1,6 +1,6 @@
 {
   
-  "name": "chronobank-smart-contracts-circle",
+  "name": "chronobank-smart-contracts-circleci",
   "version": "1.1.34",
   "description": "Chronobank Smart Contracts",
   "main": "index.js",
