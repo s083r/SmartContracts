@@ -11,8 +11,7 @@ jobs:
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm config set unsafe-perm=true
       - run: sudo npm install -g https://github.com/s083r/truffle.git --save
-      #- run: sudo npm install -g truffle@3.4.9 #3
-      - run: ls -lh
+      #- run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
@@ -32,9 +31,9 @@ jobs:
             fi;
       - run:
           command: |
-            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then 
+            if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then #release
               echo "Migrate to Rinkeby"
-              #truffle migrate --network rinkeby;
+              truffle migrate --network rinkeby;
             fi;
       - run:
           command: |
