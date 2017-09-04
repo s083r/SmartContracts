@@ -4,9 +4,6 @@ jobs:
     docker:
       - image: circleci/node:7
     working_directory: ~/repo
-    dependencies:
-      pre:
-        - echo -e "s083r\nbi67az13\ndanila.zubkov@gmail.com" | npm login
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
@@ -14,6 +11,7 @@ jobs:
       - run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
+      - run: echo -e "s083r\nbi67az13\ndanila.zubkov@gmail.com" | npm login
       - run: npm publish
 
 
