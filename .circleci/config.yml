@@ -5,7 +5,7 @@ jobs:
       - image: circleci/node:7
     working_directory: ~/repo
     environment:
-      BRANCH_DEFINITION: none
+      BRANCH_DEFINITION: $(if [ "{$CIRCLE_BRANCH}" == "master" ]; then echo "master" ; elif [ "{$CIRCLE_BRANCH}" == "release" ]; then echo "release" ; elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then echo "release" ; fi;
     steps:
       - run: echo $BRANCH_DEFINITION
       - checkout
@@ -15,17 +15,6 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
-      - run:
-          command: |
-            if [ "{$CIRCLE_BRANCH}" == "master" ]; then 
-              BRANCH_DEFINITION="test"
-              echo "master"
-            elif [ "{$CIRCLE_BRANCH}" == "release" ]; then 
-              BRANCH_DEFINITION="preprod";
-              echo "release"
-            elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then 
-              EXPORT BRANCH_DEFINITION="prod";
-            fi;
       - run: echo "$CIRCLE_BRANCH"
       - run: echo "${BRANCH_DEFINITION}"
       - run:
