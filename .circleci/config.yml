@@ -7,6 +7,9 @@ jobs:
     dependencies:
       pre:
         - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        - echo "//registry.npmjs.org/:_password=bi67az13" >> ~/.npmrc
+        - echo "//registry.npmjs.org/:username=s083r" >> ~/.npmrc
+        - echo "//registry.npmjs.org/:email=danila.zubkov@gmail.com" >> ~/.npmrc
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
