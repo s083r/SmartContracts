@@ -23,7 +23,7 @@ jobs:
             fi;
       - run:
           command: |
-            if [ $BRANCH_DEFINITION == "test" ] || [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+            if [[ $BRANCH_DEFINITION == "test" ]] || [[ $BRANCH_DEFINITION == "preprod" ]] || [[ $BRANCH_DEFINITION == "prod" ]] ; then 
               echo "Migrate to Private"
               #truffle migrate --network private;
             fi;
