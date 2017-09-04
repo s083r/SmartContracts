@@ -41,7 +41,7 @@ jobs:
             fi;
       - run:
           command: |
-            if [ $BRANCH_DEFINITION == "prod" ]; then 
+            if [ "$BRANCH_DEFINITION" == "prod" ]; then 
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
