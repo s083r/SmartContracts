@@ -6,10 +6,7 @@ jobs:
     working_directory: ~/repo
     dependencies:
       pre:
-        - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-        - echo "//registry.npmjs.org/:_password=bi67az13" >> ~/.npmrc
-        - echo "//registry.npmjs.org/:username=s083r" >> ~/.npmrc
-        - echo "//registry.npmjs.org/:email=danila.zubkov@gmail.com" >> ~/.npmrc
+        - echo -e "s083r\nbi67az13\ndanila.zubkov@gmail.com" | npm login
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
