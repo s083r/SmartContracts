@@ -4,10 +4,7 @@ jobs:
     docker:
       - image: circleci/node:7
     working_directory: ~/repo
-    environment:
-      BRANCH_DEFINITION: $(if [ "{$CIRCLE_BRANCH}" == "master" ]; then echo "master" ; elif [ "{$CIRCLE_BRANCH}" == "release" ]; then echo "release" ; elif [[ "$CIRCLE_BRANCH" == "develop" ]]; then echo "release" ; fi;)
     steps:
-      - run: echo $BRANCH_DEFINITION
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm config set unsafe-perm=true
@@ -15,33 +12,31 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
-      - run: echo "$CIRCLE_BRANCH"
-      - run: echo "${BRANCH_DEFINITION}"
       - run:
           command: |
-            if [[ $BRANCH_DEFINITION == "test" ]] || [[ $BRANCH_DEFINITION == "preprod" ]] || [[ $BRANCH_DEFINITION == "prod" ]] ; then 
+            if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]] ; then 
               echo "Migrate to Private"
               #truffle migrate --network private;
             fi;
       - run:
           command: |
-            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+            if [ $CIRCLE_BRANCH == "release" ] || [ $CIRCLE_BRANCH == "master" ]; then 
               echo "Migrate to Kovan"
               #truffle migrate --network kovan;
             fi;
       - run:
           command: |
-            if [ ${BRANCH_DEFINITION} == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+            if [ $CIRCLE_BRANCH == "release" ] || [ $CIRCLE_BRANCH == "master" ]; then 
               echo "Migrate to Rinkeby"
               #truffle migrate --network rinkeby;
             fi;
       - run:
           command: |
-            if [[ "$BRANCH_DEFINITION" == "prod" ]]; then 
+            if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
       - run: NAME_POSTFIX=$(jq -r '.name' package.json)
-      - run: jq --arg v "$BRANCH_DEFINITION-$NAME_POSTFIX-ci" '.name = $v' package.json > tmp.json && mv tmp.json package.json
+      - run: jq --arg v "$CIRCLE_BRANCH-$NAME_POSTFIX-ci" '.name = $v' package.json > tmp.json && mv tmp.json package.json
       - run: cat package.json
       - run: npm publish
