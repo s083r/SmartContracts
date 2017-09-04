@@ -12,22 +12,37 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
-      - run: npm publish
-
-
-#        command: |
-#          if [ $CIRCLE_BRANCH == "master" ]; then 
-#            BRANCH_DEFINITION="test" 
-#            truffle migrate --network private;
-#          elif [ $CIRCLE_BRANCH == "release" ]; then 
-#            BRANCH_DEFINITION="preprod";
-#            truffle migrate --network private;
-#            truffle migrate --network kovan;
-#            truffle migrate --network rinkeby;
-#          elif [ $CIRCLE_BRANCH == "develop" ]; then 
-#            BRANCH_DEFINITION="prod"; 
-#            #truffle migrate --network private;
-#            truffle migrate --network kovan;
-#            truffle migrate --network rinkeby;
-#            truffle migrate --network mainnet;
-#          fi;
+      - run:
+        command: |
+          if [ $CIRCLE_BRANCH == "master" ]; then 
+            BRANCH_DEFINITION="test" 
+          elif [ $CIRCLE_BRANCH == "release" ]; then 
+            BRANCH_DEFINITION="preprod";
+          elif [ $CIRCLE_BRANCH == "develop" ]; then 
+            BRANCH_DEFINITION="prod"; 
+          fi;
+       - run:
+         command: |
+           if [ $BRANCH_DEFINITION == "test" ] || [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+             echo "Migrate to Private"
+             #truffle migrate --network private;
+           fi;
+       - run:
+         command: |
+           if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+             echo "Migrate to Kovan"
+             #truffle migrate --network kovan;
+           fi;
+       - run:
+         command: |
+           if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+             echo "Migrate to Rinkeby"
+             #truffle migrate --network rinkeby;
+           fi;
+       - run:
+         command: |
+           if [ $BRANCH_DEFINITION == "prod" ]; then 
+             echo "Migrate to Mainnet"
+             #truffle migrate --network mainnet;
+           fi;
+       - run: npm publish
