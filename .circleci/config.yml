@@ -28,21 +28,21 @@ jobs:
               #truffle migrate --network private;
             fi;
       - run:
-        command: |
-          if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
-            echo "Migrate to Kovan"
-            #truffle migrate --network kovan;
-          fi;
+          command: |
+            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+              echo "Migrate to Kovan"
+              #truffle migrate --network kovan;
+            fi;
       - run:
-        command: |
-          if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
-            echo "Migrate to Rinkeby"
-            #truffle migrate --network rinkeby;
-          fi;
+          command: |
+            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+              echo "Migrate to Rinkeby"
+              #truffle migrate --network rinkeby;
+            fi;
       - run:
-        command: |
-          if [ $BRANCH_DEFINITION == "prod" ]; then 
-            echo "Migrate to Mainnet"
-            #truffle migrate --network mainnet;
-          fi;
+          command: |
+            if [ $BRANCH_DEFINITION == "prod" ]; then 
+              echo "Migrate to Mainnet"
+              #truffle migrate --network mainnet;
+            fi;
       - run: npm publish
