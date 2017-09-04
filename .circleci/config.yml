@@ -16,10 +16,8 @@ jobs:
       - run: sudo npm install
       - run: echo "Deploy"
     deployment:
-      production:
-        branch: develop
-        commands:
-          - npm publish
+      commands:
+        - npm publish
 
 
 #        command: |
