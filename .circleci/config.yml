@@ -18,8 +18,8 @@ jobs:
               BRANCH_DEFINITION="test" 
             elif [ $CIRCLE_BRANCH == "release" ]; then 
               BRANCH_DEFINITION="preprod";
-            elif [ $CIRCLE_BRANCH == "develop" ]; then 
-              BRANCH_DEFINITION="prod"; 
+            elif [ "${CIRCLE_BRANCH}" == "develop" ]; then 
+              BRANCH_DEFINITION="prod";
             fi;
       - run: cat $BRANCH_DEFINITION
       - run:
@@ -36,13 +36,13 @@ jobs:
             fi;
       - run:
           command: |
-            if [ $BRANCH_DEFINITION == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
+            if [ ${BRANCH_DEFINITION} == "preprod" ] || [ $BRANCH_DEFINITION == "prod" ]; then 
               echo "Migrate to Rinkeby"
               #truffle migrate --network rinkeby;
             fi;
       - run:
           command: |
-            if [ "$BRANCH_DEFINITION" == "prod" ]; then 
+            if [[ "$BRANCH_DEFINITION" == "prod" ]]; then 
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
