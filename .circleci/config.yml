@@ -37,5 +37,5 @@ jobs:
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
-      - run: jq --arg v "$(if [ $CIRCLE_BRANCH == "develop" ] ; then echo "Gotit"; fi)-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
+      - run: jq --arg v "$(if [ $CIRCLE_BRANCH == "develop" ] ; then echo "test"; fi; if [ $CIRCLE_BRANCH == "release" ] ; then echo "preprod"; fi; if [ $CIRCLE_BRANCH == "master" ] ; then echo "prod"; fi )-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
       - run: npm publish
