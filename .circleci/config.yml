@@ -19,7 +19,7 @@ jobs:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]] ; then 
               echo "Migrate to Private"
-              #truffle migrate --network private;
+              truffle migrate --network private;
             fi;
       - run:
           command: |
