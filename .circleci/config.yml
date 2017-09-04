@@ -15,6 +15,12 @@ jobs:
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo "Deploy"
+    deploy:
+      npm:
+        commands:
+          - npm publish
+
+
 #        command: |
 #          if [ $CIRCLE_BRANCH == "master" ]; then 
 #            BRANCH_DEFINITION="test" 
@@ -31,8 +37,3 @@ jobs:
 #            truffle migrate --network rinkeby;
 #            truffle migrate --network mainnet;
 #          fi;
-
-   deploy:
-     npm:
-       commands:
-         - npm publish
