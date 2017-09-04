@@ -11,7 +11,7 @@ jobs:
       - run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
-      - run: echo -e "s083r\nbi67az13\ndanila.zubkov@gmail.com" | npm login
+      - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
       - run: npm publish
 
 
