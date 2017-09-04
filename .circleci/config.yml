@@ -22,6 +22,7 @@ jobs:
               BRANCH_DEFINITION="prod";
             fi;
       - run: echo "$CIRCLE_BRANCH"
+      - run: echo "$BRANCH_DEFINITION"
       - run:
           command: |
             if [[ $BRANCH_DEFINITION == "test" ]] || [[ $BRANCH_DEFINITION == "preprod" ]] || [[ $BRANCH_DEFINITION == "prod" ]] ; then 
