@@ -36,7 +36,6 @@ jobs:
               echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
-      - run: NAME_POSTFIX=$(jq -r '.name' package.json)
-      - run: jq --arg v "$CIRCLE_BRANCH-$NAME_POSTFIX-ci" '.name = $v' package.json > tmp.json && mv tmp.json package.json
+      - run: jq --arg v "$CIRCLE_BRANCH-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
       - run: cat package.json
       - run: npm publish
