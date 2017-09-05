@@ -5,13 +5,11 @@ jobs:
       - image: circleci/node:7
     working_directory: ~/repo
     artifacts: ~/repo
-      
     steps:
       - checkout
       - run: sed -i -e 's/pwd/'$WALLET_PWD'/g' truffle-config.js
       - run: sudo npm config set unsafe-perm=true
       - run: sudo npm install -g https://github.com/s083r/truffle.git --save
-      #- run: sudo npm install -g truffle@3.4.3
       - run: sudo npm install -g mikefluff/truffle-hdwallet-provider
       - run: sudo npm install
       - run: echo -e "$NPM_LOGIN\n$NPM_PWD\n$NPM_EMAIL" | npm login
@@ -19,27 +17,24 @@ jobs:
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]] ; then 
-              echo "Migrate to Private"
-              truffle compile
               #truffle migrate --network private;
             fi;
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then 
-              echo "Migrate to Kovan"
               #truffle migrate --network kovan;
             fi;
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then #release
-              echo "Migrate to Rinkeby"
-              truffle migrate --network rinkeby;
+              #truffle migrate --network rinkeby;
             fi;
       - run:
           command: |
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
-              echo "Migrate to Mainnet"
               #truffle migrate --network mainnet;
             fi;
       - run: jq --arg v "$(if [ $CIRCLE_BRANCH == "develop" ] ; then echo "test"; fi; if [ $CIRCLE_BRANCH == "release" ] ; then echo "preprod"; fi; if [ $CIRCLE_BRANCH == "master" ] ; then echo "prod"; fi )-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
+      - run: sed -i -e 's/'$WALLET_PWD'/pwd/g' truffle-config.js
       - run: npm publish
+
