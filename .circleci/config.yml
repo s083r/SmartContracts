@@ -28,7 +28,7 @@ jobs:
             fi;
       - run:
           command: |
-            if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then #release
+            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then #release
               echo "Migrate to private rinkeby"
               #truffle migrate --network rinkeby;
             fi;
