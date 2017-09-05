@@ -17,21 +17,25 @@ jobs:
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]] ; then 
+              echo "Migrate to private network"
               #truffle migrate --network private;
             fi;
       - run:
           command: |
-            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then 
+            if [[ $CIRCLE_BRANCH == "release" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then
+              echo "Migrate to private kovan"
               #truffle migrate --network kovan;
             fi;
       - run:
           command: |
             if [[ $CIRCLE_BRANCH == "develop" ]] || [[ $CIRCLE_BRANCH == "master" ]]; then #release
+              echo "Migrate to private rinkeby"
               #truffle migrate --network rinkeby;
             fi;
       - run:
           command: |
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then 
+              echo "Migrate to private mainnet"
               #truffle migrate --network mainnet;
             fi;
       - run: jq --arg v "$(if [ $CIRCLE_BRANCH == "develop" ] ; then echo "test"; fi; if [ $CIRCLE_BRANCH == "release" ] ; then echo "preprod"; fi; if [ $CIRCLE_BRANCH == "master" ] ; then echo "prod"; fi )-$(jq -r '.name' package.json)" '.name = $v' package.json > tmp.json && mv tmp.json package.json
